@@ -5,20 +5,25 @@
   "sourceRoot": "apps/core",
   "targets": {
     "build": {
-      "executor": "@nx-go/nx-go:build",
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/core",
-        "main": "apps/core/main.go"
+        "cwd": "apps/core",
+        "command": "make all -j 3"
       }
     },
     "serve": {
-      "executor": "@nx-go/nx-go:serve",
+      "executor": "nx:run-commands",
       "options": {
-        "main": "apps/core/main.go"
+        "cwd": "apps/core",
+        "command": "make dev"
       }
     },
     "test": {
-      "executor": "@nx-go/nx-go:test"
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/core",
+        "command": "make mac-test"
+      }
     },
     "lint": {
       "executor": "@nx-go/nx-go:lint"
