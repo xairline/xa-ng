@@ -8,11 +8,7 @@
 
 ## 4. Cloud*
 
-# Nonfunctional Requirements
-
-## 1. CI/CD
-
-## 2. Auto update
+## 5. Auto update
 
 - [ ] The `Core` portion should check whether there is a newer version at start-up time.
 - [ ] The `Core` portion should have minimum business logic and most backend business logic should be delivered
@@ -41,6 +37,21 @@
    The manifest indicates `core` needs an update. in this case, we need to notify user that a full reinstall of plugin
    is required. and the core should not update anything
 
-## 3. Code structure
+# Nonfunctional Requirements
 
+## 1. CI/CD/Dev Setup
 
+## 2. Code structure
+
+We use [NX.DEV](https://nx.dev).
+
+### Apps
+
+- Core
+- Backend
+- Frontend
+- Frontend-e2e
+
+### Libs
+
+This is where we have buildable wasm and other UI components
