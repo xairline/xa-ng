@@ -1,0 +1,28 @@
+{
+  "name": "backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/backend",
+  "targets": {
+    "build": {
+      "executor": "@nx-golang/gin:build",
+      "options": {
+        "outputPath": "dist/apps/backend",
+        "main": "apps/backend/main.go"
+      }
+    },
+    "serve": {
+      "executor": "@nx-go/nx-go:serve",
+      "options": {
+        "main": "apps/backend/main.go"
+      }
+    },
+    "test": {
+      "executor": "@nx-go/nx-go:test"
+    },
+    "lint": {
+      "executor": "@nx-golang/gin:lint"
+    }
+  },
+  "tags": []
+}
