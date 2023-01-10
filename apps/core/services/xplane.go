@@ -1,10 +1,9 @@
 package services
 
-//go:generate mockgen -destination=../mocks/services/xplane.go -package=mocks -source=xplane.go
+//go:generate mockgen -destination=./__mocks__/xplane.go -package=mocks -source=xplane.go
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nakabonne/tstorage"
 	"github.com/xairline/goplane/extra"
 	"github.com/xairline/goplane/extra/logging"
 	"github.com/xairline/goplane/xplm/plugins"
@@ -18,39 +17,34 @@ type XplaneService interface {
 	onPluginStateChanged(state extra.PluginState, plugin *extra.XPlanePlugin)
 	onPluginStart()
 	onPluginStop()
-	onPluginEnable()
-	onPluginDisable()
 	flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32
-	GetVersion() string
 }
 
 type xplaneService struct {
-	Plugin *extra.XPlanePlugin
-	Tstore tstorage.Storage
+	Plugin      *extra.XPlanePlugin
+	TstorageSvc TstorageService
 }
 
-var lock = &sync.Mutex{}
+var xplaneSvclock = &sync.Mutex{}
 var xplaneSvc XplaneService
 
-func NewXplaneService(tstorage tstorage.Storage) XplaneService {
+func NewXplaneService(tstorageSvc TstorageService) XplaneService {
 	if xplaneSvc != nil {
+		logging.Info("Xplane SVC has been initialized already")
 		return xplaneSvc
 	} else {
-		lock.Lock()
-		defer lock.Unlock()
-		svc := xplaneService{
-			Plugin: extra.NewPlugin("X Airline NG", "com.github.xairline.xa-ng", "X Airline NG"),
-			Tstore: tstorage,
+		logging.Info("Xplane SVC: initializing")
+		xplaneSvclock.Lock()
+		defer xplaneSvclock.Unlock()
+		xplaneSvc := xplaneService{
+			Plugin:      extra.NewPlugin("X Airline NG", "com.github.xairline.xa-ng", "X Airline NG"),
+			TstorageSvc: tstorageSvc,
 		}
-		svc.Plugin.SetPluginStateCallback(svc.onPluginStateChanged)
+		xplaneSvc.Plugin.SetPluginStateCallback(xplaneSvc.onPluginStateChanged)
 		plugins.EnableFeature("XPLM_USE_NATIVE_PATHS", true)
 		logging.MinLevel = logging.Info_Level
-		return svc
+		return xplaneSvc
 	}
-}
-
-func (s xplaneService) GetVersion() string {
-	return "development"
 }
 
 func (s xplaneService) onPluginStateChanged(state extra.PluginState, plugin *extra.XPlanePlugin) {
@@ -60,9 +54,9 @@ func (s xplaneService) onPluginStateChanged(state extra.PluginState, plugin *ext
 	case extra.PluginStop:
 		s.onPluginStop()
 	case extra.PluginEnable:
-		s.onPluginEnable()
+		logging.Info("Plugin enabled")
 	case extra.PluginDisable:
-		s.onPluginDisable()
+		logging.Info("Plugin disabled")
 	}
 }
 
@@ -86,16 +80,8 @@ func (s xplaneService) onPluginStart() {
 }
 
 func (s xplaneService) onPluginStop() {
-	defer s.Tstore.Close()
+	defer s.TstorageSvc.Close()
 	logging.Info("Plugin stopped")
-}
-
-func (s xplaneService) onPluginEnable() {
-	logging.Info("Plugin enabled")
-}
-
-func (s xplaneService) onPluginDisable() {
-	logging.Info("Plugin disabled")
 }
 
 func (s xplaneService) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32 {
