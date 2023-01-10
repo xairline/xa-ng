@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/gin-gonic/gin v1.8.2
+	github.com/golang/mock v1.6.0
 	github.com/nakabonne/tstorage v0.3.5
 	github.com/xairline/goplane v1.301.0
 )
