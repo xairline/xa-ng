@@ -14,9 +14,11 @@ import (
 )
 
 type XplaneService interface {
+	// init
 	onPluginStateChanged(state extra.PluginState, plugin *extra.XPlanePlugin)
 	onPluginStart()
 	onPluginStop()
+	// flight loop
 	flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32
 }
 

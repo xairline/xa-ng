@@ -34,20 +34,6 @@ func (m *MockXplaneService) EXPECT() *MockXplaneServiceMockRecorder {
 	return m.recorder
 }
 
-// GetVersion mocks base method.
-func (m *MockXplaneService) GetVersion() string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetVersion")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// GetVersion indicates an expected call of GetVersion.
-func (mr *MockXplaneServiceMockRecorder) GetVersion() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetVersion", reflect.TypeOf((*MockXplaneService)(nil).GetVersion))
-}
-
 // flightLoop mocks base method.
 func (m *MockXplaneService) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32 {
 	m.ctrl.T.Helper()
@@ -60,30 +46,6 @@ func (m *MockXplaneService) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLas
 func (mr *MockXplaneServiceMockRecorder) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop, counter, ref interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "flightLoop", reflect.TypeOf((*MockXplaneService)(nil).flightLoop), elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop, counter, ref)
-}
-
-// onPluginDisable mocks base method.
-func (m *MockXplaneService) onPluginDisable() {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "onPluginDisable")
-}
-
-// onPluginDisable indicates an expected call of onPluginDisable.
-func (mr *MockXplaneServiceMockRecorder) onPluginDisable() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "onPluginDisable", reflect.TypeOf((*MockXplaneService)(nil).onPluginDisable))
-}
-
-// onPluginEnable mocks base method.
-func (m *MockXplaneService) onPluginEnable() {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "onPluginEnable")
-}
-
-// onPluginEnable indicates an expected call of onPluginEnable.
-func (mr *MockXplaneServiceMockRecorder) onPluginEnable() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "onPluginEnable", reflect.TypeOf((*MockXplaneService)(nil).onPluginEnable))
 }
 
 // onPluginStart mocks base method.
