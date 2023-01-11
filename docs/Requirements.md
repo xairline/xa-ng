@@ -2,8 +2,9 @@
 
 ## 1. Core
 
-### 1.1 Backend
-### 1.2 Xplane Flight Loop
+### 1.1 Backend: Open/Async API
+### 1.2 Xplane: Flight Loop
+### 1.3 TS storage
 
 ## 2. Frontend
 
