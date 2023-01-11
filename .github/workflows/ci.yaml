@@ -5,9 +5,6 @@ on:
   # Triggers the workflow on push or pull request events but only for the master branch
   pull_request:
     branches: [ main ]
-  push:
-    branches:
-      - 'main'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -42,8 +39,4 @@ jobs:
             go-mod-
       - run: go mod tidy
       - run: make mac-test
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-
       - run: make all -j 3
