@@ -43,6 +43,10 @@ jobs:
       - run: go mod tidy
       - run: make mac-test
 
-      - run: bash <(curl -s https://codecov.io/bash)
+      - run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+
+          chmod +x codecov
+          ./codecov
 
       - run: make all -j 3
