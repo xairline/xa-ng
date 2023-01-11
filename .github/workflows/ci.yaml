@@ -42,4 +42,11 @@ jobs:
             go-mod-
       - run: go mod tidy
       - run: make mac-test
+
+      - run: |
+          curl -Os https://uploader.codecov.io/latest/macos/codecov
+
+          chmod +x codecov
+          ./codecov
+
       - run: make all -j 3
