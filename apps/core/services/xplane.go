@@ -25,12 +25,16 @@ type XplaneService interface {
 type xplaneService struct {
 	Plugin      *extra.XPlanePlugin
 	TstorageSvc TstorageService
+	DatarefSvc  DatarefService
 }
 
 var xplaneSvcLock = &sync.Mutex{}
 var xplaneSvc XplaneService
 
-func NewXplaneService(tstorageSvc TstorageService) XplaneService {
+func NewXplaneService(
+	tstorageSvc TstorageService,
+	datarefSvc DatarefService,
+) XplaneService {
 	if xplaneSvc != nil {
 		logging.Info("Xplane SVC has been initialized already")
 		return xplaneSvc
@@ -41,6 +45,7 @@ func NewXplaneService(tstorageSvc TstorageService) XplaneService {
 		xplaneSvc := xplaneService{
 			Plugin:      extra.NewPlugin("X Airline NG", "com.github.xairline.xa-ng", "X Airline NG"),
 			TstorageSvc: tstorageSvc,
+			DatarefSvc:  datarefSvc,
 		}
 		xplaneSvc.Plugin.SetPluginStateCallback(xplaneSvc.onPluginStateChanged)
 		plugins.EnableFeature("XPLM_USE_NATIVE_PATHS", true)
@@ -92,6 +97,7 @@ func (s xplaneService) onPluginStop() {
 }
 
 func (s xplaneService) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32 {
-	logging.Infof("Flight loop:%f", elapsedSinceLastCall)
-	return -1
+	datarefValues, ts := s.DatarefSvc.GetCurrentValues()
+	logging.Debugf("timestamp: %d, value: %+v", ts, datarefValues)
+	return 1.0 / 20
 }
