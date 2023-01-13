@@ -2,6 +2,7 @@ package flight_status
 
 import (
 	"apps/core/models"
+	"apps/core/utils/logger"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -25,6 +26,7 @@ func TestFlightStatusService_ProcessDatarefClimb(t *testing.T) {
 				cruiseCounter:  new(int),
 				climbCounter:   new(int),
 				descendCounter: new(int),
+				Logger:         logger.NewGenericLogger(),
 			},
 			datarefValues: []models.DatarefValues{
 				map[string]models.DatarefValue{

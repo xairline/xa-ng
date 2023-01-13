@@ -3,7 +3,9 @@ package services
 //go:generate mockgen -destination=./__mocks__/xplane.go -package=mocks -source=xplane.go
 
 import (
+	"apps/core/services/dataref"
 	"apps/core/services/flight-status"
+	"apps/core/utils/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/xairline/goplane/extra"
 	"github.com/xairline/goplane/extra/logging"
@@ -25,28 +27,31 @@ type XplaneService interface {
 
 type xplaneService struct {
 	Plugin              *extra.XPlanePlugin
-	DatarefSvc          DatarefService
+	DatarefSvc          dataref.DatarefService
 	FlightStatusService flight_status.FlightStatusService
+	Logger              logger.Logger
 }
 
 var xplaneSvcLock = &sync.Mutex{}
 var xplaneSvc XplaneService
 
 func NewXplaneService(
-	datarefSvc DatarefService,
+	datarefSvc dataref.DatarefService,
 	flightStatusSvc flight_status.FlightStatusService,
+	logger logger.Logger,
 ) XplaneService {
 	if xplaneSvc != nil {
-		logging.Info("Xplane SVC has been initialized already")
+		logger.Info("Xplane SVC has been initialized already")
 		return xplaneSvc
 	} else {
-		logging.Info("Xplane SVC: initializing")
+		logger.Info("Xplane SVC: initializing")
 		xplaneSvcLock.Lock()
 		defer xplaneSvcLock.Unlock()
 		xplaneSvc := xplaneService{
 			Plugin:              extra.NewPlugin("X Airline NG", "com.github.xairline.xa-ng", "X Airline NG"),
 			DatarefSvc:          datarefSvc,
 			FlightStatusService: flightStatusSvc,
+			Logger:              logger,
 		}
 		xplaneSvc.Plugin.SetPluginStateCallback(xplaneSvc.onPluginStateChanged)
 		plugins.EnableFeature("XPLM_USE_NATIVE_PATHS", true)
@@ -62,23 +67,23 @@ func (s xplaneService) onPluginStateChanged(state extra.PluginState, plugin *ext
 	case extra.PluginStop:
 		s.onPluginStop()
 	case extra.PluginEnable:
-		logging.Infof("Plugin: %s enabled", plugin.GetName())
+		s.Logger.Infof("Plugin: %s enabled", plugin.GetName())
 	case extra.PluginDisable:
-		logging.Infof("Plugin: %s disabled", plugin.GetName())
+		s.Logger.Infof("Plugin: %s disabled", plugin.GetName())
 	}
 }
 
 func (s xplaneService) onPluginStart() {
-	logging.Info("Plugin started")
+	s.Logger.Info("Plugin started")
 
 	// get plugin path
 	systemPath := utilities.GetSystemPath()
 	pluginPath := filepath.Join(systemPath, "Resources", "plugins", "xairline")
-	logging.Infof("Plugin path: %s", pluginPath)
+	s.Logger.Infof("Plugin path: %s", pluginPath)
 
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
-		logging.Info("ping")
+		s.Logger.Info("ping")
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
@@ -86,14 +91,14 @@ func (s xplaneService) onPluginStart() {
 	go func() {
 		err := r.Run(":8080")
 		if err != nil {
-			logging.Errorf("Failed to start gin server, %v", err)
+			s.Logger.Errorf("Failed to start gin server, %v", err)
 		}
 	}()
 	processing.RegisterFlightLoopCallback(s.flightLoop, -1, nil)
 }
 
 func (s xplaneService) onPluginStop() {
-	logging.Info("Plugin stopped")
+	s.Logger.Info("Plugin stopped")
 }
 
 func (s xplaneService) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32 {
