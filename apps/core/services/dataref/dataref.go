@@ -2,11 +2,13 @@ package dataref
 
 //go:generate mockgen -destination=../__mocks__/dataref/dataref.go -package=mocks -source=dataref.go
 
+import "C"
 import (
 	"apps/core/models"
 	"apps/core/utils/logger"
 	_ "embed"
 	"fmt"
+	"github.com/xairline/goplane/extra/logging"
 	"github.com/xairline/goplane/xplm/dataAccess"
 	"github.com/xairline/goplane/xplm/navigation"
 	"gopkg.in/yaml.v3"
@@ -39,18 +41,22 @@ func (d datarefService) GetNearestAirport() string {
 	navRef := navigation.FindNavAid(
 		"",
 		"",
-		latDataref.Value.(float32),
-		lngDataref.Value.(float32),
+		float32(latDataref.Value.(float64)),
+		float32(lngDataref.Value.(float64)),
 		math.MaxInt32,
 		navigation.Nav_Airport,
 	)
+	logging.Infof("%+v", navRef)
 	_, _, _, _, _, _, airportId, airportName, _ := navigation.GetNavAidInfo(navRef)
-	d.Logger.Infof("Nearest Airport: %s - %s", airportId, airportName)
+	d.Logger.Infof("Nearest Airport:%s - %s", airportId, airportName)
 	return airportId
 }
 
 func (d datarefService) GetValueByDatarefName(dataref, name string, precision *int8) models.DatarefValue {
-	myDataref, _ := dataAccess.FindDataRef(dataref)
+	myDataref, success := dataAccess.FindDataRef(dataref)
+	if !success {
+		d.Logger.Errorf("Failed to find dataref: %s", name)
+	}
 	datarefExt := models.DatarefExt{
 		Name:        name,
 		Dataref:     myDataref,

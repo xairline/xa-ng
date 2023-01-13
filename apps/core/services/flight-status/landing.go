@@ -2,14 +2,11 @@ package flight_status
 
 import (
 	"apps/core/models"
-	"github.com/xairline/goplane/xplm/navigation"
-	"math"
 )
 
 func (f flightStatusService) processDatarefLanding(datarefValues models.DatarefValues) {
 	if datarefValues["gs"].Value.(float64) < 30/1.9438 {
-		navRef := navigation.FindNavAid("", "", math.MaxFloat32, math.MaxFloat32, math.MaxInt32, navigation.Nav_Airport)
-		_, _, _, _, _, _, _, arrivalAirport, _ := navigation.GetNavAidInfo(navRef)
+		arrivalAirport := f.DatarefSvc.GetNearestAirport()
 		f.FlightStatus.FlightInfo.Arrival = arrivalAirport
 		f.FlightStatus.Events = append(f.FlightStatus.Events, models.FlightStatusEvent{
 			Timestamp:     datarefValues["ts"].Value.(float64),
