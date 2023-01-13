@@ -3,6 +3,7 @@ package services
 //go:generate mockgen -destination=./__mocks__/xplane.go -package=mocks -source=xplane.go
 
 import (
+	"apps/core/services/flight-status"
 	"github.com/gin-gonic/gin"
 	"github.com/xairline/goplane/extra"
 	"github.com/xairline/goplane/extra/logging"
@@ -23,17 +24,17 @@ type XplaneService interface {
 }
 
 type xplaneService struct {
-	Plugin      *extra.XPlanePlugin
-	TstorageSvc TstorageService
-	DatarefSvc  DatarefService
+	Plugin              *extra.XPlanePlugin
+	DatarefSvc          DatarefService
+	FlightStatusService flight_status.FlightStatusService
 }
 
 var xplaneSvcLock = &sync.Mutex{}
 var xplaneSvc XplaneService
 
 func NewXplaneService(
-	tstorageSvc TstorageService,
 	datarefSvc DatarefService,
+	flightStatusSvc flight_status.FlightStatusService,
 ) XplaneService {
 	if xplaneSvc != nil {
 		logging.Info("Xplane SVC has been initialized already")
@@ -43,9 +44,9 @@ func NewXplaneService(
 		xplaneSvcLock.Lock()
 		defer xplaneSvcLock.Unlock()
 		xplaneSvc := xplaneService{
-			Plugin:      extra.NewPlugin("X Airline NG", "com.github.xairline.xa-ng", "X Airline NG"),
-			TstorageSvc: tstorageSvc,
-			DatarefSvc:  datarefSvc,
+			Plugin:              extra.NewPlugin("X Airline NG", "com.github.xairline.xa-ng", "X Airline NG"),
+			DatarefSvc:          datarefSvc,
+			FlightStatusService: flightStatusSvc,
 		}
 		xplaneSvc.Plugin.SetPluginStateCallback(xplaneSvc.onPluginStateChanged)
 		plugins.EnableFeature("XPLM_USE_NATIVE_PATHS", true)
@@ -92,12 +93,10 @@ func (s xplaneService) onPluginStart() {
 }
 
 func (s xplaneService) onPluginStop() {
-	defer s.TstorageSvc.Close()
 	logging.Info("Plugin stopped")
 }
 
 func (s xplaneService) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32 {
-	datarefValues, ts := s.DatarefSvc.GetCurrentValues()
-	logging.Debugf("timestamp: %d, value: %+v", ts, datarefValues)
-	return 1.0 / 20
+	datarefValues := s.DatarefSvc.GetCurrentValues()
+	return s.FlightStatusService.ProcessDataref(datarefValues)
 }

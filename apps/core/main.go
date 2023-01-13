@@ -2,6 +2,7 @@ package main
 
 import (
 	"apps/core/services"
+	"apps/core/services/flight-status"
 )
 
 func main() {
@@ -9,11 +10,10 @@ func main() {
 
 func init() {
 	datarefSvc := services.NewDatarefService()
-	tstorageSvc := services.NewTstorageService()
-
+	flightStatusSvc := flight_status.NewFlightStatusService()
 	// entrypoint
 	services.NewXplaneService(
-		tstorageSvc,
 		datarefSvc,
+		flightStatusSvc,
 	)
 }

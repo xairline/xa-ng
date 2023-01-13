@@ -35,12 +35,11 @@ func (m *MockDatarefService) EXPECT() *MockDatarefServiceMockRecorder {
 }
 
 // GetCurrentValues mocks base method.
-func (m *MockDatarefService) GetCurrentValues() ([]models.DatarefValue, int) {
+func (m *MockDatarefService) GetCurrentValues() models.DatarefValues {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCurrentValues")
-	ret0, _ := ret[0].([]models.DatarefValue)
-	ret1, _ := ret[1].(int)
-	return ret0, ret1
+	ret0, _ := ret[0].(models.DatarefValues)
+	return ret0
 }
 
 // GetCurrentValues indicates an expected call of GetCurrentValues.

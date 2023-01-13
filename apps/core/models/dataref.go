@@ -18,6 +18,9 @@ type DatarefExt struct {
 }
 
 type DatarefValue struct {
-	Name  string
-	Value interface{}
+	Name        string
+	DatarefType dataAccess.DataRefType
+	Value       interface{}
 }
+
+type DatarefValues map[string]DatarefValue

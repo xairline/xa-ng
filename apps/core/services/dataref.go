@@ -20,7 +20,7 @@ var datarefSvc DatarefService
 var datarefBytes []byte
 
 type DatarefService interface {
-	GetCurrentValues() ([]models.DatarefValue, int)
+	GetCurrentValues() models.DatarefValues
 	getCurrentValue(datarefExt *models.DatarefExt) models.DatarefValue
 }
 
@@ -75,25 +75,20 @@ func (d datarefService) getCurrentValue(datarefExt *models.DatarefExt) models.Da
 	}
 }
 
-func (d datarefService) GetCurrentValues() ([]models.DatarefValue, int) {
-	res := make([]models.DatarefValue, len(d.DatarefExtList)-1)
-	var ts int
-	var wg sync.WaitGroup
-	for i, value := range d.DatarefExtList {
-		wg.Add(1)
+func (d datarefService) GetCurrentValues() models.DatarefValues {
+	var res = models.DatarefValues{}
+	//var wg sync.WaitGroup
+	for _, value := range d.DatarefExtList {
+		//wg.Add(1)
 		datarefExt := value
-		go func(index int) {
-			defer wg.Done()
-			currentValue := d.getCurrentValue(&datarefExt)
-			if datarefExt.Name == "ts" {
-				ts = int(currentValue.Value.(float64) * 1000)
-			} else {
-				res[index-1] = currentValue
-			}
-		}(i)
+		//go func() {
+		//	defer wg.Done()
+		currentValue := d.getCurrentValue(&datarefExt)
+		res[currentValue.Name] = currentValue
+		//}()
 	}
-	wg.Wait()
-	return res, ts
+	//wg.Wait()
+	return res
 }
 
 func NewDatarefService() DatarefService {
