@@ -14,6 +14,7 @@ var flightStatusSvc FlightStatusService
 
 type FlightStatusService interface {
 	ResetFlightStatus()
+	GetFlightStatus() models.FlightStatus
 	ProcessDataref(datarefValues models.DatarefValues) float32
 	processDatarefParked(datarefValues models.DatarefValues)
 	processDatarefTaxiOut(datarefValues models.DatarefValues)
@@ -31,6 +32,10 @@ type flightStatusService struct {
 	cruiseCounter  *int
 	climbCounter   *int
 	descendCounter *int
+}
+
+func (f flightStatusService) GetFlightStatus() models.FlightStatus {
+	return *f.FlightStatus
 }
 
 func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) float32 {
@@ -70,7 +75,10 @@ func NewFlightStatusService() FlightStatusService {
 		defer flightStatusSvcLock.Unlock()
 		flightStatus := models.FlightStatus{}
 		flightStatusSvc = flightStatusService{
-			FlightStatus: &flightStatus,
+			FlightStatus:   &flightStatus,
+			cruiseCounter:  new(int),
+			climbCounter:   new(int),
+			descendCounter: new(int),
 		}
 		flightStatusSvc.ResetFlightStatus()
 		return flightStatusSvc

@@ -3,7 +3,6 @@ package flight_status
 import (
 	"apps/core/models"
 	"fmt"
-	"github.com/xairline/goplane/extra/logging"
 	"github.com/xairline/goplane/xplm/navigation"
 	"math"
 )
@@ -14,7 +13,7 @@ func (f flightStatusService) changeState(newState models.FlightState, newPollFre
 	*f.cruiseCounter = 0
 	*f.climbCounter = 0
 	*f.descendCounter = 0
-	logging.Infof("%+v", f.FlightStatus.Events)
+	//	logging.Infof("%+v", f.FlightStatus.Events)
 }
 
 func (f flightStatusService) processDatarefParked(datarefValues models.DatarefValues) {
