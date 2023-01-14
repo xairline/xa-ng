@@ -10,12 +10,7 @@ func (f flightStatusService) processDatarefTaxiOut(datarefValues models.DatarefV
 		break
 	}
 	if n1 > 75 {
-		// get additional one time data
-		f.FlightStatus.Events = append(f.FlightStatus.Events, models.FlightStatusEvent{
-			Timestamp:     datarefValues["ts"].Value.(float64),
-			Description:   "Takeoff %TODO%",
-			DatarefValues: datarefValues,
-		})
+		f.addFlightEvent(datarefValues, "Takeoff %TODO%")
 		f.changeState(models.FlightStateTakeoff, 0.1)
 	} else {
 		// watch for violation

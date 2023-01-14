@@ -26,6 +26,7 @@ type FlightStatusService interface {
 	processDatarefLanding(datarefValues models.DatarefValues)
 	processDatarefTaxiIn(datarefValues models.DatarefValues)
 	changeState(newState models.FlightState, newPollFrequency float32)
+	addFlightEvent(datarefValues models.DatarefValues, description string)
 }
 
 type flightStatusService struct {
@@ -35,6 +36,16 @@ type flightStatusService struct {
 	climbCounter   *int
 	descendCounter *int
 	Logger         logger.Logger
+}
+
+func (f flightStatusService) addFlightEvent(datarefValues models.DatarefValues, description string) {
+	event := models.FlightStatusEvent{
+		Timestamp:     datarefValues["ts"].Value.(float64),
+		Description:   description,
+		DatarefValues: datarefValues,
+	}
+	f.FlightStatus.Events = append(f.FlightStatus.Events, event)
+	f.Logger.Infof("NEW Event: %+v", event)
 }
 
 func (f flightStatusService) GetFlightStatus() *models.FlightStatus {
@@ -99,5 +110,4 @@ func (f flightStatusService) changeState(newState models.FlightState, newPollFre
 	*f.cruiseCounter = 0
 	*f.climbCounter = 0
 	*f.descendCounter = 0
-	f.Logger.Infof("%+v", f.FlightStatus.Events)
 }

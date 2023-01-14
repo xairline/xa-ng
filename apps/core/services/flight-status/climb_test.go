@@ -19,7 +19,7 @@ func TestFlightStatusService_ProcessDatarefClimb(t *testing.T) {
 			initSvc: flightStatusService{
 				FlightStatus: &models.FlightStatus{
 					CurrentState:  models.FlightStateTakeoff,
-					PollFrequency: 15,
+					PollFrequency: 3,
 					Events:        nil,
 					FlightInfo:    models.FlightInfo{},
 				},
@@ -39,7 +39,7 @@ func TestFlightStatusService_ProcessDatarefClimb(t *testing.T) {
 				},
 				map[string]models.DatarefValue{
 					"vs": {
-						Value: 400.0,
+						Value: 700.0,
 					},
 					"ts": {
 						Value: 1.0,

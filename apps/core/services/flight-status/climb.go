@@ -11,11 +11,7 @@ func (f flightStatusService) processDatarefClimb(datarefValues models.DatarefVal
 	}
 	// 15s
 	if *f.cruiseCounter >= int(15/f.FlightStatus.PollFrequency) {
-		f.FlightStatus.Events = append(f.FlightStatus.Events, models.FlightStatusEvent{
-			Timestamp:     datarefValues["ts"].Value.(float64),
-			Description:   "Cruise %TODO%",
-			DatarefValues: datarefValues,
-		})
+		f.addFlightEvent(datarefValues, "Cruise %TODO%")
 		f.changeState(models.FlightStateCruise, 1)
 	}
 }
