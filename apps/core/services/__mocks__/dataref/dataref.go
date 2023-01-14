@@ -49,11 +49,12 @@ func (mr *MockDatarefServiceMockRecorder) GetCurrentValues() *gomock.Call {
 }
 
 // GetNearestAirport mocks base method.
-func (m *MockDatarefService) GetNearestAirport() string {
+func (m *MockDatarefService) GetNearestAirport() (string, string) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetNearestAirport")
 	ret0, _ := ret[0].(string)
-	return ret0
+	ret1, _ := ret[1].(string)
+	return ret0, ret1
 }
 
 // GetNearestAirport indicates an expected call of GetNearestAirport.

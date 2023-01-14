@@ -27,6 +27,8 @@ type FlightStatusService interface {
 	processDatarefTaxiIn(datarefValues models.DatarefValues)
 	changeState(newState models.FlightState, newPollFrequency float32)
 	addFlightEvent(datarefValues models.DatarefValues, description string)
+	setDepartureFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64)
+	setArrivalFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64)
 }
 
 type flightStatusService struct {
@@ -38,6 +40,26 @@ type flightStatusService struct {
 	Logger         logger.Logger
 }
 
+func (f flightStatusService) setDepartureFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64) {
+	f.FlightStatus.DepartureFlightInfo = models.FlightInfo{
+		AirportId:   airportId,
+		AirportName: airportName,
+		FuelWeight:  fuelWeight,
+		TotalWeight: totalWeight,
+		Time:        timestamp,
+	}
+}
+
+func (f flightStatusService) setArrivalFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64) {
+	f.FlightStatus.ArrivalFlightInfo = models.FlightInfo{
+		AirportId:   airportId,
+		AirportName: airportName,
+		FuelWeight:  fuelWeight,
+		TotalWeight: totalWeight,
+		Time:        timestamp,
+	}
+}
+
 func (f flightStatusService) addFlightEvent(datarefValues models.DatarefValues, description string) {
 	event := models.FlightStatusEvent{
 		Timestamp:     datarefValues["ts"].Value.(float64),
@@ -45,7 +67,7 @@ func (f flightStatusService) addFlightEvent(datarefValues models.DatarefValues, 
 		DatarefValues: datarefValues,
 	}
 	f.FlightStatus.Events = append(f.FlightStatus.Events, event)
-	f.Logger.Infof("NEW Event: %+v", event)
+	f.Logger.Infof("NEW Event: &v,%+v", event.Timestamp, event.Description)
 }
 
 func (f flightStatusService) GetFlightStatus() *models.FlightStatus {
@@ -77,7 +99,8 @@ func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) 
 func (f flightStatusService) ResetFlightStatus() {
 	f.Logger.Warning("====== RESET Flight status ======")
 	f.Logger.Warningf("%+v", f.GetFlightStatus())
-	f.FlightStatus.Events = []models.FlightStatusEvent{}
+	tmpFlightStatus := models.FlightStatus{}
+	f.FlightStatus = &tmpFlightStatus
 	f.changeState(models.FlightStateParked, 5)
 	f.Logger.Warning("====== RESET Flight status ======")
 }

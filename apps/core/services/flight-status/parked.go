@@ -7,9 +7,18 @@ import (
 
 func (f flightStatusService) processDatarefParked(datarefValues models.DatarefValues) {
 	if datarefValues["gs"].Value.(float64) > 1 {
-		departureAirport := f.DatarefSvc.GetNearestAirport()
-		f.FlightStatus.FlightInfo.Departure = departureAirport
-		f.addFlightEvent(datarefValues, fmt.Sprintf("Taxi in at %s", departureAirport))
+		airportId, airportName := f.DatarefSvc.GetNearestAirport()
+		var weightPrecision int8 = 1
+		fuelWeight := f.DatarefSvc.GetValueByDatarefName("sim/flightmodel/weight/m_fuel_total", "fuel_weight", &weightPrecision)
+		totalWeight := f.DatarefSvc.GetValueByDatarefName("sim/flightmodel/weight/m_total", "total_weight", &weightPrecision)
+		f.setDepartureFlightInfo(
+			airportId,
+			airportName,
+			datarefValues["ts"].Value.(float64),
+			fuelWeight.Value.(float64),
+			totalWeight.Value.(float64),
+		)
+		f.addFlightEvent(datarefValues, fmt.Sprintf("Taxi out at %s", airportId))
 		f.changeState(models.FlightStateTaxiOut, 0.2)
 	}
 }

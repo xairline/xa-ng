@@ -74,6 +74,18 @@ func (mr *MockFlightStatusServiceMockRecorder) ResetFlightStatus() *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResetFlightStatus", reflect.TypeOf((*MockFlightStatusService)(nil).ResetFlightStatus))
 }
 
+// addFlightEvent mocks base method.
+func (m *MockFlightStatusService) addFlightEvent(datarefValues models.DatarefValues, description string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "addFlightEvent", datarefValues, description)
+}
+
+// addFlightEvent indicates an expected call of addFlightEvent.
+func (mr *MockFlightStatusServiceMockRecorder) addFlightEvent(datarefValues, description interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "addFlightEvent", reflect.TypeOf((*MockFlightStatusService)(nil).addFlightEvent), datarefValues, description)
+}
+
 // changeState mocks base method.
 func (m *MockFlightStatusService) changeState(newState models.FlightState, newPollFrequency float32) {
 	m.ctrl.T.Helper()
@@ -180,4 +192,28 @@ func (m *MockFlightStatusService) processDatarefTaxiOut(datarefValues models.Dat
 func (mr *MockFlightStatusServiceMockRecorder) processDatarefTaxiOut(datarefValues interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "processDatarefTaxiOut", reflect.TypeOf((*MockFlightStatusService)(nil).processDatarefTaxiOut), datarefValues)
+}
+
+// setArrivalFlightInfo mocks base method.
+func (m *MockFlightStatusService) setArrivalFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "setArrivalFlightInfo", airportId, airportName, timestamp, fuelWeight, totalWeight)
+}
+
+// setArrivalFlightInfo indicates an expected call of setArrivalFlightInfo.
+func (mr *MockFlightStatusServiceMockRecorder) setArrivalFlightInfo(airportId, airportName, timestamp, fuelWeight, totalWeight interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "setArrivalFlightInfo", reflect.TypeOf((*MockFlightStatusService)(nil).setArrivalFlightInfo), airportId, airportName, timestamp, fuelWeight, totalWeight)
+}
+
+// setDepartureFlightInfo mocks base method.
+func (m *MockFlightStatusService) setDepartureFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "setDepartureFlightInfo", airportId, airportName, timestamp, fuelWeight, totalWeight)
+}
+
+// setDepartureFlightInfo indicates an expected call of setDepartureFlightInfo.
+func (mr *MockFlightStatusServiceMockRecorder) setDepartureFlightInfo(airportId, airportName, timestamp, fuelWeight, totalWeight interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "setDepartureFlightInfo", reflect.TypeOf((*MockFlightStatusService)(nil).setDepartureFlightInfo), airportId, airportName, timestamp, fuelWeight, totalWeight)
 }

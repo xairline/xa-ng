@@ -8,7 +8,6 @@ import (
 	"apps/core/utils/logger"
 	_ "embed"
 	"fmt"
-	"github.com/xairline/goplane/extra/logging"
 	"github.com/xairline/goplane/xplm/dataAccess"
 	"github.com/xairline/goplane/xplm/navigation"
 	"gopkg.in/yaml.v3"
@@ -25,7 +24,7 @@ var datarefBytes []byte
 type DatarefService interface {
 	GetCurrentValues() models.DatarefValues
 	GetValueByDatarefName(dataref, name string, precision *int8) models.DatarefValue
-	GetNearestAirport() string
+	GetNearestAirport() (string, string)
 	getCurrentValue(datarefExt *models.DatarefExt) models.DatarefValue
 }
 
@@ -34,7 +33,7 @@ type datarefService struct {
 	Logger         logger.Logger
 }
 
-func (d datarefService) GetNearestAirport() string {
+func (d datarefService) GetNearestAirport() (string, string) {
 	latLngPrecision := int8(-1)
 	latDataref := d.GetValueByDatarefName("sim/flightmodel/position/latitude", "lat", &latLngPrecision)
 	lngDataref := d.GetValueByDatarefName("sim/flightmodel/position/longitude", "lng", &latLngPrecision)
@@ -46,10 +45,9 @@ func (d datarefService) GetNearestAirport() string {
 		math.MaxInt32,
 		navigation.Nav_Airport,
 	)
-	logging.Infof("%+v", navRef)
 	_, _, _, _, _, _, airportId, airportName, _ := navigation.GetNavAidInfo(navRef)
 	d.Logger.Infof("Nearest Airport:%s - %s", airportId, airportName)
-	return airportId
+	return airportId, airportName
 }
 
 func (d datarefService) GetValueByDatarefName(dataref, name string, precision *int8) models.DatarefValue {

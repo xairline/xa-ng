@@ -21,7 +21,6 @@ func TestFlightStatusService_ProcessDatarefClimb(t *testing.T) {
 					CurrentState:  models.FlightStateTakeoff,
 					PollFrequency: 3,
 					Events:        nil,
-					FlightInfo:    models.FlightInfo{},
 				},
 				cruiseCounter:  new(int),
 				climbCounter:   new(int),

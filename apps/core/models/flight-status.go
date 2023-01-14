@@ -1,10 +1,11 @@
 package models
 
 type FlightStatus struct {
-	CurrentState  FlightState
-	PollFrequency float32
-	Events        []FlightStatusEvent
-	FlightInfo    FlightInfo
+	CurrentState        FlightState
+	PollFrequency       float32
+	Events              []FlightStatusEvent
+	DepartureFlightInfo FlightInfo
+	ArrivalFlightInfo   FlightInfo
 }
 
 type FlightStatusEvent struct {
@@ -13,10 +14,11 @@ type FlightStatusEvent struct {
 	DatarefValues DatarefValues
 }
 type FlightInfo struct {
-	Departure   string
-	Arrival     string
-	FuelWeight  float32
-	TotalWeight float32
+	AirportId   string
+	AirportName string
+	FuelWeight  float64
+	TotalWeight float64
+	Time        float64
 }
 
 type FlightState string
