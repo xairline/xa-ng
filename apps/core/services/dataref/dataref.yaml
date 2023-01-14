@@ -1,5 +1,5 @@
 - name: ts
-  value: sim/network/misc/network_time_sec
+  value: sim/time/total_running_time_sec
   precision: 3
 - name: tas
   value: sim/cockpit2/gauges/indicators/true_airspeed_kts_pilot
@@ -26,15 +26,15 @@
   value: sim/cockpit2/engine/indicators/N1_percent
 - name: pitch
   value: sim/flightmodel/position/theta
-#- name: ias
-#  value: sim/cockpit2/gauges/indicators/airspeed_kts_pilot
-#  precision: 1
-#- name: lat
-#  value: sim/flightmodel/position/latitude
-#  precision: -1
-#- name: lng
-#  value: sim/flightmodel/position/longitude
-#  precision: -1
+- name: ias
+  value: sim/cockpit2/gauges/indicators/airspeed_kts_pilot
+  precision: 1
+- name: lat
+  value: sim/flightmodel/position/latitude
+  precision: -1
+- name: lng
+  value: sim/flightmodel/position/longitude
+  precision: -1
 #- name: icao
 #  value: sim/aircraft/view/acf_ICAO
 #  isBytesArray: true

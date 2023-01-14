@@ -67,7 +67,11 @@ func (f flightStatusService) addFlightEvent(datarefValues models.DatarefValues, 
 		DatarefValues: datarefValues,
 	}
 	f.FlightStatus.Events = append(f.FlightStatus.Events, event)
-	f.Logger.Infof("NEW Event: &v,%+v", event.Timestamp, event.Description)
+	f.Logger.Infof(
+		"NEW Event: %v sec,%+v",
+		event.Timestamp-f.FlightStatus.DepartureFlightInfo.Time,
+		event.Description,
+	)
 }
 
 func (f flightStatusService) GetFlightStatus() *models.FlightStatus {
@@ -99,8 +103,9 @@ func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) 
 func (f flightStatusService) ResetFlightStatus() {
 	f.Logger.Warning("====== RESET Flight status ======")
 	f.Logger.Warningf("%+v", f.GetFlightStatus())
-	tmpFlightStatus := models.FlightStatus{}
-	f.FlightStatus = &tmpFlightStatus
+	f.FlightStatus.Events = []models.FlightStatusEvent{}
+	f.FlightStatus.ArrivalFlightInfo = models.FlightInfo{}
+	f.FlightStatus.DepartureFlightInfo = models.FlightInfo{}
 	f.changeState(models.FlightStateParked, 5)
 	f.Logger.Warning("====== RESET Flight status ======")
 }

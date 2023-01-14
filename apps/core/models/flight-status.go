@@ -6,6 +6,8 @@ type FlightStatus struct {
 	Events              []FlightStatusEvent
 	DepartureFlightInfo FlightInfo
 	ArrivalFlightInfo   FlightInfo
+	AircraftICAO        string
+	AircraftDisplayName string
 }
 
 type FlightStatusEvent struct {

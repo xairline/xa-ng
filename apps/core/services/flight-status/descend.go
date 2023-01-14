@@ -6,7 +6,7 @@ func (f flightStatusService) processDatarefDescend(datarefValues models.DatarefV
 	if datarefValues["agl"].Value.(float64) < 30 &&
 		datarefValues["vs"].Value.(float64) < -200 &&
 		datarefValues["gear_force"].Value.(float64) < 5 {
-		f.addFlightEvent(datarefValues, "Landing %TODO%")
+		f.addFlightEvent(datarefValues, "Landing")
 		f.changeState(models.FlightStateLanding, -1)
 	} else {
 		// watch for violation

@@ -10,7 +10,7 @@ func (f flightStatusService) processDatarefTaxiOut(datarefValues models.DatarefV
 		break
 	}
 	if n1 > 75 {
-		f.addFlightEvent(datarefValues, "Takeoff %TODO%")
+		f.addFlightEvent(datarefValues, "Takeoff")
 		f.changeState(models.FlightStateTakeoff, 0.1)
 	} else {
 		// watch for violation
