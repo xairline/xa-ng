@@ -16,7 +16,7 @@ const docTemplateXWebStack = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/version": {
+        "/dataref": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -25,9 +25,37 @@ const docTemplateXWebStack = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Misc"
+                    "Dataref"
                 ],
-                "summary": "Get version of cray-nls service",
+                "summary": "Get Dataref",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "xplane dataref string",
+                        "name": "dataref_str",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "alias name, if not set, dataref_str will be used",
+                        "name": "alias",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "-1: raw, 2: round up to two digits",
+                        "name": "precision",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "transform xplane byte array to string",
+                        "name": "is_byte_array",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -40,6 +68,59 @@ const docTemplateXWebStack = `{
                         "schema": {
                             "$ref": "#/definitions/ResponseError"
                         }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dataref"
+                ],
+                "summary": "Set Dataref",
+                "responses": {
+                    "501": {
+                        "description": "Not Implemented"
+                    }
+                }
+            }
+        },
+        "/datarefs": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dataref"
+                ],
+                "summary": "Set a list of Dataref",
+                "responses": {
+                    "501": {
+                        "description": "Not Implemented"
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dataref"
+                ],
+                "summary": "Get a list of Dataref",
+                "responses": {
+                    "501": {
+                        "description": "Not Implemented"
                     }
                 }
             }

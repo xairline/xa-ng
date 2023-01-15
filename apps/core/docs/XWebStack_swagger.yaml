@@ -13,10 +13,29 @@ definitions:
 info:
   contact: {}
 paths:
-  /version:
+  /dataref:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: xplane dataref string
+        in: query
+        name: dataref_str
+        required: true
+        type: string
+      - description: alias name, if not set, dataref_str will be used
+        in: query
+        name: alias
+        type: string
+      - description: '-1: raw, 2: round up to two digits'
+        in: query
+        name: precision
+        required: true
+        type: integer
+      - description: transform xplane byte array to string
+        in: query
+        name: is_byte_array
+        type: boolean
       produces:
       - application/json
       responses:
@@ -28,7 +47,41 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ResponseError'
-      summary: Get version of cray-nls service
+      summary: Get Dataref
       tags:
-      - Misc
+      - Dataref
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "501":
+          description: Not Implemented
+      summary: Set Dataref
+      tags:
+      - Dataref
+  /datarefs:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "501":
+          description: Not Implemented
+      summary: Get a list of Dataref
+      tags:
+      - Dataref
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "501":
+          description: Not Implemented
+      summary: Set a list of Dataref
+      tags:
+      - Dataref
 swagger: "2.0"

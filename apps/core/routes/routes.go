@@ -18,11 +18,11 @@ type Route interface {
 func NewRoutes(
 	logger logger.Logger,
 	gin *gin.Engine,
-	miscController controllers.MiscController,
+	datarefController controllers.DatarefController,
 ) Routes {
 	return Routes{
 		NewOpenAPIRoutes(logger, gin),
-		NewMiscRoutes(logger, gin, miscController),
+		NewDatarefRoutes(logger, gin, datarefController),
 	}
 }
 

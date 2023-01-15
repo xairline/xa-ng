@@ -4,6 +4,7 @@ import (
 	"apps/core/controllers"
 	_ "apps/core/docs"
 	"apps/core/routes"
+	"apps/core/services/dataref"
 	"apps/core/utils/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +17,7 @@ func main() {
 	routes.NewRoutes(
 		logger,
 		g,
-		controllers.NewMiscController(logger),
+		controllers.NewDatarefController(logger, dataref.NewDatarefService(logger)),
 	).Setup()
 
 	err := g.Run(":8080")

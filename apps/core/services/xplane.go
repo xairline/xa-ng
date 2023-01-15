@@ -99,15 +99,15 @@ func (s xplaneService) setupGin() {
 	pluginPath := filepath.Join(systemPath, "Resources", "plugins", "XWebStack")
 	s.Logger.Infof("Plugin path: %s", pluginPath)
 
-	g := gin.New()
+	g := gin.Default()
 	routes.NewRoutes(
 		s.Logger,
 		g,
-		controllers.NewMiscController(s.Logger),
+		controllers.NewDatarefController(s.Logger, s.DatarefSvc),
 	).Setup()
 
 	go func() {
-		err := g.Run(":8080")
+		err := g.Run(":9090")
 		if err != nil {
 			s.Logger.Errorf("Failed to start gin server, %v", err)
 		}
