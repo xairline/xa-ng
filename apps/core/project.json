@@ -15,7 +15,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "apps/core",
-        "command": "make dev"
+        "command": "swag init --md docs/ --outputTypes go,yaml --instanceName \"Marketplace\" && make dev"
       }
     },
     "test": {

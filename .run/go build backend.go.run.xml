@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="go build backend.go" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+    <module name="xa-ng" />
+    <working_directory value="$PROJECT_DIR$/apps/core" />
+    <envs>
+      <env name="CGO_CFLAGS" value="-DAPL=1 -DIBM=0 -DLIN=0" />
+      <env name="CGO_ENABLED" value="1" />
+      <env name="CGO_LDFLAGS" value="-F/System/Library/Frameworks/ -F/Users/dzou/git/personal/xa-ng/apps/core/Libraries/Mac -framework XPLM" />
+      <env name="GOARCH" value="amd64" />
+      <env name="GOOS" value="darwin" />
+    </envs>
+    <kind value="FILE" />
+    <package value="apps/core" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/apps/core/backend.go" />
+    <method v="2" />
+  </configuration>
+</component>

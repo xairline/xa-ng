@@ -3,6 +3,8 @@ package services
 //go:generate mockgen -destination=./__mocks__/xplane.go -package=mocks -source=xplane.go
 
 import (
+	"apps/core/controllers"
+	"apps/core/routes"
 	"apps/core/services/dataref"
 	"apps/core/services/flight-status"
 	"apps/core/utils/logger"
@@ -23,6 +25,8 @@ type XplaneService interface {
 	onPluginStop()
 	// flight loop
 	flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32
+	// setup gin
+	setupGin()
 }
 
 type xplaneService struct {
@@ -48,7 +52,7 @@ func NewXplaneService(
 		xplaneSvcLock.Lock()
 		defer xplaneSvcLock.Unlock()
 		xplaneSvc := xplaneService{
-			Plugin:              extra.NewPlugin("X Marketplace", "com.github.xairline.xa-ng", "A plugin enables Frontend developer to contribute to xplane"),
+			Plugin:              extra.NewPlugin("X Web Stack", "com.github.xairline.xwebstack", "A plugin enables Frontend developer to contribute to xplane"),
 			DatarefSvc:          datarefSvc,
 			FlightStatusService: flightStatusSvc,
 			Logger:              logger,
@@ -76,24 +80,7 @@ func (s xplaneService) onPluginStateChanged(state extra.PluginState, plugin *ext
 func (s xplaneService) onPluginStart() {
 	s.Logger.Info("Plugin started")
 
-	// get plugin path
-	systemPath := utilities.GetSystemPath()
-	pluginPath := filepath.Join(systemPath, "Resources", "plugins", "xairline")
-	s.Logger.Infof("Plugin path: %s", pluginPath)
-
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		s.Logger.Info("ping")
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	go func() {
-		err := r.Run(":8080")
-		if err != nil {
-			s.Logger.Errorf("Failed to start gin server, %v", err)
-		}
-	}()
+	s.setupGin()
 	processing.RegisterFlightLoopCallback(s.flightLoop, -1, nil)
 }
 
@@ -104,4 +91,25 @@ func (s xplaneService) onPluginStop() {
 func (s xplaneService) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32 {
 	datarefValues := s.DatarefSvc.GetCurrentValues()
 	return s.FlightStatusService.ProcessDataref(datarefValues)
+}
+
+func (s xplaneService) setupGin() {
+	// get plugin path
+	systemPath := utilities.GetSystemPath()
+	pluginPath := filepath.Join(systemPath, "Resources", "plugins", "XWebStack")
+	s.Logger.Infof("Plugin path: %s", pluginPath)
+
+	g := gin.New()
+	routes.NewRoutes(
+		s.Logger,
+		g,
+		controllers.NewMiscController(s.Logger),
+	).Setup()
+
+	go func() {
+		err := g.Run(":8080")
+		if err != nil {
+			s.Logger.Errorf("Failed to start gin server, %v", err)
+		}
+	}()
 }

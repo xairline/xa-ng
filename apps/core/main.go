@@ -1,11 +1,14 @@
 package main
 
 import (
+	_ "apps/core/docs"
 	"apps/core/services"
 	"apps/core/services/dataref"
 	"apps/core/services/flight-status"
 	"apps/core/utils/logger"
 )
+
+// @BasePath  /apis
 
 func main() {
 }
