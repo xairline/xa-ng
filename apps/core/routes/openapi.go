@@ -22,10 +22,10 @@ func NewOpenAPIRoutes(logger logger.Logger, gin *gin.Engine) OpenAPIRoutes {
 
 func (o OpenAPIRoutes) Setup() {
 	o.logger.Info("Setting up routes")
-	docs.SwaggerInfoMarketplace.Title = "X Marketplace"
+	docs.SwaggerInfoXWebStack.Title = "X Web Stack"
 	o.gin.GET("/api-docs/*any", ginSwagger.WrapHandler(
 		swaggerFiles.Handler,
 		ginSwagger.DocExpansion("none"),
-		ginSwagger.InstanceName("Marketplace"),
+		ginSwagger.InstanceName("XWebStack"),
 	))
 }

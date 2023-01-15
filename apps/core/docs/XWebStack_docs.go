@@ -4,7 +4,7 @@ package docs
 
 import "github.com/swaggo/swag"
 
-const docTemplateMarketplace = `{
+const docTemplateXWebStack = `{
     "schemes": {{ marshal .Schemes }},
     "swagger": "2.0",
     "info": {
@@ -65,18 +65,18 @@ const docTemplateMarketplace = `{
     }
 }`
 
-// SwaggerInfoMarketplace holds exported Swagger Info so clients can modify it
-var SwaggerInfoMarketplace = &swag.Spec{
+// SwaggerInfoXWebStack holds exported Swagger Info so clients can modify it
+var SwaggerInfoXWebStack = &swag.Spec{
 	Version:          "",
 	Host:             "",
 	BasePath:         "/apis",
 	Schemes:          []string{},
 	Title:            "",
 	Description:      "",
-	InfoInstanceName: "Marketplace",
-	SwaggerTemplate:  docTemplateMarketplace,
+	InfoInstanceName: "XWebStack",
+	SwaggerTemplate:  docTemplateXWebStack,
 }
 
 func init() {
-	swag.Register(SwaggerInfoMarketplace.InstanceName(), SwaggerInfoMarketplace)
+	swag.Register(SwaggerInfoXWebStack.InstanceName(), SwaggerInfoXWebStack)
 }
