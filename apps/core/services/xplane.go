@@ -104,6 +104,7 @@ func (s xplaneService) setupGin() {
 		s.Logger,
 		g,
 		controllers.NewDatarefController(s.Logger, s.DatarefSvc),
+		//controller.NewFlightLogController(s.Logger, s.FlightLogRepo),
 	).Setup()
 
 	go func() {

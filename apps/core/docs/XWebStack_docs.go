@@ -16,7 +16,7 @@ const docTemplateXWebStack = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/dataref": {
+        "/xplm/dataref": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -25,7 +25,7 @@ const docTemplateXWebStack = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Dataref"
+                    "XPLM_Dataref"
                 ],
                 "summary": "Get Dataref",
                 "parameters": [
@@ -60,7 +60,7 @@ const docTemplateXWebStack = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ResponseOk"
+                            "$ref": "#/definitions/models.DatarefValue"
                         }
                     },
                     "500": {
@@ -79,7 +79,7 @@ const docTemplateXWebStack = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Dataref"
+                    "XPLM_Dataref"
                 ],
                 "summary": "Set Dataref",
                 "responses": {
@@ -89,7 +89,7 @@ const docTemplateXWebStack = `{
                 }
             }
         },
-        "/datarefs": {
+        "/xplm/datarefs": {
             "put": {
                 "consumes": [
                     "application/json"
@@ -98,7 +98,7 @@ const docTemplateXWebStack = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Dataref"
+                    "XPLM_Dataref"
                 ],
                 "summary": "Set a list of Dataref",
                 "responses": {
@@ -115,10 +115,19 @@ const docTemplateXWebStack = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Dataref"
+                    "XPLM_Dataref"
                 ],
                 "summary": "Get a list of Dataref",
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DatarefValue"
+                            }
+                        }
+                    },
                     "501": {
                         "description": "Not Implemented"
                     }
@@ -135,12 +144,37 @@ const docTemplateXWebStack = `{
                 }
             }
         },
-        "ResponseOk": {
+        "dataAccess.DataRefType": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                4,
+                8,
+                16,
+                32
+            ],
+            "x-enum-varnames": [
+                "TypeUnknown",
+                "TypeInt",
+                "TypeFloat",
+                "TypeDouble",
+                "TypeFloatArray",
+                "TypeIntArray",
+                "TypeData"
+            ]
+        },
+        "models.DatarefValue": {
             "type": "object",
             "properties": {
-                "message": {
+                "dataref_type": {
+                    "$ref": "#/definitions/dataAccess.DataRefType"
+                },
+                "name": {
                     "type": "string"
-                }
+                },
+                "value": {}
             }
         }
     }

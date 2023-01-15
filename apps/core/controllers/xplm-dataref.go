@@ -24,16 +24,16 @@ func NewDatarefController(logger logger.Logger, datarefSvc dataref.DatarefServic
 
 // GetDataref
 // @Summary  Get Dataref
-// @Tags     Dataref
+// @Tags     XPLM_Dataref
 // @Param    dataref_str  query string true "xplane dataref string"
 // @Param    alias  query string false "alias name, if not set, dataref_str will be used"
 // @Param    precision  query int8 true "-1: raw, 2: round up to two digits"
 // @Param    is_byte_array query bool false "transform xplane byte array to string"
 // @Accept   json
 // @Produce  json
-// @Success  200  {object}  utils.ResponseOk
+// @Success  200  {object}  models.DatarefValue
 // @Failure  500  {object}  utils.ResponseError
-// @Router   /dataref [get]
+// @Router   /xplm/dataref [get]
 func (u DatarefController) GetDataref(c *gin.Context) {
 	dataref, success := c.GetQuery("dataref_str")
 	if !success {
@@ -56,33 +56,34 @@ func (u DatarefController) GetDataref(c *gin.Context) {
 
 // GetDatarefs
 // @Summary  Get a list of Dataref
-// @Tags     Dataref
+// @Tags     XPLM_Dataref
 // @Accept   json
 // @Produce  json
+// @Success  200  {object}  []models.DatarefValue
 // @Failure  501  "Not Implemented"
-// @Router   /datarefs [post]
+// @Router   /xplm/datarefs [post]
 func (u DatarefController) GetDatarefs(c *gin.Context) {
 	c.JSON(501, "not implemented")
 }
 
 // SetDataref
 // @Summary  Set Dataref
-// @Tags     Dataref
+// @Tags     XPLM_Dataref
 // @Accept   json
 // @Produce  json
 // @Failure  501  "Not Implemented"
-// @Router   /dataref [put]
+// @Router   /xplm/dataref [put]
 func (u DatarefController) SetDataref(c *gin.Context) {
 	c.JSON(501, "not implemented")
 }
 
 // SetDatarefs
 // @Summary  Set a list of Dataref
-// @Tags     Dataref
+// @Tags     XPLM_Dataref
 // @Accept   json
 // @Produce  json
 // @Failure  501  "Not Implemented"
-// @Router   /datarefs [put]
+// @Router   /xplm/datarefs [put]
 func (u DatarefController) SetDatarefs(c *gin.Context) {
 	c.JSON(501, "not implemented")
 }

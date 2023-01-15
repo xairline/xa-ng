@@ -15,7 +15,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "apps/core",
-        "command": "swag init --md docs/ --outputTypes go,yaml --instanceName \"XWebStack\" && make dev"
+        "command": "swag init --md docs/ --outputTypes go,yaml --instanceName \"XWebStack\"  -pd  --parseDepth 1 && make dev"
       }
     },
     "test": {

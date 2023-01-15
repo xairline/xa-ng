@@ -5,15 +5,36 @@ definitions:
       message:
         type: string
     type: object
-  ResponseOk:
+  dataAccess.DataRefType:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 4
+    - 8
+    - 16
+    - 32
+    type: integer
+    x-enum-varnames:
+    - TypeUnknown
+    - TypeInt
+    - TypeFloat
+    - TypeDouble
+    - TypeFloatArray
+    - TypeIntArray
+    - TypeData
+  models.DatarefValue:
     properties:
-      message:
+      dataref_type:
+        $ref: '#/definitions/dataAccess.DataRefType'
+      name:
         type: string
+      value: {}
     type: object
 info:
   contact: {}
 paths:
-  /dataref:
+  /xplm/dataref:
     get:
       consumes:
       - application/json
@@ -42,14 +63,14 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ResponseOk'
+            $ref: '#/definitions/models.DatarefValue'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ResponseError'
       summary: Get Dataref
       tags:
-      - Dataref
+      - XPLM_Dataref
     put:
       consumes:
       - application/json
@@ -60,19 +81,25 @@ paths:
           description: Not Implemented
       summary: Set Dataref
       tags:
-      - Dataref
-  /datarefs:
+      - XPLM_Dataref
+  /xplm/datarefs:
     post:
       consumes:
       - application/json
       produces:
       - application/json
       responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DatarefValue'
+            type: array
         "501":
           description: Not Implemented
       summary: Get a list of Dataref
       tags:
-      - Dataref
+      - XPLM_Dataref
     put:
       consumes:
       - application/json
@@ -83,5 +110,5 @@ paths:
           description: Not Implemented
       summary: Set a list of Dataref
       tags:
-      - Dataref
+      - XPLM_Dataref
 swagger: "2.0"

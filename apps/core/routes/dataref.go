@@ -16,7 +16,7 @@ type DatarefRoutes struct {
 // Setup Dataref routes
 func (s DatarefRoutes) Setup() {
 	s.logger.Info("Setting up routes")
-	api := s.gin.Group("/apis/dataref")
+	api := s.gin.Group("/apis/xplm/dataref")
 	{
 		api.GET("", s.datarefController.GetDataref)
 		api.PUT("", s.datarefController.SetDataref)
