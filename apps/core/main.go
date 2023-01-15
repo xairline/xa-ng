@@ -2,19 +2,24 @@ package main
 
 import (
 	"apps/core/services"
-	"go.uber.org/fx"
+	"apps/core/services/dataref"
+	"apps/core/services/flight-status"
+	"apps/core/utils/logger"
 )
-
-const PollFeq = 20
-
-var tracking bool
 
 func main() {
 }
 
 func init() {
-	myTstorage := services.NewTstorageService()
-	services.NewXplaneService(myTstorage)
-
-	go fx.New(services.Module).Run()
+	datarefSvc := dataref.NewDatarefService(logger.NewXplaneLogger())
+	flightStatusSvc := flight_status.NewFlightStatusService(
+		datarefSvc,
+		logger.NewXplaneLogger(),
+	)
+	// entrypoint
+	services.NewXplaneService(
+		datarefSvc,
+		flightStatusSvc,
+		logger.NewXplaneLogger(),
+	)
 }
