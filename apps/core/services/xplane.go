@@ -48,7 +48,7 @@ func NewXplaneService(
 		xplaneSvcLock.Lock()
 		defer xplaneSvcLock.Unlock()
 		xplaneSvc := xplaneService{
-			Plugin:              extra.NewPlugin("X Airline NG", "com.github.xairline.xa-ng", "X Airline NG"),
+			Plugin:              extra.NewPlugin("X Airline Marketplace", "com.github.xairline.xa-ng", "A plugin enables Frontend developer to contribute to xplane"),
 			DatarefSvc:          datarefSvc,
 			FlightStatusService: flightStatusSvc,
 			Logger:              logger,

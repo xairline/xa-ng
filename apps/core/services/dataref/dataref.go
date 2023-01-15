@@ -23,7 +23,7 @@ var datarefBytes []byte
 
 type DatarefService interface {
 	GetCurrentValues() models.DatarefValues
-	GetValueByDatarefName(dataref, name string, precision *int8) models.DatarefValue
+	GetValueByDatarefName(dataref, name string, precision *int8, isByteArray bool) models.DatarefValue
 	GetNearestAirport() (string, string)
 	getCurrentValue(datarefExt *models.DatarefExt) models.DatarefValue
 }
@@ -35,8 +35,8 @@ type datarefService struct {
 
 func (d datarefService) GetNearestAirport() (string, string) {
 	latLngPrecision := int8(-1)
-	latDataref := d.GetValueByDatarefName("sim/flightmodel/position/latitude", "lat", &latLngPrecision)
-	lngDataref := d.GetValueByDatarefName("sim/flightmodel/position/longitude", "lng", &latLngPrecision)
+	latDataref := d.GetValueByDatarefName("sim/flightmodel/position/latitude", "lat", &latLngPrecision, false)
+	lngDataref := d.GetValueByDatarefName("sim/flightmodel/position/longitude", "lng", &latLngPrecision, false)
 	navRef := navigation.FindNavAid(
 		"",
 		"",
@@ -50,16 +50,17 @@ func (d datarefService) GetNearestAirport() (string, string) {
 	return airportId, airportName
 }
 
-func (d datarefService) GetValueByDatarefName(dataref, name string, precision *int8) models.DatarefValue {
+func (d datarefService) GetValueByDatarefName(dataref, name string, precision *int8, isByteArray bool) models.DatarefValue {
 	myDataref, success := dataAccess.FindDataRef(dataref)
 	if !success {
 		d.Logger.Errorf("Failed to find dataref: %s", name)
 	}
 	datarefExt := models.DatarefExt{
-		Name:        name,
-		Dataref:     myDataref,
-		DatarefType: dataAccess.GetDataRefTypes(myDataref),
-		Precision:   precision,
+		Name:         name,
+		Dataref:      myDataref,
+		DatarefType:  dataAccess.GetDataRefTypes(myDataref),
+		Precision:    precision,
+		IsBytesArray: isByteArray,
 	}
 	return d.getCurrentValue(&datarefExt)
 }

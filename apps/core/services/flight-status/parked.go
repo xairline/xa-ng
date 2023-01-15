@@ -11,8 +11,8 @@ func (f flightStatusService) processDatarefParked(datarefValues models.DatarefVa
 		airportId, airportName := f.DatarefSvc.GetNearestAirport()
 		// get weight information
 		var weightPrecision int8 = 1
-		fuelWeight := f.DatarefSvc.GetValueByDatarefName("sim/flightmodel/weight/m_fuel_total", "fuel_weight", &weightPrecision)
-		totalWeight := f.DatarefSvc.GetValueByDatarefName("sim/flightmodel/weight/m_total", "total_weight", &weightPrecision)
+		fuelWeight := f.DatarefSvc.GetValueByDatarefName("sim/flightmodel/weight/m_fuel_total", "fuel_weight", &weightPrecision, false)
+		totalWeight := f.DatarefSvc.GetValueByDatarefName("sim/flightmodel/weight/m_total", "total_weight", &weightPrecision, false)
 		f.setDepartureFlightInfo(
 			airportId,
 			airportName,
@@ -21,8 +21,8 @@ func (f flightStatusService) processDatarefParked(datarefValues models.DatarefVa
 			totalWeight.Value.(float64),
 		)
 		// get aircraft name
-		aircraftICAO := f.DatarefSvc.GetValueByDatarefName("sim/aircraft/view/acf_ICAO", "icao", nil)
-		aircraftDisplayName := f.DatarefSvc.GetValueByDatarefName("sim/aircraft/view/acf_ui_name", "acf_ui_name", nil)
+		aircraftICAO := f.DatarefSvc.GetValueByDatarefName("sim/aircraft/view/acf_ICAO", "icao", nil, true)
+		aircraftDisplayName := f.DatarefSvc.GetValueByDatarefName("sim/aircraft/view/acf_ui_name", "acf_ui_name", nil, true)
 		f.FlightStatus.AircraftICAO = aircraftICAO.Value.(string)
 		f.FlightStatus.AircraftDisplayName = aircraftDisplayName.Value.(string)
 
