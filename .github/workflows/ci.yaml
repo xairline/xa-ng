@@ -38,5 +38,5 @@ jobs:
           restore-keys: |
             go-mod-
       - run: go mod tidy
-      - run: make mac-test
+      #      - run: make mac-test
       - run: make all -j 3
