@@ -15,9 +15,11 @@ type FlightStatus struct {
 
 type FlightStatusEvent struct {
 	gorm.Model
+	EventType   FlightStatusEventType
 	FlightId    int
 	Timestamp   float64
 	Description string
+	ExtraData   string
 }
 type FlightInfo struct {
 	AirportId   string
@@ -28,6 +30,7 @@ type FlightInfo struct {
 }
 
 type FlightState string
+type FlightStatusEventType string
 
 const (
 	FlightStateParked  FlightState = "parked"
@@ -38,4 +41,10 @@ const (
 	FlightStateDescend             = "descend"
 	FlightStateLanding             = "landing"
 	FlightStateTaxiIn              = "taxi_in"
+)
+
+const (
+	StateEvent     FlightStatusEventType = "event:state"
+	LocationEvent                        = "event:location"
+	ViolationEvent                       = "event:violation"
 )

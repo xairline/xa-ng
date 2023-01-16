@@ -7,6 +7,7 @@ import (
 	"apps/core/services/dataref"
 	"apps/core/utils/logger"
 	_ "embed"
+	"encoding/json"
 	"gorm.io/gorm"
 	"sync"
 )
@@ -63,11 +64,19 @@ func (f flightStatusService) setArrivalFlightInfo(airportId, airportName string,
 }
 
 func (f flightStatusService) addFlightEvent(datarefValues models.DatarefValues, description string) {
+	extraData, err := json.Marshal(datarefValues)
+	if err != nil {
+		f.Logger.Warningf("ERROR: fail to Marshal json, %s", err.Error())
+	}
 	event := models.FlightStatusEvent{
 		Timestamp:   datarefValues["ts"].Value.(float64),
 		Description: description,
+		EventType:   models.StateEvent,
+		ExtraData:   string(extraData),
+		FlightId:    int(f.FlightStatus.ID),
 	}
 	f.FlightStatus.Events = append(f.FlightStatus.Events, event)
+	f.db.Create(&event)
 	f.Logger.Infof(
 		"NEW Event: %v sec,%+v",
 		event.Timestamp-f.FlightStatus.DepartureFlightInfo.Time,

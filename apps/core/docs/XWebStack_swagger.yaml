@@ -83,6 +83,10 @@ definitions:
         $ref: '#/definitions/gorm.DeletedAt'
       description:
         type: string
+      eventType:
+        $ref: '#/definitions/models.FlightStatusEventType'
+      extraData:
+        type: string
       flightId:
         type: integer
       id:
@@ -92,6 +96,12 @@ definitions:
       updatedAt:
         type: string
     type: object
+  models.FlightStatusEventType:
+    enum:
+    - event:state
+    type: string
+    x-enum-varnames:
+    - StateEvent
 info:
   contact: {}
 paths:
@@ -108,8 +118,10 @@ paths:
             items:
               $ref: '#/definitions/models.FlightStatus'
             type: array
-        "501":
-          description: Not Implemented
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
       summary: Get a list of FlightLogs
       tags:
       - Flight_Logs
@@ -130,9 +142,57 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.FlightStatus'
+        "404":
+          description: Not Found
+      summary: Get one FlightLog
+      tags:
+      - Flight_Logs
+  /flight-logs/{id}/events:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: id of a flight log item
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.FlightStatusEvent'
+            type: array
         "501":
           description: Not Implemented
-      summary: Get one FlightLogs
+      summary: Get events of a Flight
+      tags:
+      - Flight_Logs
+  /flight-logs/{id}/landing:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: id of a flight log item
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.FlightStatusEvent'
+            type: array
+        "501":
+          description: Not Implemented
+      summary: Get landing data of a Flight
       tags:
       - Flight_Logs
   /xplm/dataref:

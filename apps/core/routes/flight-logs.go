@@ -19,7 +19,7 @@ func (s FlightLogsRoutes) Setup() {
 	api := s.gin.Group("/apis/flight-logs")
 	{
 		api.GET("", s.flightLogsController.GetFlightLogs)
-		api.GET(":id", s.flightLogsController.GetFlightLogs)
+		api.GET(":id", s.flightLogsController.GetFlightLog)
 
 	}
 }

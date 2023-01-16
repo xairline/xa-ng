@@ -7,6 +7,8 @@ import (
 	"apps/core/services/flight-status"
 	"apps/core/utils"
 	"apps/core/utils/logger"
+	"github.com/xairline/goplane/extra/logging"
+	"github.com/xairline/goplane/xplm/plugins"
 	"github.com/xairline/goplane/xplm/utilities"
 	"path/filepath"
 )
@@ -18,6 +20,8 @@ func main() {
 
 func init() {
 	logger := logger.NewXplaneLogger()
+	plugins.EnableFeature("XPLM_USE_NATIVE_PATHS", true)
+	logging.MinLevel = logging.Info_Level
 	// get plugin path
 	systemPath := utilities.GetSystemPath()
 	pluginPath := filepath.Join(systemPath, "Resources", "plugins", "XWebStack")

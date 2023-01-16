@@ -10,8 +10,6 @@ import (
 	"apps/core/utils/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/xairline/goplane/extra"
-	"github.com/xairline/goplane/extra/logging"
-	"github.com/xairline/goplane/xplm/plugins"
 	"github.com/xairline/goplane/xplm/processing"
 	"gorm.io/gorm"
 	"sync"
@@ -60,8 +58,6 @@ func NewXplaneService(
 			db:                  db,
 		}
 		xplaneSvc.Plugin.SetPluginStateCallback(xplaneSvc.onPluginStateChanged)
-		plugins.EnableFeature("XPLM_USE_NATIVE_PATHS", true)
-		logging.MinLevel = logging.Info_Level
 		return xplaneSvc
 	}
 }

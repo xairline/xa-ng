@@ -8,7 +8,7 @@ require (
 	github.com/swaggo/files v1.0.0
 	github.com/swaggo/gin-swagger v1.5.3
 	github.com/swaggo/swag v1.8.1
-	github.com/xairline/goplane v1.301.1
+	github.com/xairline/goplane v1.301.3
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/sqlite v1.4.4
 	gorm.io/gorm v1.24.3

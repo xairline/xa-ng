@@ -5,12 +5,15 @@ import (
 	"apps/core/utils/logger"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"path"
 )
 
 const dbFileName = "xws.dat"
 
-func CreateDatabase(logger logger.Logger, path string) (*gorm.DB, error) {
-	db, err := gorm.Open(sqlite.Open(path+dbFileName), &gorm.Config{})
+func CreateDatabase(logger logger.Logger, myPath string) (*gorm.DB, error) {
+	dbFilePath := path.Join(myPath, dbFileName)
+	logger.Errorf("DB file path: %s", dbFilePath)
+	db, err := gorm.Open(sqlite.Open(dbFilePath), &gorm.Config{})
 	if err != nil {
 		logger.Errorf("%+v", err)
 		return nil, err
@@ -22,6 +25,6 @@ func CreateDatabase(logger logger.Logger, path string) (*gorm.DB, error) {
 		logger.Errorf("%+v", err)
 		return nil, err
 	}
-	logger.Infof("created/connected to database: %s/%s", path, dbFileName)
+	logger.Infof("created/connected to database: %s/%s", myPath, dbFileName)
 	return db, err
 }

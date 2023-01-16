@@ -8,18 +8,18 @@ mac:
 	GOOS=darwin \
 	GOARCH=amd64 \
 	CGO_ENABLED=1 \
-	CGO_CFLAGS="-DAPL=1 -DIBM=0 -DLIN=0" \
+	CGO_CFLAGS="-DAPL=1 -DIBM=0 -DLIN=0 -O0 -g" \
 	CGO_LDFLAGS="-F/System/Library/Frameworks/ -F${CURDIR}/Libraries/Mac -framework XPLM" \
 	go build -buildmode c-shared -o ../../dist/apps/XWebStack/mac.xpl main.go
 dev:
 	GOOS=darwin \
 	GOARCH=amd64 \
 	CGO_ENABLED=1 \
-	CGO_CFLAGS="-DAPL=1 -DIBM=0 -DLIN=0" \
+	CGO_CFLAGS="-DAPL=1 -DIBM=0 -DLIN=0 -O0 -g" \
 	CGO_LDFLAGS="-F/System/Library/Frameworks/ -F${CURDIR}/Libraries/Mac -framework XPLM" \
 	go build -buildmode c-shared -o ~/X-Plane\ 12/Resources/plugins/XWebStack/mac.xpl main.go
 win:
-	CGO_CFLAGS="-DIBM=1 -static" \
+	CGO_CFLAGS="-DIBM=1 -static -O0 -g" \
 	CGO_LDFLAGS="-L${CURDIR}/Libraries/Win -lXPLM_64 -static-libgcc -static-libstdc++ -Wl,--exclude-libs,ALL" \
 	GOOS=windows \
 	GOARCH=amd64 \
@@ -32,7 +32,7 @@ lin:
 	GOARCH=amd64 \
 	CGO_ENABLED=1 \
 	CC=/usr/local/bin/x86_64-linux-musl-cc \
-	CGO_CFLAGS="-DLIN=1" \
+	CGO_CFLAGS="-DLIN=1 -O0 -g" \
 	CGO_LDFLAGS="-shared -rdynamic -nodefaultlibs -undefined_warning" \
 	go build -buildmode c-shared -o ../../dist/apps/XWebStack/lin.xpl main.go
 
@@ -41,6 +41,6 @@ mac-test:
 	GOOS=darwin \
 	GOARCH=amd64 \
 	CGO_ENABLED=1 \
-	CGO_CFLAGS="-DAPL=1 -DIBM=0 -DLIN=0" \
+	CGO_CFLAGS="-DAPL=1 -DIBM=0 -DLIN=0 -O0 -g" \
 	CGO_LDFLAGS="-F/System/Library/Frameworks/ -F${CURDIR}/Libraries/Mac -framework XPLM" \
 	go test -race -coverprofile=coverage.txt -covermode=atomic ./... -v

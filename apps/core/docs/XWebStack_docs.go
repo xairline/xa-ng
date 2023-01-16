@@ -38,8 +38,11 @@ const docTemplateXWebStack = `{
                             }
                         }
                     },
-                    "501": {
-                        "description": "Not Implemented"
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseError"
+                        }
                     }
                 }
             }
@@ -55,7 +58,7 @@ const docTemplateXWebStack = `{
                 "tags": [
                     "Flight_Logs"
                 ],
-                "summary": "Get one FlightLogs",
+                "summary": "Get one FlightLog",
                 "parameters": [
                     {
                         "type": "string",
@@ -70,6 +73,80 @@ const docTemplateXWebStack = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.FlightStatus"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/flight-logs/{id}/events": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flight_Logs"
+                ],
+                "summary": "Get events of a Flight",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of a flight log item",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.FlightStatusEvent"
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented"
+                    }
+                }
+            }
+        },
+        "/flight-logs/{id}/landing": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flight_Logs"
+                ],
+                "summary": "Get landing data of a Flight",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of a flight log item",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.FlightStatusEvent"
+                            }
                         }
                     },
                     "501": {
@@ -318,6 +395,12 @@ const docTemplateXWebStack = `{
                 "description": {
                     "type": "string"
                 },
+                "eventType": {
+                    "$ref": "#/definitions/models.FlightStatusEventType"
+                },
+                "extraData": {
+                    "type": "string"
+                },
                 "flightId": {
                     "type": "integer"
                 },
@@ -331,6 +414,15 @@ const docTemplateXWebStack = `{
                     "type": "string"
                 }
             }
+        },
+        "models.FlightStatusEventType": {
+            "type": "string",
+            "enum": [
+                "event:state"
+            ],
+            "x-enum-varnames": [
+                "StateEvent"
+            ]
         }
     }
 }`
