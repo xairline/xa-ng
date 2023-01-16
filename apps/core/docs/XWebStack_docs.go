@@ -16,6 +16,68 @@ const docTemplateXWebStack = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/flight-logs": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flight_Logs"
+                ],
+                "summary": "Get a list of FlightLogs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.FlightStatus"
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented"
+                    }
+                }
+            }
+        },
+        "/flight-logs/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flight_Logs"
+                ],
+                "summary": "Get one FlightLogs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of a flight log item",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.FlightStatus"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented"
+                    }
+                }
+            }
+        },
         "/xplm/dataref": {
             "get": {
                 "consumes": [
@@ -165,6 +227,18 @@ const docTemplateXWebStack = `{
                 "TypeData"
             ]
         },
+        "gorm.DeletedAt": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "valid": {
+                    "description": "Valid is true if Time is not NULL",
+                    "type": "boolean"
+                }
+            }
+        },
         "models.DatarefValue": {
             "type": "object",
             "properties": {
@@ -175,6 +249,87 @@ const docTemplateXWebStack = `{
                     "type": "string"
                 },
                 "value": {}
+            }
+        },
+        "models.FlightInfo": {
+            "type": "object",
+            "properties": {
+                "airportId": {
+                    "type": "string"
+                },
+                "airportName": {
+                    "type": "string"
+                },
+                "fuelWeight": {
+                    "type": "number"
+                },
+                "time": {
+                    "type": "number"
+                },
+                "totalWeight": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.FlightStatus": {
+            "type": "object",
+            "properties": {
+                "aircraftDisplayName": {
+                    "type": "string"
+                },
+                "aircraftICAO": {
+                    "type": "string"
+                },
+                "arrivalFlightInfo": {
+                    "$ref": "#/definitions/models.FlightInfo"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "departureFlightInfo": {
+                    "$ref": "#/definitions/models.FlightInfo"
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FlightStatusEvent"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.FlightStatusEvent": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "flightId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
             }
         }
     }

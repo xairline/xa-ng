@@ -83,3 +83,15 @@ func (mr *MockXplaneServiceMockRecorder) onPluginStop() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "onPluginStop", reflect.TypeOf((*MockXplaneService)(nil).onPluginStop))
 }
+
+// setupGin mocks base method.
+func (m *MockXplaneService) setupGin() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "setupGin")
+}
+
+// setupGin indicates an expected call of setupGin.
+func (mr *MockXplaneServiceMockRecorder) setupGin() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "setupGin", reflect.TypeOf((*MockXplaneService)(nil).setupGin))
+}

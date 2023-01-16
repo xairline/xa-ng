@@ -23,6 +23,14 @@ definitions:
     - TypeFloatArray
     - TypeIntArray
     - TypeData
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
   models.DatarefValue:
     properties:
       dataref_type:
@@ -31,9 +39,102 @@ definitions:
         type: string
       value: {}
     type: object
+  models.FlightInfo:
+    properties:
+      airportId:
+        type: string
+      airportName:
+        type: string
+      fuelWeight:
+        type: number
+      time:
+        type: number
+      totalWeight:
+        type: number
+    type: object
+  models.FlightStatus:
+    properties:
+      aircraftDisplayName:
+        type: string
+      aircraftICAO:
+        type: string
+      arrivalFlightInfo:
+        $ref: '#/definitions/models.FlightInfo'
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      departureFlightInfo:
+        $ref: '#/definitions/models.FlightInfo'
+      events:
+        items:
+          $ref: '#/definitions/models.FlightStatusEvent'
+        type: array
+      id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.FlightStatusEvent:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      flightId:
+        type: integer
+      id:
+        type: integer
+      timestamp:
+        type: number
+      updatedAt:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
+  /flight-logs:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.FlightStatus'
+            type: array
+        "501":
+          description: Not Implemented
+      summary: Get a list of FlightLogs
+      tags:
+      - Flight_Logs
+  /flight-logs/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: id of a flight log item
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.FlightStatus'
+        "501":
+          description: Not Implemented
+      summary: Get one FlightLogs
+      tags:
+      - Flight_Logs
   /xplm/dataref:
     get:
       consumes:

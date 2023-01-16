@@ -1,19 +1,23 @@
 package models
 
+import "gorm.io/gorm"
+
 type FlightStatus struct {
-	CurrentState        FlightState
-	PollFrequency       float32
-	Events              []FlightStatusEvent
-	DepartureFlightInfo FlightInfo
-	ArrivalFlightInfo   FlightInfo
+	gorm.Model
+	CurrentState        FlightState         `gorm:"-" swaggerignore:"true"`
+	PollFrequency       float32             `gorm:"-" swaggerignore:"true"`
+	Events              []FlightStatusEvent `gorm:"foreignKey:FlightId"`
+	DepartureFlightInfo FlightInfo          `gorm:"embedded;embeddedPrefix:departure_"`
+	ArrivalFlightInfo   FlightInfo          `gorm:"embedded;embeddedPrefix:arrival_"`
 	AircraftICAO        string
 	AircraftDisplayName string
 }
 
 type FlightStatusEvent struct {
-	Timestamp     float64
-	Description   string
-	DatarefValues DatarefValues
+	gorm.Model
+	FlightId    int
+	Timestamp   float64
+	Description string
 }
 type FlightInfo struct {
 	AirportId   string

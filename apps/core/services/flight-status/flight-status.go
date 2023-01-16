@@ -7,6 +7,7 @@ import (
 	"apps/core/services/dataref"
 	"apps/core/utils/logger"
 	_ "embed"
+	"gorm.io/gorm"
 	"sync"
 )
 
@@ -37,6 +38,7 @@ type flightStatusService struct {
 	cruiseCounter  *int
 	climbCounter   *int
 	descendCounter *int
+	db             *gorm.DB
 	Logger         logger.Logger
 }
 
@@ -62,9 +64,8 @@ func (f flightStatusService) setArrivalFlightInfo(airportId, airportName string,
 
 func (f flightStatusService) addFlightEvent(datarefValues models.DatarefValues, description string) {
 	event := models.FlightStatusEvent{
-		Timestamp:     datarefValues["ts"].Value.(float64),
-		Description:   description,
-		DatarefValues: datarefValues,
+		Timestamp:   datarefValues["ts"].Value.(float64),
+		Description: description,
 	}
 	f.FlightStatus.Events = append(f.FlightStatus.Events, event)
 	f.Logger.Infof(
@@ -110,7 +111,7 @@ func (f flightStatusService) ResetFlightStatus() {
 	f.Logger.Warning("====== RESET Flight status ======")
 }
 
-func NewFlightStatusService(datarefSvc dataref.DatarefService, logger logger.Logger) FlightStatusService {
+func NewFlightStatusService(datarefSvc dataref.DatarefService, logger logger.Logger, db *gorm.DB) FlightStatusService {
 	if flightStatusSvc != nil {
 		logger.Info("FlightStatus SVC has been initialized already")
 		return flightStatusSvc
@@ -126,6 +127,7 @@ func NewFlightStatusService(datarefSvc dataref.DatarefService, logger logger.Log
 			climbCounter:   new(int),
 			descendCounter: new(int),
 			Logger:         logger,
+			db:             db,
 		}
 		flightStatusSvc.ResetFlightStatus()
 		return flightStatusSvc

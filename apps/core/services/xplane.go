@@ -13,8 +13,7 @@ import (
 	"github.com/xairline/goplane/extra/logging"
 	"github.com/xairline/goplane/xplm/plugins"
 	"github.com/xairline/goplane/xplm/processing"
-	"github.com/xairline/goplane/xplm/utilities"
-	"path/filepath"
+	"gorm.io/gorm"
 	"sync"
 )
 
@@ -34,6 +33,7 @@ type xplaneService struct {
 	DatarefSvc          dataref.DatarefService
 	FlightStatusService flight_status.FlightStatusService
 	Logger              logger.Logger
+	db                  *gorm.DB
 }
 
 var xplaneSvcLock = &sync.Mutex{}
@@ -43,6 +43,7 @@ func NewXplaneService(
 	datarefSvc dataref.DatarefService,
 	flightStatusSvc flight_status.FlightStatusService,
 	logger logger.Logger,
+	db *gorm.DB,
 ) XplaneService {
 	if xplaneSvc != nil {
 		logger.Info("Xplane SVC has been initialized already")
@@ -56,6 +57,7 @@ func NewXplaneService(
 			DatarefSvc:          datarefSvc,
 			FlightStatusService: flightStatusSvc,
 			Logger:              logger,
+			db:                  db,
 		}
 		xplaneSvc.Plugin.SetPluginStateCallback(xplaneSvc.onPluginStateChanged)
 		plugins.EnableFeature("XPLM_USE_NATIVE_PATHS", true)
@@ -94,17 +96,12 @@ func (s xplaneService) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlig
 }
 
 func (s xplaneService) setupGin() {
-	// get plugin path
-	systemPath := utilities.GetSystemPath()
-	pluginPath := filepath.Join(systemPath, "Resources", "plugins", "XWebStack")
-	s.Logger.Infof("Plugin path: %s", pluginPath)
-
 	g := gin.Default()
 	routes.NewRoutes(
 		s.Logger,
 		g,
 		controllers.NewDatarefController(s.Logger, s.DatarefSvc),
-		//controller.NewFlightLogController(s.Logger, s.FlightLogRepo),
+		controllers.NewFlightLogsController(s.Logger, s.db),
 	).Setup()
 
 	go func() {
