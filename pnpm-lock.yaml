@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@babel/preset-react': ^7.14.5
+  '@heroicons/react': v1
   '@nrwl/cli': ^15.5.1
   '@nrwl/cypress': 15.4.4
   '@nrwl/eslint-plugin-nx': 15.4.4
@@ -39,6 +40,8 @@ specifiers:
   jest: 28.1.1
   jest-environment-jsdom: 28.1.1
   next: 13.0.0
+  next-themes: ^0.2.1
+  nightwind: ^1.1.12
   nx: 15.4.4
   postcss: ^8.4.21
   prettier: ^2.6.2
@@ -62,6 +65,7 @@ dependencies:
 
 devDependencies:
   '@babel/preset-react': 7.18.6_@babel+core@7.20.12
+  '@heroicons/react': 1.0.6_react@18.2.0
   '@nrwl/cli': 15.5.1
   '@nrwl/cypress': 15.4.4_feg3thbu55lbqaht7lvznjdmpy
   '@nrwl/eslint-plugin-nx': 15.4.4_rkkp7ywk27ol5ei4wg2z2in4cu
@@ -97,6 +101,8 @@ devDependencies:
   eslint-plugin-react-hooks: 4.6.0_eslint@8.15.0
   jest: 28.1.1_odkjkoia5xunhxkdrka32ib6vi
   jest-environment-jsdom: 28.1.1
+  next-themes: 0.2.1_r5sq4deac3rmm2d5onhwvomqve
+  nightwind: 1.1.12_tailwindcss@3.2.4
   nx: 15.4.4
   postcss: 8.4.21
   prettier: 2.8.1
@@ -1722,6 +1728,14 @@ packages:
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@heroicons/react/1.0.6_react@18.2.0:
+    resolution: {integrity: sha512-JJCXydOFWMDpCP4q13iEplA503MQO3xLoZiKum+955ZCtHINWnx26CUxVxxFQu/uLb4LW3ge15ZpzIkXKkJ8oQ==}
+    peerDependencies:
+      react: '>= 16'
+    dependencies:
+      react: 18.2.0
     dev: true
 
   /@humanwhocodes/config-array/0.9.5:
@@ -8457,6 +8471,18 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: true
 
+  /next-themes/0.2.1_r5sq4deac3rmm2d5onhwvomqve:
+    resolution: {integrity: sha512-B+AKNfYNIzh0vqQQKqQItTS8evEouKD7H5Hj3kmuPERwddR2TxvDSFZuTj6T7Jfn1oyeUyJMydPl1Bkxkh0W7A==}
+    peerDependencies:
+      next: '*'
+      react: '*'
+      react-dom: '*'
+    dependencies:
+      next: 13.0.0_pjwopsidmaokadturxaafygjp4
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: true
+
   /next/13.0.0_pjwopsidmaokadturxaafygjp4:
     resolution: {integrity: sha512-puH1WGM6rGeFOoFdXXYfUxN9Sgi4LMytCV5HkQJvVUOhHfC1DoVqOfvzaEteyp6P04IW+gbtK2Q9pInVSrltPA==}
     engines: {node: '>=14.6.0'}
@@ -8500,6 +8526,14 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+
+  /nightwind/1.1.12_tailwindcss@3.2.4:
+    resolution: {integrity: sha512-iJGJxeglk3vrRyFDH7shinvKuN/EcIbBtNVkko0Zni/XGVSHrBH0rsvqgp2HhkIf5B7iZU+2+kGhS2oItBnASQ==}
+    peerDependencies:
+      tailwindcss: ^2.0.0
+    dependencies:
+      tailwindcss: 3.2.4_aesdjsunmf4wiehhujt67my7tu
+    dev: true
 
   /node-abort-controller/3.0.1:
     resolution: {integrity: sha512-/ujIVxthRs+7q6hsdjHMaj8hRG9NuWmwrz+JdRwZ14jdFoKSkm+vDsCbF9PLpnSqjaWQJuTmVtcWHNLr+vrOFw==}
