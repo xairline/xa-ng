@@ -37,7 +37,7 @@ export function Navbar(props: NavbarProps) {
     }
   };
   return (
-    <div className="bg-gray-50 grid grid-cols-3 gap-4 py-2 md:py-4 lg:py-8">
+    <div className="h-2/12 md:h-[12%] lg:h-[16%] bg-gray-50 grid grid-cols-3 gap-4 py-2 md:py-4 lg:py-8">
       <div
         className="flex justify-center col-span-2">
         <h2 className="text-2sm font-extrabold tracking-tight text-gray-900 md:text-4xl lg:text-4xl">

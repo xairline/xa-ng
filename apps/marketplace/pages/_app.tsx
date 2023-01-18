@@ -19,9 +19,9 @@ function CustomApp({Component, pageProps}: AppProps) {
         storageKey="nightwind-mode"
         defaultTheme="system" // default "light"
       >
-        <div className="h-screen grid md:grid-rows-7 lg:row-span-6 grid-rows-7">
+        <div className="h-screen">
           <Navbar/>
-          <div className="bg-slate-200 md:row-span-6 lg:row-span-5 row-span-6 h-full p-3 md:p-4 lg:p-6 overflow-auto">
+          <div className="bg-gray-50 h-[92%] md:h-[88%] lg:h-[84%] p-3 mb-6 md:p-4 lg:p-6 overflow-auto">
             <Component {...pageProps} />
           </div>
         </div>
