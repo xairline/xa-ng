@@ -47,6 +47,7 @@ specifiers:
   prettier: ^2.6.2
   react: 18.2.0
   react-dom: 18.2.0
+  react-tailwind-table: ^1.1.1
   react-test-renderer: 18.2.0
   regenerator-runtime: 0.13.7
   tailwindcss: ^3.2.4
@@ -106,6 +107,7 @@ devDependencies:
   nx: 15.4.4
   postcss: 8.4.21
   prettier: 2.8.1
+  react-tailwind-table: 1.1.1_react@18.2.0
   react-test-renderer: 18.2.0_react@18.2.0
   tailwindcss: 3.2.4_aesdjsunmf4wiehhujt67my7tu
   ts-jest: 28.0.5_eqo52wwcgcnvubpjmpqsyr64ce
@@ -9653,6 +9655,15 @@ packages:
       object-assign: 4.1.1
       react: 18.2.0
       react-is: 18.2.0
+    dev: true
+
+  /react-tailwind-table/1.1.1_react@18.2.0:
+    resolution: {integrity: sha512-X+3MFk/6DBZ/TSlrOPAkKiwHTMaEOBqVKTVytzAW4F0aT8bEvokiiEjkQ1zPOYUETjW6LrRb2Hb9FczqWjJYnw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^17.0.2
+    dependencies:
+      react: 18.2.0
     dev: true
 
   /react-test-renderer/18.2.0_react@18.2.0:
