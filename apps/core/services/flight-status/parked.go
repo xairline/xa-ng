@@ -28,7 +28,10 @@ func (f flightStatusService) processDatarefParked(datarefValues models.DatarefVa
 		f.Logger.Infof("Departure information: %+v", f.FlightStatus)
 
 		// store to db
-		f.db.Model(&models.FlightStatus{}).Create(f.FlightStatus)
+		result := f.db.Model(&models.FlightStatus{}).Create(f.FlightStatus)
+		if result.Error != nil {
+			f.Logger.Errorf("Failed to store flight: %+v", result)
+		}
 
 		f.addFlightEvent(datarefValues, fmt.Sprintf("Taxi out at %s", airportId))
 		f.changeState(models.FlightStateTaxiOut, 0.2)

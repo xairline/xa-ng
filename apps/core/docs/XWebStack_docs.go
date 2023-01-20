@@ -378,6 +378,12 @@ const docTemplateXWebStack = `{
                 "id": {
                     "type": "integer"
                 },
+                "locations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FlightStatusLocation"
+                    }
+                },
                 "updatedAt": {
                     "type": "string"
                 }
@@ -423,6 +429,56 @@ const docTemplateXWebStack = `{
             "x-enum-varnames": [
                 "StateEvent"
             ]
+        },
+        "models.FlightStatusLocation": {
+            "type": "object",
+            "properties": {
+                "agl": {
+                    "type": "number"
+                },
+                "altitude": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "flightId": {
+                    "type": "integer"
+                },
+                "gearForce": {
+                    "type": "number"
+                },
+                "gforce": {
+                    "type": "number"
+                },
+                "ias": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isLanding": {
+                    "type": "boolean"
+                },
+                "lat": {
+                    "type": "number"
+                },
+                "lng": {
+                    "type": "number"
+                },
+                "timestamp": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "vs": {
+                    "type": "number"
+                }
+            }
         }
     }
 }`

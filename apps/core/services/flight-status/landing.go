@@ -17,7 +17,13 @@ func (f flightStatusService) processDatarefLanding(datarefValues models.DatarefV
 		)
 		f.addFlightEvent(datarefValues, fmt.Sprintf("Taxi in at %s", airportId))
 		f.changeState(models.FlightStateTaxiIn, 0.2)
-	} else {
-		// watch for violation
+		return
 	}
+	// go-around
+	//if datarefValues["vs"].Value.(float64) > 500 &&
+	//	datarefValues["gear_force"].Value.(float64) < 1 {
+	//	f.addFlightEvent(datarefValues, "Climb")
+	//	f.changeState(models.FlightStateClimb, 0.2)
+	//	return
+	//}
 }

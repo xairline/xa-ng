@@ -4,13 +4,29 @@ import "gorm.io/gorm"
 
 type FlightStatus struct {
 	gorm.Model
-	CurrentState        FlightState         `gorm:"-" swaggerignore:"true"`
-	PollFrequency       float32             `gorm:"-" swaggerignore:"true"`
-	Events              []FlightStatusEvent `gorm:"foreignKey:FlightId"`
-	DepartureFlightInfo FlightInfo          `gorm:"embedded;embeddedPrefix:departure_"`
-	ArrivalFlightInfo   FlightInfo          `gorm:"embedded;embeddedPrefix:arrival_"`
+	CurrentState        FlightState            `gorm:"-" swaggerignore:"true"`
+	PollFrequency       float32                `gorm:"-" swaggerignore:"true"`
+	Events              []FlightStatusEvent    `gorm:"foreignKey:FlightId"`
+	Locations           []FlightStatusLocation `gorm:"foreignKey:FlightId"`
+	DepartureFlightInfo FlightInfo             `gorm:"embedded;embeddedPrefix:departure_"`
+	ArrivalFlightInfo   FlightInfo             `gorm:"embedded;embeddedPrefix:arrival_"`
 	AircraftICAO        string
 	AircraftDisplayName string
+}
+
+type FlightStatusLocation struct {
+	gorm.Model
+	FlightId  int
+	Timestamp float64
+	IsLanding bool
+	Vs        float64
+	Ias       float64
+	Lat       float64
+	Lng       float64
+	Altitude  float64
+	Agl       float64
+	GearForce float64
+	GForce    float64
 }
 
 type FlightStatusEvent struct {

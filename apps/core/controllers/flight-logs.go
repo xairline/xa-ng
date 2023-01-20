@@ -53,7 +53,11 @@ func (u FlightLogsController) GetFlightLogs(c *gin.Context) {
 func (u FlightLogsController) GetFlightLog(c *gin.Context) {
 	var res models.FlightStatus
 	id, _ := strconv.Atoi(c.Param("id"))
-	result := u.db.Model(&models.FlightStatus{}).Preload("Events").First(&res, id)
+	result := u.db.
+		Model(&models.FlightStatus{}).
+		Preload("Events").
+		Preload("Locations").
+		First(&res, id)
 	if result.Error == nil {
 		c.JSON(200, res)
 	} else {

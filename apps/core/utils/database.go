@@ -12,7 +12,7 @@ const dbFileName = "xws.dat"
 
 func CreateDatabase(logger logger.Logger, myPath string) (*gorm.DB, error) {
 	dbFilePath := path.Join(myPath, dbFileName)
-	logger.Errorf("DB file path: %s", dbFilePath)
+	logger.Infof("DB file path: %s", dbFilePath)
 	db, err := gorm.Open(sqlite.Open(dbFilePath), &gorm.Config{})
 	if err != nil {
 		logger.Errorf("%+v", err)
@@ -20,7 +20,11 @@ func CreateDatabase(logger logger.Logger, myPath string) (*gorm.DB, error) {
 	}
 
 	// Migrate the schema
-	err = db.AutoMigrate(&models.FlightStatusEvent{}, &models.FlightStatus{})
+	err = db.AutoMigrate(
+		&models.FlightStatusEvent{},
+		&models.FlightStatus{},
+		&models.FlightStatusLocation{},
+	)
 	if err != nil {
 		logger.Errorf("%+v", err)
 		return nil, err

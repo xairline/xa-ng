@@ -72,6 +72,10 @@ definitions:
         type: array
       id:
         type: integer
+      locations:
+        items:
+          $ref: '#/definitions/models.FlightStatusLocation'
+        type: array
       updatedAt:
         type: string
     type: object
@@ -102,6 +106,39 @@ definitions:
     type: string
     x-enum-varnames:
     - StateEvent
+  models.FlightStatusLocation:
+    properties:
+      agl:
+        type: number
+      altitude:
+        type: number
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      flightId:
+        type: integer
+      gearForce:
+        type: number
+      gforce:
+        type: number
+      ias:
+        type: number
+      id:
+        type: integer
+      isLanding:
+        type: boolean
+      lat:
+        type: number
+      lng:
+        type: number
+      timestamp:
+        type: number
+      updatedAt:
+        type: string
+      vs:
+        type: number
+    type: object
 info:
   contact: {}
 paths:

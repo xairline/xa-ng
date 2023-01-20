@@ -1,8 +1,12 @@
 package logger
 
-import "github.com/xairline/goplane/extra/logging"
+import (
+	"github.com/xairline/goplane/extra/logging"
+)
 
-type XplaneLogger struct{}
+type XplaneLogger struct {
+	genericLogger GenericLogger
+}
 
 func (x XplaneLogger) Infof(format string, a ...interface{}) {
 	logging.Infof(format, a...)
@@ -34,4 +38,8 @@ func (x XplaneLogger) Warningf(format string, a ...interface{}) {
 
 func (x XplaneLogger) Warning(msg string) {
 	logging.Warning(msg)
+}
+
+func NewXplaneLogger() Logger {
+	return XplaneLogger{}
 }

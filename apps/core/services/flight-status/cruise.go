@@ -8,8 +8,7 @@ func (f flightStatusService) processDatarefCruise(datarefValues models.DatarefVa
 	} else {
 		*f.climbCounter = 0
 	}
-	if datarefValues["vs"].Value.(float64) < -500 &&
-		datarefValues["elevation"].Value.(float64) < 20000/3.28 {
+	if datarefValues["vs"].Value.(float64) < -500 {
 		*f.descendCounter += 1
 	} else {
 		*f.descendCounter = 0
