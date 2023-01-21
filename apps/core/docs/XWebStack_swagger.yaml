@@ -52,6 +52,12 @@ definitions:
       totalWeight:
         type: number
     type: object
+  models.FlightState:
+    enum:
+    - parked
+    type: string
+    x-enum-varnames:
+    - FlightStateParked
   models.FlightStatus:
     properties:
       aircraftDisplayName:
@@ -66,10 +72,6 @@ definitions:
         $ref: '#/definitions/gorm.DeletedAt'
       departureFlightInfo:
         $ref: '#/definitions/models.FlightInfo'
-      events:
-        items:
-          $ref: '#/definitions/models.FlightStatusEvent'
-        type: array
       id:
         type: integer
       locations:
@@ -81,24 +83,10 @@ definitions:
     type: object
   models.FlightStatusEvent:
     properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
       description:
         type: string
       eventType:
         $ref: '#/definitions/models.FlightStatusEventType'
-      extraData:
-        type: string
-      flightId:
-        type: integer
-      id:
-        type: integer
-      timestamp:
-        type: number
-      updatedAt:
-        type: string
     type: object
   models.FlightStatusEventType:
     enum:
@@ -116,22 +104,26 @@ definitions:
         type: string
       deletedAt:
         $ref: '#/definitions/gorm.DeletedAt'
+      event:
+        $ref: '#/definitions/models.FlightStatusEvent'
       flightId:
         type: integer
       gearForce:
         type: number
       gforce:
         type: number
+      heading:
+        type: number
       ias:
         type: number
       id:
         type: integer
-      isLanding:
-        type: boolean
       lat:
         type: number
       lng:
         type: number
+      state:
+        $ref: '#/definitions/models.FlightState'
       timestamp:
         type: number
       updatedAt:
@@ -182,54 +174,6 @@ paths:
         "404":
           description: Not Found
       summary: Get one FlightLog
-      tags:
-      - Flight_Logs
-  /flight-logs/{id}/events:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: id of a flight log item
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.FlightStatusEvent'
-            type: array
-        "501":
-          description: Not Implemented
-      summary: Get events of a Flight
-      tags:
-      - Flight_Logs
-  /flight-logs/{id}/landing:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: id of a flight log item
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.FlightStatusEvent'
-            type: array
-        "501":
-          description: Not Implemented
-      summary: Get landing data of a Flight
       tags:
       - Flight_Logs
   /xplm/dataref:

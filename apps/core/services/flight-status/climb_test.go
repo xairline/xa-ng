@@ -2,12 +2,19 @@ package flight_status
 
 import (
 	"apps/core/models"
+	"apps/core/utils"
 	"apps/core/utils/logger"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"os"
+	"path"
 	"testing"
 )
 
 func TestFlightStatusService_ProcessDatarefClimb(t *testing.T) {
+	tmpDbDir := path.Join("/tmp", uuid.New().String())
+	os.Mkdir(tmpDbDir, 0700)
+	db, _ := utils.CreateDatabase(logger.NewGenericLogger(), tmpDbDir)
 	var tests = []struct {
 		name          string
 		initSvc       FlightStatusService
@@ -20,12 +27,12 @@ func TestFlightStatusService_ProcessDatarefClimb(t *testing.T) {
 				FlightStatus: &models.FlightStatus{
 					CurrentState:  models.FlightStateTakeoff,
 					PollFrequency: 3,
-					Events:        nil,
 				},
 				cruiseCounter:  new(int),
 				climbCounter:   new(int),
 				descendCounter: new(int),
 				Logger:         logger.NewGenericLogger(),
+				db:             db,
 			},
 			datarefValues: []models.DatarefValues{
 				map[string]models.DatarefValue{

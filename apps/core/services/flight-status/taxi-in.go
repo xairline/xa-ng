@@ -1,6 +1,9 @@
 package flight_status
 
-import "apps/core/models"
+import (
+	"apps/core/models"
+	"math"
+)
 
 func (f flightStatusService) processDatarefTaxiIn(datarefValues models.DatarefValues) {
 	//todo: fix below
@@ -10,15 +13,20 @@ func (f flightStatusService) processDatarefTaxiIn(datarefValues models.DatarefVa
 		break
 	}
 	if datarefValues["gs"].Value.(float64) < 1/1.9438 &&
-		n1 < 1 {
+		n1 < 3 {
 		var weightPrecision int8 = 1
 		fuelWeight := f.DatarefSvc.GetValueByDatarefName("sim/flightmodel/weight/m_fuel_total", "fuel_weight", &weightPrecision, false)
 		totalWeight := f.DatarefSvc.GetValueByDatarefName("sim/flightmodel/weight/m_total", "total_weight", &weightPrecision, false)
 		f.FlightStatus.ArrivalFlightInfo.FuelWeight = fuelWeight.Value.(float64)
 		f.FlightStatus.ArrivalFlightInfo.TotalWeight = totalWeight.Value.(float64)
+		f.addLocation(datarefValues, -1, nil)
 		f.db.Model(&models.FlightStatus{}).Where("id = ?", f.FlightStatus.ID).Updates(f.FlightStatus)
 		f.ResetFlightStatus()
 	} else {
-		// watch for violation
+		currentHeading := datarefValues["heading"].Value.(float64)
+		lastHeading := f.FlightStatus.Locations[len(f.FlightStatus.Locations)-1].Heading
+		if math.Abs(lastHeading-currentHeading) > 10 {
+			f.addLocation(datarefValues, -1, nil)
+		}
 	}
 }

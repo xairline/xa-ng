@@ -7,7 +7,7 @@ import (
 	"apps/core/services/dataref"
 	"apps/core/utils/logger"
 	_ "embed"
-	"encoding/json"
+	"fmt"
 	"gorm.io/gorm"
 	"math"
 	"sync"
@@ -29,10 +29,10 @@ type FlightStatusService interface {
 	processDatarefLanding(datarefValues models.DatarefValues)
 	processDatarefTaxiIn(datarefValues models.DatarefValues)
 	changeState(newState models.FlightState, newPollFrequency float32)
-	addFlightEvent(datarefValues models.DatarefValues, description string)
+	addFlightEvent(description string) models.FlightStatusEvent
 	setDepartureFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64)
 	setArrivalFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64)
-	addLocation(datarefValues models.DatarefValues, isLanding bool, threshold float64)
+	addLocation(datarefValues models.DatarefValues, distance_threshold float64, event *models.FlightStatusEvent)
 }
 
 type flightStatusService struct {
@@ -45,11 +45,10 @@ type flightStatusService struct {
 	Logger         logger.Logger
 }
 
-func (f flightStatusService) addLocation(datarefValues models.DatarefValues, isLanding bool, threshold float64) {
+func (f flightStatusService) addLocation(datarefValues models.DatarefValues, distance_threshold float64, event *models.FlightStatusEvent) {
 	newLocation := models.FlightStatusLocation{
 		FlightId:  int(f.FlightStatus.ID),
 		Timestamp: datarefValues["ts"].Value.(float64),
-		IsLanding: isLanding,
 		Vs:        datarefValues["vs"].Value.(float64),
 		Ias:       datarefValues["ias"].Value.(float64),
 		Lat:       datarefValues["lat"].Value.(float64),
@@ -58,8 +57,14 @@ func (f flightStatusService) addLocation(datarefValues models.DatarefValues, isL
 		Agl:       datarefValues["agl"].Value.(float64),
 		GearForce: datarefValues["gear_force"].Value.(float64),
 		GForce:    datarefValues["g_force"].Value.(float64),
+		Heading:   datarefValues["heading"].Value.(float64),
+		State:     f.FlightStatus.CurrentState,
 	}
-	if len(f.FlightStatus.Locations) == 0 || (isLanding && newLocation.Agl < 5) {
+	if event != nil {
+		myEvent := *event
+		newLocation.Event = myEvent
+	}
+	if len(f.FlightStatus.Locations) == 0 || (f.FlightStatus.CurrentState == models.FlightStateLanding && newLocation.Agl < 5) {
 		f.FlightStatus.Locations = append(
 			f.FlightStatus.Locations,
 			newLocation,
@@ -70,7 +75,7 @@ func (f flightStatusService) addLocation(datarefValues models.DatarefValues, isL
 		curLat := datarefValues["lat"].Value.(float64)
 		curLng := datarefValues["lng"].Value.(float64)
 		delta := distance(lastLat, lastLng, curLat, curLng)
-		if delta > threshold {
+		if delta > distance_threshold {
 			f.FlightStatus.Locations = append(
 				f.FlightStatus.Locations,
 				newLocation,
@@ -99,28 +104,16 @@ func (f flightStatusService) setArrivalFlightInfo(airportId, airportName string,
 	}
 }
 
-func (f flightStatusService) addFlightEvent(datarefValues models.DatarefValues, description string) {
-	extraData, err := json.Marshal(datarefValues)
-	if err != nil {
-		f.Logger.Warningf("ERROR: fail to Marshal json, %s", err.Error())
-	}
+func (f flightStatusService) addFlightEvent(description string) models.FlightStatusEvent {
 	event := models.FlightStatusEvent{
-		Timestamp:   datarefValues["ts"].Value.(float64),
 		Description: description,
 		EventType:   models.StateEvent,
-		ExtraData:   string(extraData),
-		FlightId:    int(f.FlightStatus.ID),
-	}
-	f.FlightStatus.Events = append(f.FlightStatus.Events, event)
-	result := f.db.Create(&event)
-	if result.Error != nil {
-		f.Logger.Errorf("Failed to store event: %+v", result)
 	}
 	f.Logger.Infof(
-		"NEW Event: %v sec,%+v",
-		event.Timestamp-f.FlightStatus.DepartureFlightInfo.Time,
+		"NEW Event: %+v",
 		event.Description,
 	)
+	return event
 }
 
 func (f flightStatusService) GetFlightStatus() *models.FlightStatus {
@@ -135,19 +128,14 @@ func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) 
 		f.processDatarefTaxiOut(datarefValues)
 	case models.FlightStateTakeoff:
 		f.processDatarefTakeoff(datarefValues)
-		f.addLocation(datarefValues, false, 0.01)
 	case models.FlightStateClimb:
 		f.processDatarefClimb(datarefValues)
-		f.addLocation(datarefValues, false, 10)
 	case models.FlightStateCruise:
 		f.processDatarefCruise(datarefValues)
-		f.addLocation(datarefValues, false, 50)
 	case models.FlightStateDescend:
 		f.processDatarefDescend(datarefValues)
-		f.addLocation(datarefValues, false, 10)
 	case models.FlightStateLanding:
 		f.processDatarefLanding(datarefValues)
-		f.addLocation(datarefValues, true, 0.1)
 	case models.FlightStateTaxiIn:
 		f.processDatarefTaxiIn(datarefValues)
 	}
@@ -156,17 +144,11 @@ func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) 
 
 func (f flightStatusService) ResetFlightStatus() {
 	f.Logger.Warning("====== RESET Flight status ======")
-	f.FlightStatus.Events = []models.FlightStatusEvent{}
 
-	// flush locations to db
-	if len(f.FlightStatus.Locations) > 0 {
-		locations := f.FlightStatus.Locations
-		result := f.db.CreateInBatches(&locations, 500)
-		if result.Error != nil {
-			f.Logger.Errorf("Failed to store flight: %+v", result)
-		}
-	}
-	f.FlightStatus.Events = []models.FlightStatusEvent{}
+	// cleanup data points
+	f.cleanupDataPointsAndStore()
+
+	// reset
 	f.FlightStatus.Locations = []models.FlightStatusLocation{}
 	f.FlightStatus.ArrivalFlightInfo = models.FlightInfo{}
 	f.FlightStatus.DepartureFlightInfo = models.FlightInfo{}
@@ -203,6 +185,50 @@ func (f flightStatusService) changeState(newState models.FlightState, newPollFre
 	*f.cruiseCounter = 0
 	*f.climbCounter = 0
 	*f.descendCounter = 0
+}
+
+func (f flightStatusService) cleanupDataPointsAndStore() {
+	if len(f.FlightStatus.Locations) > 0 {
+		var indexOfLastLanding, indexOfFirstTaxiIn int
+		for index, location := range f.FlightStatus.Locations {
+			if location.State == models.FlightStateLanding {
+				if f.FlightStatus.Locations[index].GearForce <= 1 &&
+					f.FlightStatus.Locations[index+1].GearForce > 1 {
+					indexOfLastLanding = index
+				}
+			}
+			if location.State == models.FlightStateTaxiIn {
+				indexOfFirstTaxiIn = index
+				break
+			}
+		}
+		numOfDataPointsBetweenLandingAndTaxi := indexOfFirstTaxiIn - indexOfLastLanding - 100
+		numOfDataPointsToKeep := int(float64(numOfDataPointsBetweenLandingAndTaxi) * 0.2)
+		gap := numOfDataPointsBetweenLandingAndTaxi / numOfDataPointsToKeep
+		locations := f.FlightStatus.Locations[:indexOfLastLanding+1+100]
+		for i := 1; i < numOfDataPointsToKeep; i++ {
+			if i*gap+indexOfLastLanding+1 < indexOfFirstTaxiIn {
+				locations = append(locations, f.FlightStatus.Locations[i*gap+indexOfLastLanding+1+100])
+			}
+		}
+		locations = append(locations, f.FlightStatus.Locations[indexOfFirstTaxiIn:]...) // flush locations to db
+
+		f.Logger.Infof("Original: %v, now: %v", len(f.FlightStatus.Locations), len(locations))
+
+		// add missing taxi in event
+		for index, _ := range locations {
+			if locations[index].State == models.FlightStateLanding &&
+				locations[index+1].State == models.FlightStateTaxiIn {
+				locations[index].Event = f.addFlightEvent(fmt.Sprintf("Taxi in at %s", f.FlightStatus.ArrivalFlightInfo.AirportId))
+			}
+			break
+		}
+		// store to db
+		result := f.db.CreateInBatches(&locations, 500)
+		if result.Error != nil {
+			f.Logger.Errorf("Failed to store flight: %+v", result)
+		}
+	}
 }
 
 func distance(lat1 float64, lng1 float64, lat2 float64, lng2 float64) float64 {

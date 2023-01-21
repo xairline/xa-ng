@@ -14,13 +14,19 @@ import (
 type FlightLogsController struct {
 	logger logger.Logger
 	db     *gorm.DB
+	//flightStatusSvc flight_status.FlightStatusService
 }
 
 // NewFlightLogsController creates new FlightLogs controller
-func NewFlightLogsController(logger logger.Logger, db *gorm.DB) FlightLogsController {
+func NewFlightLogsController(
+	logger logger.Logger,
+	db *gorm.DB,
+	/* flightStatusSvc flight_status.FlightStatusService, */
+) FlightLogsController {
 	return FlightLogsController{
 		logger: logger,
 		db:     db,
+		//flightStatusSvc: flightStatusSvc,
 	}
 }
 
@@ -55,7 +61,6 @@ func (u FlightLogsController) GetFlightLog(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	result := u.db.
 		Model(&models.FlightStatus{}).
-		Preload("Events").
 		Preload("Locations").
 		First(&res, id)
 	if result.Error == nil {
@@ -64,30 +69,4 @@ func (u FlightLogsController) GetFlightLog(c *gin.Context) {
 		u.logger.Infof("%+v", result.Error)
 		c.JSON(404, "not found")
 	}
-}
-
-// GetFlightLogEvents
-// @Summary  Get events of a Flight
-// @Param    id  path  string  true  "id of a flight log item"
-// @Tags     Flight_Logs
-// @Accept   json
-// @Produce  json
-// @Success  200  {object}  []models.FlightStatusEvent
-// @Failure  501  "Not Implemented"
-// @Router   /flight-logs/{id}/events [get]
-func (u FlightLogsController) GetFlightLogEvents(c *gin.Context) {
-	c.JSON(501, "not implemented")
-}
-
-// GetFlightLogLandingData
-// @Summary  Get landing data of a Flight
-// @Param    id  path  string  true  "id of a flight log item"
-// @Tags     Flight_Logs
-// @Accept   json
-// @Produce  json
-// @Success  200  {object}  []models.FlightStatusEvent
-// @Failure  501  "Not Implemented"
-// @Router   /flight-logs/{id}/landing [get]
-func (u FlightLogsController) GetFlightLogLandingData(c *gin.Context) {
-	c.JSON(501, "not implemented")
 }

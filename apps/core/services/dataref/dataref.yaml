@@ -47,8 +47,8 @@
 #- name: empty_weight
 #  value: sim/aircraft/weight/acf_m_empty
 #  precision: 1
-#- name: heading
-#  value: sim/flightmodel/position/mag_psi
+- name: heading
+  value: sim/flightmodel/position/mag_psi
 #  precision: 0
 #- name: paused
 #  value: sim/time/paused

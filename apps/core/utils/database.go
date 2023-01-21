@@ -21,7 +21,6 @@ func CreateDatabase(logger logger.Logger, myPath string) (*gorm.DB, error) {
 
 	// Migrate the schema
 	err = db.AutoMigrate(
-		&models.FlightStatusEvent{},
 		&models.FlightStatus{},
 		&models.FlightStatusLocation{},
 	)
