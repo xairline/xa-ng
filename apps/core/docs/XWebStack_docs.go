@@ -28,6 +28,14 @@ const docTemplateXWebStack = `{
                     "Flight_Logs"
                 ],
                 "summary": "Get a list of FlightLogs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "specify if it's overview",
+                        "name": "isOverview",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

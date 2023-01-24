@@ -138,6 +138,11 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: specify if it's overview
+        in: query
+        name: isOverview
+        type: string
       produces:
       - application/json
       responses:

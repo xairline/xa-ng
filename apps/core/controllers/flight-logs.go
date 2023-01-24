@@ -32,6 +32,7 @@ func NewFlightLogsController(
 
 // GetFlightLogs
 // @Summary  Get a list of FlightLogs
+// @Param    isOverview    query     string  false  "specify if it's overview"
 // @Tags     Flight_Logs
 // @Accept   json
 // @Produce  json
@@ -40,9 +41,20 @@ func NewFlightLogsController(
 // @Router   /flight-logs [get]
 func (u FlightLogsController) GetFlightLogs(c *gin.Context) {
 	var res []models.FlightStatus
-	result := u.db.Model(&models.FlightStatus{}).Find(&res)
-	if result.Error != nil {
-		c.JSON(500, utils.ResponseError{Message: fmt.Sprintf("Failed to get flight logs: %+v", result.Error)})
+	isOverview := c.Request.URL.Query().Get("isOverview")
+	if isOverview == "true" {
+		result := u.db.
+			Preload("Locations" /*, "event_type = (?)", models.StateEvent*/).
+			Model(&models.FlightStatus{}).
+			Find(&res)
+		if result.Error != nil {
+			c.JSON(500, utils.ResponseError{Message: fmt.Sprintf("Failed to get flight logs: %+v", result.Error)})
+		}
+	} else {
+		result := u.db.Model(&models.FlightStatus{}).Find(&res)
+		if result.Error != nil {
+			c.JSON(500, utils.ResponseError{Message: fmt.Sprintf("Failed to get flight logs: %+v", result.Error)})
+		}
 	}
 	c.JSON(200, res)
 }
