@@ -72,6 +72,7 @@
     "next-themes": "^0.2.1",
     "nx": "15.4.4",
     "prettier": "^2.6.2",
+    "react-countup": "^6.4.0",
     "react-map-gl": "^5.0.21",
     "react-refresh": "^0.10.0",
     "react-router-dom": "^6.7.0",

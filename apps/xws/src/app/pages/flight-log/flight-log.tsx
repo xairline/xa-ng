@@ -2,8 +2,8 @@ import {Col, Row} from 'antd';
 import {useEffect, useState} from 'react';
 import {useStores} from '../../../store';
 import {useObserver} from 'mobx-react-lite';
+import TableView from '../../components/table/table';
 import MapArch from '../../components/map/map';
-import TableView from "../../components/table/table";
 
 /* eslint-disable-next-line */
 export interface FlightLogProps {
@@ -32,13 +32,20 @@ export function FlightLog(props: FlightLogProps) {
   }, []);
 
   return useObserver(() => (
-    <Row style={{height: '100%'}}>
+    <Row style={{height: '100%'}} gutter={20}>
       <Col
         lg={10}
         span={24}
         style={{height: `${windowDimensions.width > 992 ? '100%' : '30%'}`}}
       >
-        <TableView dataSet={FlightLogStore.tableDataSet}/>
+        <TableView
+          dataSet={FlightLogStore.tableDataSet}
+          height={`${
+            windowDimensions.width > 992
+              ? 'calc(70vh - 100px)'
+              : 'calc(25vh - 100px)'
+          }`}
+        />
       </Col>
       <Col
         lg={14}

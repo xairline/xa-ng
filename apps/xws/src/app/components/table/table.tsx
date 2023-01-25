@@ -6,6 +6,7 @@ import {ModelsFlightInfo} from '../../../store/Api';
 /* eslint-disable-next-line */
 export interface TableViewProps {
   dataSet: TableDataSet;
+  height: string;
 }
 
 interface DataType {
@@ -22,7 +23,12 @@ export function TableView(props: TableViewProps) {
       dataIndex: 'date',
       filters: props.dataSet.filters['departure'] || null,
       filterMode: 'menu',
-      // width: '40%',
+      width: '40%',
+      render: (record: any) => (
+        <Tooltip placement="topLeft" title={record.date}>
+          {record.slice(0, 19)}
+        </Tooltip>
+      ),
     },
     {
       title: 'Departure',
@@ -31,7 +37,7 @@ export function TableView(props: TableViewProps) {
       filterMode: 'menu',
       filterSearch: true,
       //onFilter: (value: string, record) => record.departure.startsWith(value),
-      // width: '20%',
+      width: '20%',
       render: (record: ModelsFlightInfo) => (
         <Tooltip placement="topLeft" title={record.airportName}>
           {record.airportId}
@@ -45,7 +51,7 @@ export function TableView(props: TableViewProps) {
       filterMode: 'menu',
       filterSearch: true,
       //onFilter: (value: string, record) => record.arrival.startsWith(value),
-      // width: '20%',
+      width: '20%',
       render: (record: ModelsFlightInfo) => (
         <Tooltip placement="topLeft" title={record.airportName}>
           {record.airportId}
@@ -82,20 +88,6 @@ export function TableView(props: TableViewProps) {
             ) + " h"
       * */
     },
-    {
-      title: 'Source',
-      dataIndex: 'source',
-      // filters: ["Imported"],
-      filterMode: 'menu',
-      filterSearch: true,
-      //onFilter: (value: string, record) => record.departure.startsWith(value),
-      // width: '20%',
-      // render: (record: ModelsFlightInfo) => (
-      //   <Tooltip placement="topLeft" title={record.airportName}>
-      //     {record.airportId}
-      //   </Tooltip>
-      // ),
-    },
   ];
 
   const onChange: TableProps<DataType>['onChange'] = (
@@ -113,6 +105,7 @@ export function TableView(props: TableViewProps) {
       columns={columns}
       dataSource={props.dataSet.data}
       onChange={onChange}
+      scroll={{y: props.height}}
     />
   );
 }
