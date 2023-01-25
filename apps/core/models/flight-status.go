@@ -1,20 +1,29 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type FlightStatus struct {
-	gorm.Model
+	ID                  uint      `gorm:"primarykey" json:"id"`
+	CreatedAt           time.Time `json:"createdAt"`
+	UpdatedAt           time.Time
+	DeletedAt           gorm.DeletedAt         `gorm:"index"`
 	CurrentState        FlightState            `gorm:"-" swaggerignore:"true"`
 	PollFrequency       float32                `gorm:"-" swaggerignore:"true"`
 	Locations           []FlightStatusLocation `gorm:"foreignKey:FlightId"`
-	DepartureFlightInfo FlightInfo             `gorm:"embedded;embeddedPrefix:departure_"`
-	ArrivalFlightInfo   FlightInfo             `gorm:"embedded;embeddedPrefix:arrival_"`
+	DepartureFlightInfo FlightInfo             `gorm:"embedded;embeddedPrefix:departure_" json:"departureFlightInfo"`
+	ArrivalFlightInfo   FlightInfo             `gorm:"embedded;embeddedPrefix:arrival_" json:"arrivalFlightInfo"`
 	AircraftICAO        string
 	AircraftDisplayName string
 }
 
 type FlightStatusLocation struct {
-	gorm.Model
+	ID        uint      `gorm:"primarykey" json:"id"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 	FlightId  int
 	Timestamp float64
 	Vs        float64
@@ -35,11 +44,11 @@ type FlightStatusEvent struct {
 	Description string
 }
 type FlightInfo struct {
-	AirportId   string
-	AirportName string
-	FuelWeight  float64
-	TotalWeight float64
-	Time        float64
+	AirportId   string  `json:"airportId"`
+	AirportName string  `json:"airportName"`
+	FuelWeight  float64 `json:"fuelWeight"`
+	TotalWeight float64 `json:"totalWeight"`
+	Time        float64 `json:"time"`
 }
 
 type FlightState string

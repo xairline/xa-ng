@@ -1,6 +1,11 @@
 import {action, computed, makeObservable, observable, toJS} from 'mobx';
 import {Api, ModelsFlightStatus} from './Api';
 
+export interface TableDataSet {
+  filters: any;
+  data: any;
+}
+
 class FlightLogStore {
   @observable
   public flightStatuses: ModelsFlightStatus[];
@@ -9,6 +14,7 @@ class FlightLogStore {
   constructor() {
     this.flightStatuses = [];
     this.api = new Api<ModelsFlightStatus>();
+    this.loadFlightStatuses();
     makeObservable(this);
   }
 
@@ -21,8 +27,28 @@ class FlightLogStore {
     };
   }
 
+  @computed
+  get tableDataSet(): TableDataSet {
+    let data: any[] = [];
+    this.flightStatuses.forEach((flightStatus) => {
+      data.push({
+        key: flightStatus.id,
+        date: flightStatus.createdAt,
+        departure: flightStatus.departureFlightInfo,
+        arrival: flightStatus.arrivalFlightInfo || '-',
+        duration: !flightStatus.arrivalFlightInfo?.time
+          ? '-'
+          : !flightStatus.departureFlightInfo?.time
+            ? '-'
+            : flightStatus.arrivalFlightInfo.time -
+            flightStatus.departureFlightInfo?.time,
+      });
+    });
+    return {data, filters: []};
+  }
+
   @action
-  async loadFlightStatuses(): Promise<void> {
+  async loadFlightStatuses() {
     let res = await this.api.flightLogs.flightLogsList({isOverview: 'true'});
     this.flightStatuses = res.data;
   }

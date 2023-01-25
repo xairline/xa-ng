@@ -2,8 +2,8 @@ import {Col, Row} from 'antd';
 import {useEffect, useState} from 'react';
 import {useStores} from '../../../store';
 import {useObserver} from 'mobx-react-lite';
-import MapArch from './map';
-import TableView from './table';
+import MapArch from '../../components/map/map';
+import TableView from "../../components/table/table";
 
 /* eslint-disable-next-line */
 export interface FlightLogProps {
@@ -22,14 +22,6 @@ export function FlightLog(props: FlightLogProps) {
   const [windowDimensions, setWindowDimensions] = useState(
     getWindowDimensions()
   );
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await FlightLogStore.loadFlightStatuses();
-    };
-    fetchData().catch(console.error);
-  }, []);
-
   useEffect(() => {
     function handleResize() {
       setWindowDimensions(getWindowDimensions());
@@ -46,7 +38,7 @@ export function FlightLog(props: FlightLogProps) {
         span={24}
         style={{height: `${windowDimensions.width > 992 ? '100%' : '30%'}`}}
       >
-        <TableView/>
+        <TableView dataSet={FlightLogStore.tableDataSet}/>
       </Col>
       <Col
         lg={14}
