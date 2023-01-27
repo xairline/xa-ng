@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import {useStores} from '../../../store';
 import {useObserver} from 'mobx-react-lite';
 import TableView from '../../components/table/table';
-import MapArch from '../../components/map/map';
+import MapDetailed from '../../components/map/mapDetailed';
 
 /* eslint-disable-next-line */
 export interface FlightLogProps {
@@ -52,7 +52,7 @@ export function FlightLog(props: FlightLogProps) {
         span={24}
         style={{height: `${windowDimensions.width > 992 ? '100%' : '70%'}`}}
       >
-        <MapArch data={FlightLogStore.mapDataSet}/>
+        <MapDetailed data={FlightLogStore.mapDataSet}/>
       </Col>
     </Row>
   ));

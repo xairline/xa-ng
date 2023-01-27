@@ -16,11 +16,9 @@ interface IRoute {
 const MenuItem = Menu.Item;
 const {Header, Content, Footer} = Layout;
 
-
 export function App() {
   const {defaultAlgorithm, darkAlgorithm} = theme;
   const [isDarkMode, setIsDarkMode] = useState(true);
-
 
   const handleClick = () => {
     setIsDarkMode((previousValue) => !previousValue);
@@ -46,7 +44,7 @@ export function App() {
                 margin: '24px 16px',
                 padding: 24,
                 minHeight: 280,
-                background: 'url("/airport_night.jpg")',
+                overflowY: 'scroll',
               }}
             >
               <Routes>

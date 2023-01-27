@@ -12,11 +12,11 @@ type FlightStatus struct {
 	DeletedAt           gorm.DeletedAt         `gorm:"index"`
 	CurrentState        FlightState            `gorm:"-" swaggerignore:"true"`
 	PollFrequency       float32                `gorm:"-" swaggerignore:"true"`
-	Locations           []FlightStatusLocation `gorm:"foreignKey:FlightId"`
+	Locations           []FlightStatusLocation `gorm:"foreignKey:FlightId" json:"locations"`
 	DepartureFlightInfo FlightInfo             `gorm:"embedded;embeddedPrefix:departure_" json:"departureFlightInfo"`
 	ArrivalFlightInfo   FlightInfo             `gorm:"embedded;embeddedPrefix:arrival_" json:"arrivalFlightInfo"`
-	AircraftICAO        string
-	AircraftDisplayName string
+	AircraftICAO        string                 `json:"aircraftICAO"`
+	AircraftDisplayName string                 `json:"aircraftDisplayName"`
 }
 
 type FlightStatusLocation struct {
@@ -26,16 +26,16 @@ type FlightStatusLocation struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 	FlightId  int
 	Timestamp float64
-	Vs        float64
-	Ias       float64
-	Lat       float64
-	Lng       float64
+	Vs        float64 `json:"vs"`
+	Ias       float64 `json:"ias"`
+	Lat       float64 `json:"lat"`
+	Lng       float64 `json:"lng"`
 	Altitude  float64
-	Agl       float64
-	GearForce float64
-	GForce    float64
+	Agl       float64 `json:"agl"`
+	GearForce float64 `json:"gearForce"`
+	GForce    float64 `json:"gforce"`
 	Heading   float64
-	State     FlightState       `gorm:"embedded"`
+	State     FlightState       `gorm:"embedded" json:"state"`
 	Event     FlightStatusEvent `gorm:"embedded"`
 }
 
@@ -56,13 +56,13 @@ type FlightStatusEventType string
 
 const (
 	FlightStateParked  FlightState = "parked"
-	FlightStateTaxiOut             = "taxi_out"
-	FlightStateTakeoff             = "takeoff"
-	FlightStateClimb               = "climb"
-	FlightStateCruise              = "cruise"
-	FlightStateDescend             = "descend"
-	FlightStateLanding             = "landing"
-	FlightStateTaxiIn              = "taxi_in"
+	FlightStateTaxiOut FlightState = "taxi_out"
+	FlightStateTakeoff FlightState = "takeoff"
+	FlightStateClimb   FlightState = "climb"
+	FlightStateCruise  FlightState = "cruise"
+	FlightStateDescend FlightState = "descend"
+	FlightStateLanding FlightState = "landing"
+	FlightStateTaxiIn  FlightState = "taxi_in"
 )
 
 const (

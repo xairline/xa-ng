@@ -22,7 +22,7 @@ export interface MapArchProps {
 }
 
 // DeckGL react component
-export function MapArch(props: MapArchProps) {
+export function MapDetailed(props: MapArchProps) {
   const [time, setTime] = useState(0);
   const [animation]: any = useState({});
   const animationSpeed = 100,
@@ -96,11 +96,11 @@ export function MapArch(props: MapArchProps) {
       getTooltip={getTooltip}
     >
       <Map
-        mapStyle="mapbox://styles/mapbox/satellite-v9"
+        mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
         mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
       ></Map>
     </DeckGL>
   ));
 }
 
-export default MapArch;
+export default MapDetailed;

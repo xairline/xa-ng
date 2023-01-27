@@ -6,7 +6,9 @@
   "targets": {
     "build": {
       "executor": "@nrwl/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/xws"
@@ -39,7 +41,9 @@
     },
     "test": {
       "executor": "@nrwl/vite:test",
-      "outputs": ["coverage/apps/xws"],
+      "outputs": [
+        "coverage/apps/xws"
+      ],
       "options": {
         "passWithNoTests": true,
         "reportsDirectory": "../../coverage/apps/xws"
@@ -47,9 +51,13 @@
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/xws/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "apps/xws/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     }
   },

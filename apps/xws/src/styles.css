@@ -21,3 +21,7 @@ body {
 .ant-tabs-tab-active {
   color: #006363 !important;
 }
+
+.main-content {
+  background: url('/airport_night.jpg');
+}

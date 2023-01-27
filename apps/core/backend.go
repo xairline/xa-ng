@@ -18,7 +18,8 @@ func main() {
 	g := gin.New()
 	logger := logger.NewGenericLogger()
 	home, _ := os.UserHomeDir()
-	db, err := utils.CreateDatabase(logger, path.Join(home, "/X-Plane 12/Resources/plugins/XWebStack"))
+	pluginPath := path.Join(home, "/X-Plane 12/Resources/plugins/XWebStack")
+	db, err := utils.CreateDatabase(logger, pluginPath)
 	if err != nil {
 		logger.Errorf("Failed to create/connect database, %v", err)
 	}
@@ -27,6 +28,7 @@ func main() {
 		g,
 		controllers.NewDatarefController(logger, dataref.NewDatarefService(logger)),
 		controllers.NewFlightLogsController(logger, db),
+		pluginPath+"/xws",
 	).Setup()
 
 	err = g.Run(":8080")

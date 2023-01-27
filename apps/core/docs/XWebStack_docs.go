@@ -285,10 +285,24 @@ const docTemplateXWebStack = `{
         "models.FlightState": {
             "type": "string",
             "enum": [
-                "parked"
+                "parked",
+                "taxi_out",
+                "takeoff",
+                "climb",
+                "cruise",
+                "descend",
+                "landing",
+                "taxi_in"
             ],
             "x-enum-varnames": [
-                "FlightStateParked"
+                "FlightStateParked",
+                "FlightStateTaxiOut",
+                "FlightStateTakeoff",
+                "FlightStateClimb",
+                "FlightStateCruise",
+                "FlightStateDescend",
+                "FlightStateLanding",
+                "FlightStateTaxiIn"
             ]
         },
         "models.FlightStatus": {

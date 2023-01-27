@@ -107,11 +107,15 @@ func (s xplaneService) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlig
 
 func (s xplaneService) setupGin() {
 	g := gin.Default()
+	// get plugin path
+	systemPath := utilities.GetSystemPath()
+	pluginPath := filepath.Join(systemPath, "Resources", "plugins", "XWebStack")
 	routes.NewRoutes(
 		s.Logger,
 		g,
 		controllers.NewDatarefController(s.Logger, s.DatarefSvc),
 		controllers.NewFlightLogsController(s.Logger, s.db),
+		pluginPath+"/xws",
 	).Setup()
 
 	go func() {
