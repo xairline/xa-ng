@@ -1,12 +1,13 @@
 import {ColumnsType, TableProps} from 'antd/es/table';
 import {Table, Tooltip} from 'antd';
-import {TableDataSet} from '../../../store/flight-log';
 import {ModelsFlightInfo} from '../../../store/Api';
 import {Link} from 'react-router-dom';
+import {useStores} from '../../../store';
+import {useObserver} from 'mobx-react-lite';
 
 /* eslint-disable-next-line */
 export interface TableViewProps {
-  dataSet: TableDataSet;
+  // dataSet: TableDataSet;
   height: string;
 }
 
@@ -18,11 +19,12 @@ interface DataType {
 }
 
 export function TableView(props: TableViewProps) {
+  const {FlightLogStore} = useStores();
   const columns: ColumnsType<any> = [
     {
       title: 'Date',
       dataIndex: 'date',
-      filters: props.dataSet.filters['departure'] || null,
+      filters: FlightLogStore.tableDataSet.filters['departure'] || null,
       filterMode: 'menu',
       fixed: 'left',
       width: '100px',
@@ -35,7 +37,7 @@ export function TableView(props: TableViewProps) {
     {
       title: 'Departure',
       dataIndex: 'departure',
-      filters: props.dataSet.filters['departure'] || null,
+      filters: FlightLogStore.tableDataSet.filters['departure'] || null,
       filterMode: 'menu',
       filterSearch: true,
       //onFilter: (value: string, record) => record.departure.startsWith(value),
@@ -50,7 +52,7 @@ export function TableView(props: TableViewProps) {
     {
       title: 'Arrival',
       dataIndex: 'arrival',
-      filters: props.dataSet.filters['arrival'] || null,
+      filters: FlightLogStore.tableDataSet.filters['arrival'] || null,
       filterMode: 'menu',
       filterSearch: true,
       //onFilter: (value: string, record) => record.arrival.startsWith(value),
@@ -113,15 +115,15 @@ export function TableView(props: TableViewProps) {
   ) => {
     console.log('params', pagination, filters, sorter, extra);
   };
-  return (
+  return useObserver(() => (
     <Table
       size={'small'}
       columns={columns}
-      dataSource={props.dataSet.data}
+      dataSource={FlightLogStore.tableDataSet.data}
       onChange={onChange}
       scroll={{y: props.height, x: '400px'}}
     />
-  );
+  ));
 }
 
 export default TableView;

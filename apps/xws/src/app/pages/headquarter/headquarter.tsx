@@ -1,7 +1,6 @@
 import {Col, Row} from 'antd';
 import {ReactNode, useEffect, useState} from 'react';
 import TableView from '../../components/table/table';
-import {useStores} from '../../../store';
 import {useObserver} from 'mobx-react-lite';
 import MapArch from '../../components/map/mapArch';
 import CountUp from 'react-countup';
@@ -21,7 +20,6 @@ function getWindowDimensions() {
 }
 
 export function Headquarter(props: HeadquarterProps) {
-  const {FlightLogStore} = useStores();
   const [windowDimensions, setWindowDimensions] = useState(
     getWindowDimensions()
   );
@@ -47,7 +45,6 @@ export function Headquarter(props: HeadquarterProps) {
         </Col>
         <Col span={`${windowDimensions.width > 992 ? '8' : '24'}`}>
           <TableView
-            dataSet={FlightLogStore.tableDataSet}
             height={`${
               windowDimensions.width > 992
                 ? 'calc(43vh - 40px)'
@@ -61,7 +58,7 @@ export function Headquarter(props: HeadquarterProps) {
             height: `${windowDimensions.width > 992 ? '47vh' : '35vh'}`,
           }}
         >
-          <MapArch data={FlightLogStore.mapDataSet}/>
+          <MapArch/>
         </Col>
       </Row>
     </div>

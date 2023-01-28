@@ -32,12 +32,18 @@ class FlightLogStore {
   public flightStatuses: ModelsFlightStatus[];
   @observable
   public flightStatus: ModelsFlightStatus;
+  @observable
+  public AvgGForce: number;
+  @observable
+  public AvgLandingVS;
 
   private api: Api<ModelsFlightStatus>;
 
   constructor() {
     this.flightStatuses = [];
     this.flightStatus = {};
+    this.AvgLandingVS = 0;
+    this.AvgGForce = 0;
     this.api = new Api<ModelsFlightStatus>();
     this.loadFlightStatuses();
     makeObservable(this);
@@ -93,6 +99,8 @@ class FlightLogStore {
 
   @computed
   get LandingLineData(): any {
+    const avgG: number[] = [];
+    const avgVs: number[] = [];
     const line: any[] = [
       {
         name: 'VS(ft/min)',
@@ -144,7 +152,17 @@ class FlightLogStore {
         //   count: touchDownCount,
         // }
       );
+      if (g != 0) {
+        avgG.push(g);
+        avgVs.push(vs);
+      }
     });
+
+    const AvgGForce =
+      (avgG.reduce((partialSum, a) => partialSum + a, 0) * 1.0) / avgG.length;
+    const AvgVs =
+      (avgVs.reduce((partialSum, a) => partialSum + a, 0) * 1.0) / avgVs.length;
+    this.setAvgVsAndG(AvgVs, AvgGForce);
     return {line, column};
   }
 
@@ -209,6 +227,12 @@ class FlightLogStore {
       });
     });
     return {data, filters: []};
+  }
+
+  @action
+  setAvgVsAndG(vs: number, g: number) {
+    this.AvgGForce = g;
+    this.AvgLandingVS = vs;
   }
 
   @action

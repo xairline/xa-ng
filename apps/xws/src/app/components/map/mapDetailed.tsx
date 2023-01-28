@@ -17,9 +17,9 @@ export interface MapArchProps {
 export function MapDetailed(props: MapArchProps) {
   const [time, setTime] = useState(0);
   const [animation]: any = useState({});
-  const animationSpeed = 100,
+  const animationSpeed = 50,
     loopLength = 3600 * 5,
-    trailLength = 180000;
+    trailLength = 100;
   const animate = () => {
     setTime((t) => (t + animationSpeed) % loopLength);
     animation.id = window.requestAnimationFrame(animate);
@@ -43,9 +43,9 @@ export function MapDetailed(props: MapArchProps) {
   const INITIAL_VIEW_STATE = {
     longitude: props?.data?.paths[0]?.path[0][0] || -75.6692,
     latitude: props?.data?.paths[0]?.path[0][1] || 45.3192,
-    zoom: 10,
+    zoom: 14,
     pitch: 53,
-    bearing: 0,
+    bearing: -10,
   };
 
   const layers = [

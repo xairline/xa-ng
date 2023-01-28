@@ -2,7 +2,6 @@ import {useStores} from '../../../../store';
 import {useObserver} from 'mobx-react-lite';
 import {Card, Col, Row, Statistic} from 'antd';
 import {CardSize} from 'antd/es/card/Card';
-import {formatter} from '../util';
 import {DualAxes} from '@ant-design/plots';
 
 /* eslint-disable-next-line */
@@ -47,21 +46,22 @@ export function Landing(props: LandingProps) {
             <Col>
               <Statistic
                 title="Avg VS"
-                value={FlightLogStore.TotalNumberOfFlights}
+                value={FlightLogStore.AvgLandingVS}
                 precision={2}
+
                 // valueStyle={{color: '#3f8600'}}
-                // suffix="%"
-                formatter={formatter}
+                suffix="ft/min"
+                // formatter={formatter}
               />
             </Col>
             <Col>
               <Statistic
                 title="Avg G"
-                value={FlightLogStore.TotalNumberOfFlights}
+                value={FlightLogStore.AvgGForce}
                 precision={2}
                 // valueStyle={{color: '#3f8600'}}
                 // suffix="%"
-                formatter={formatter}
+                // formatter={formatter}
               />
             </Col>
           </Row>
