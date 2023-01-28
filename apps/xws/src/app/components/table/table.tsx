@@ -2,6 +2,7 @@ import {ColumnsType, TableProps} from 'antd/es/table';
 import {Table, Tooltip} from 'antd';
 import {TableDataSet} from '../../../store/flight-log';
 import {ModelsFlightInfo} from '../../../store/Api';
+import {Link} from 'react-router-dom';
 
 /* eslint-disable-next-line */
 export interface TableViewProps {
@@ -23,10 +24,11 @@ export function TableView(props: TableViewProps) {
       dataIndex: 'date',
       filters: props.dataSet.filters['departure'] || null,
       filterMode: 'menu',
-      width: '40%',
+      fixed: 'left',
+      width: '100px',
       render: (record: any) => (
         <Tooltip placement="topLeft" title={record.date}>
-          {record.slice(0, 19)}
+          {record.slice(0, 10)}
         </Tooltip>
       ),
     },
@@ -37,7 +39,8 @@ export function TableView(props: TableViewProps) {
       filterMode: 'menu',
       filterSearch: true,
       //onFilter: (value: string, record) => record.departure.startsWith(value),
-      width: '20%',
+      // fixed: 'left',
+      width: '90px',
       render: (record: ModelsFlightInfo) => (
         <Tooltip placement="topLeft" title={record.airportName}>
           {record.airportId}
@@ -51,7 +54,8 @@ export function TableView(props: TableViewProps) {
       filterMode: 'menu',
       filterSearch: true,
       //onFilter: (value: string, record) => record.arrival.startsWith(value),
-      width: '20%',
+      // fixed: 'left',
+      width: '80px',
       render: (record: ModelsFlightInfo) => (
         <Tooltip placement="topLeft" title={record.airportName}>
           {record.airportId}
@@ -63,6 +67,8 @@ export function TableView(props: TableViewProps) {
       dataIndex: 'duration',
       //onFilter: (value: string, record) => record.arrival.startsWith(value),
       // width: '20%',
+      // fixed: 'left',
+      width: '100px',
       render: (record: any) =>
         record == '-' ? (
           '-'
@@ -88,6 +94,15 @@ export function TableView(props: TableViewProps) {
             ) + " h"
       * */
     },
+    {
+      title: '',
+      key: 'operation',
+      fixed: 'right',
+      width: 100,
+      render: (record: any) => (
+        <Link to={`/flight-logs/${record.key}`}>Details</Link>
+      ),
+    },
   ];
 
   const onChange: TableProps<DataType>['onChange'] = (
@@ -98,14 +113,13 @@ export function TableView(props: TableViewProps) {
   ) => {
     console.log('params', pagination, filters, sorter, extra);
   };
-
   return (
     <Table
       size={'small'}
       columns={columns}
       dataSource={props.dataSet.data}
       onChange={onChange}
-      scroll={{y: props.height}}
+      scroll={{y: props.height, x: '400px'}}
     />
   );
 }

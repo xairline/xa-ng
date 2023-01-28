@@ -1,8 +1,8 @@
 import {useState} from 'react';
 import {ConfigProvider, Layout, Menu, theme} from 'antd';
-import {useObserver} from 'mobx-react-lite';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import {Nav, routes} from './components/nav/nav';
+import FlightLog from './pages/flight-log/flight-log';
 
 interface IRoute {
   path: string;
@@ -27,7 +27,7 @@ export function App() {
     token: {colorBgContainer},
   } = theme.useToken();
 
-  return useObserver(() => (
+  return (
     <ConfigProvider
       theme={{
         algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm,
@@ -54,6 +54,7 @@ export function App() {
                     <Route key={index} path={route.path} element={route.comp}/>
                   );
                 })}
+                <Route path="/flight-logs/:id" element={<FlightLog/>}/>
               </Routes>
             </Content>
             <Footer style={{textAlign: 'center'}}>
@@ -63,7 +64,7 @@ export function App() {
         </Layout>
       </BrowserRouter>
     </ConfigProvider>
-  ));
+  );
 }
 
 export default App;

@@ -30,10 +30,14 @@ export interface TableDataSet {
 class FlightLogStore {
   @observable
   public flightStatuses: ModelsFlightStatus[];
+  @observable
+  public flightStatus: ModelsFlightStatus;
+
   private api: Api<ModelsFlightStatus>;
 
   constructor() {
     this.flightStatuses = [];
+    this.flightStatus = {};
     this.api = new Api<ModelsFlightStatus>();
     this.loadFlightStatuses();
     makeObservable(this);
@@ -65,6 +69,15 @@ class FlightLogStore {
       }
     });
     return res;
+  }
+
+  @computed
+  get mapData() {
+    const res = this.calculatePaths([this.flightStatus]) as any;
+    return {
+      paths: res.paths,
+      pathsExt: res.pathsExt,
+    };
   }
 
   @computed
@@ -175,7 +188,6 @@ class FlightLogStore {
         .map((item) => item.arrivalFlightInfo?.airportId),
     ];
     const unique = [...new Set(airports.map((item) => item))];
-    console.log(unique);
     return unique.length;
   }
 
@@ -203,6 +215,12 @@ class FlightLogStore {
   async loadFlightStatuses() {
     let res = await this.api.flightLogs.flightLogsList({isOverview: 'true'});
     this.flightStatuses = res.data;
+  }
+
+  @action
+  async LoadFlightInfo(id: string) {
+    let res = await this.api.flightLogs.flightLogsDetail(id);
+    this.flightStatus = res.data;
   }
 
   calculateArcs(data: any) {

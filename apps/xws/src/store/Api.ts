@@ -45,6 +45,13 @@ export interface ModelsFlightInfo {
 
 export enum ModelsFlightState {
   FlightStateParked = 'parked',
+  FlightStateTaxiOut = 'taxi_out',
+  FlightStateTakeoff = 'takeoff',
+  FlightStateClimb = 'climb',
+  FlightStateCruise = 'cruise',
+  FlightStateDescend = 'descend',
+  FlightStateLanding = 'landing',
+  FlightStateTaxiIn = 'taxi_in',
 }
 
 export interface ModelsFlightStatus {

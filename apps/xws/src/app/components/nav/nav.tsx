@@ -1,10 +1,9 @@
 import {Col, Layout, Menu, Row, theme} from 'antd';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faBook, faBuilding} from '@fortawesome/free-solid-svg-icons';
+import {faBuilding} from '@fortawesome/free-solid-svg-icons';
 import Headquarter from '../../pages/headquarter/headquarter';
-import FlightLog from '../../pages/flight-log/flight-log';
 import {Link} from 'react-router-dom';
-import {useStores} from "../../../store";
+import {useStores} from '../../../store';
 
 const {Header} = Layout;
 const MenuItem = Menu.Item;
@@ -19,7 +18,6 @@ export interface IRoute {
 }
 
 export const routes: Array<IRoute> = [
-
   {
     path: '/',
     name: 'Headquarter',
@@ -33,18 +31,18 @@ export const routes: Array<IRoute> = [
     comp: <Headquarter/>,
   },
   // hq sub menus
-  {
-    path: '/flight-log',
-    name: 'Flight Log',
-    icon: (
-      <FontAwesomeIcon
-        icon={faBook}
-        style={{marginLeft: '10px', marginRight: '14px'}}
-        size={'1x'}
-      />
-    ),
-    comp: <FlightLog/>,
-  },
+  // {
+  //   path: '/flight-log',
+  //   name: 'Flight Log',
+  //   icon: (
+  //     <FontAwesomeIcon
+  //       icon={faBook}
+  //       style={{marginLeft: '10px', marginRight: '14px'}}
+  //       size={'1x'}
+  //     />
+  //   ),
+  //   comp: <FlightLog/>,
+  // },
 ];
 
 /* eslint-disable-next-line */

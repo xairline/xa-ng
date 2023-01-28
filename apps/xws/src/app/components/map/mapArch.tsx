@@ -40,8 +40,10 @@ export function MapArch(props: MapArchProps) {
     }),
   ];
   const INITIAL_VIEW_STATE = {
-    longitude: props.data?.arch[0]?.source[0] || -75.6692,
-    latitude: props.data?.arch[0]?.source[1] || 45.3192,
+    longitude:
+      props?.data?.arch?.length > 0 ? props.data?.arch[0]?.source[0] : -75.6692,
+    latitude:
+      props?.data?.arch?.length > 0 ? props.data?.arch[0]?.source[1] : 45.3192,
     zoom: 5,
     pitch: 53,
     bearing: 0,

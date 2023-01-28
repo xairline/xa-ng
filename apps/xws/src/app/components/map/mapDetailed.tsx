@@ -9,14 +9,6 @@ import {TripsLayer} from '@deck.gl/geo-layers/typed';
 const MAPBOX_ACCESS_TOKEN =
   'pk.eyJ1IjoieGFpcmxpbmUiLCJhIjoiY2xkOGE0eHY2MDExZzNvbnh6NG0zYjdkeSJ9.DBehpQbCB9Sjws8OH7I69A';
 
-const INITIAL_VIEW_STATE = {
-  longitude: -75.6692,
-  latitude: 45.3192,
-  zoom: 5,
-  pitch: 53,
-  bearing: 0,
-};
-
 export interface MapArchProps {
   data: any;
 }
@@ -47,6 +39,14 @@ export function MapDetailed(props: MapArchProps) {
     DEP: ${info.DepartureFlightInfo?.AirportId} - ${info.DepartureFlightInfo?.AirportName}
     ARR: ${info.ArrivalFlightInfo?.AirportId} - ${info.ArrivalFlightInfo?.AirportName}`;
   }
+
+  const INITIAL_VIEW_STATE = {
+    longitude: props?.data?.paths[0]?.path[0][0] || -75.6692,
+    latitude: props?.data?.paths[0]?.path[0][1] || 45.3192,
+    zoom: 10,
+    pitch: 53,
+    bearing: 0,
+  };
 
   const layers = [
     new PathLayer({
@@ -96,7 +96,7 @@ export function MapDetailed(props: MapArchProps) {
       getTooltip={getTooltip}
     >
       <Map
-        mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
+        mapStyle="mapbox://styles/mapbox/satellite-v9"
         mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
       ></Map>
     </DeckGL>
