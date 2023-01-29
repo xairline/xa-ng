@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="go test apps/core/services" type="GoTestRunConfiguration" factoryName="Go Test" nameIsGenerated="true">
+    <module name="xa-ng" />
+    <working_directory value="$PROJECT_DIR$/apps/core/services" />
+    <envs>
+      <env name="CGO_CFLAGS" value="-DAPL=1 -DIBM=0 -DLIN=0" />
+      <env name="CGO_ENABLED" value="1" />
+      <env name="CGO_LDFLAGS" value="-F/System/Library/Frameworks/ -F/Users/dzou/git/personal/xa-ng/apps/core/Libraries/Mac -framework XPLM" />
+    </envs>
+    <root_directory value="$PROJECT_DIR$/apps/core" />
+    <kind value="PACKAGE" />
+    <package value="apps/core/services" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$" />
+    <framework value="gotest" />
+    <method v="2" />
+  </configuration>
+</component>

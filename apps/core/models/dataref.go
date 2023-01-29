@@ -18,9 +18,9 @@ type DatarefExt struct {
 }
 
 type DatarefValue struct {
-	Name        string
-	DatarefType dataAccess.DataRefType
-	Value       interface{}
+	Name        string                 `json:"name" `
+	DatarefType dataAccess.DataRefType `json:"dataref_type" `
+	Value       interface{}            `json:"value" `
 }
 
 type DatarefValues map[string]DatarefValue

@@ -8,20 +8,25 @@ import (
 func (f flightStatusService) processDatarefLanding(datarefValues models.DatarefValues) {
 	if datarefValues["gs"].Value.(float64) < 30/1.9438 {
 		airportId, airportName := f.DatarefSvc.GetNearestAirport()
-		var weightPrecision int8 = 1
-		fuelWeight := f.DatarefSvc.GetValueByDatarefName("sim/flightmodel/weight/m_fuel_total", "fuel_weight", &weightPrecision, false)
-		totalWeight := f.DatarefSvc.GetValueByDatarefName("sim/flightmodel/weight/m_total", "total_weight", &weightPrecision, false)
 		f.setArrivalFlightInfo(
 			airportId,
 			airportName,
 			datarefValues["ts"].Value.(float64),
-			fuelWeight.Value.(float64),
-			totalWeight.Value.(float64),
+			0,
+			0,
 		)
-
-		f.addFlightEvent(datarefValues, fmt.Sprintf("Taxi in at %s", airportId))
+		event := f.addFlightEvent(fmt.Sprintf("Taxi in at %s", airportId))
+		f.addLocation(datarefValues, -1, &event)
 		f.changeState(models.FlightStateTaxiIn, 0.2)
+		return
 	} else {
-		// watch for violation
+		f.addLocation(datarefValues, 0.1, nil)
 	}
+	// go-around
+	//if datarefValues["vs"].Value.(float64) > 500 &&
+	//	datarefValues["gear_force"].Value.(float64) < 1 {
+	//	f.addFlightEvent(datarefValues, "Climb")
+	//	f.changeState(models.FlightStateClimb, 0.2)
+	//	return
+	//}
 }

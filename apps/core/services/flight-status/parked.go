@@ -25,10 +25,16 @@ func (f flightStatusService) processDatarefParked(datarefValues models.DatarefVa
 		aircraftDisplayName := f.DatarefSvc.GetValueByDatarefName("sim/aircraft/view/acf_ui_name", "acf_ui_name", nil, true)
 		f.FlightStatus.AircraftICAO = aircraftICAO.Value.(string)
 		f.FlightStatus.AircraftDisplayName = aircraftDisplayName.Value.(string)
-
 		f.Logger.Infof("Departure information: %+v", f.FlightStatus)
 
-		f.addFlightEvent(datarefValues, fmt.Sprintf("Taxi out at %s", airportId))
+		// store to db
+		result := f.db.Model(&models.FlightStatus{}).Create(f.FlightStatus)
+		if result.Error != nil {
+			f.Logger.Errorf("Failed to store flight: %+v", result)
+		}
+
+		event := f.addFlightEvent(fmt.Sprintf("Taxi out at %s", airportId))
+		f.addLocation(datarefValues, -1, &event)
 		f.changeState(models.FlightStateTaxiOut, 0.2)
 	}
 }

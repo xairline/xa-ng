@@ -36,9 +36,6 @@ func (g GenericLogger) Warning(msg string) {
 	fmt.Printf("WARNING: %s\n", msg)
 }
 
-func NewXplaneLogger() Logger {
-	return XplaneLogger{}
-}
 func NewGenericLogger() Logger {
 	return GenericLogger{}
 }

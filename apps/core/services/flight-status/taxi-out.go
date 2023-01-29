@@ -1,6 +1,9 @@
 package flight_status
 
-import "apps/core/models"
+import (
+	"apps/core/models"
+	"math"
+)
 
 func (f flightStatusService) processDatarefTaxiOut(datarefValues models.DatarefValues) {
 	//todo: fix below
@@ -9,10 +12,16 @@ func (f flightStatusService) processDatarefTaxiOut(datarefValues models.DatarefV
 		n1 = value
 		break
 	}
-	if n1 > 75 {
-		f.addFlightEvent(datarefValues, "Takeoff")
+	if n1 > 75 &&
+		datarefValues["gs"].Value.(float64) > 30/1.9438 {
+		event := f.addFlightEvent("Takeoff")
+		f.addLocation(datarefValues, -1, &event)
 		f.changeState(models.FlightStateTakeoff, 0.1)
 	} else {
-		// watch for violation
+		currentHeading := datarefValues["heading"].Value.(float64)
+		lastHeading := f.FlightStatus.Locations[len(f.FlightStatus.Locations)-1].Heading
+		if math.Abs(lastHeading-currentHeading) > 10 {
+			f.addLocation(datarefValues, -1, nil)
+		}
 	}
 }

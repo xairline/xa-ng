@@ -1,0 +1,275 @@
+basePath: /apis
+definitions:
+  ResponseError:
+    properties:
+      message:
+        type: string
+    type: object
+  dataAccess.DataRefType:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 4
+    - 8
+    - 16
+    - 32
+    type: integer
+    x-enum-varnames:
+    - TypeUnknown
+    - TypeInt
+    - TypeFloat
+    - TypeDouble
+    - TypeFloatArray
+    - TypeIntArray
+    - TypeData
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  models.DatarefValue:
+    properties:
+      dataref_type:
+        $ref: '#/definitions/dataAccess.DataRefType'
+      name:
+        type: string
+      value: {}
+    type: object
+  models.FlightInfo:
+    properties:
+      airportId:
+        type: string
+      airportName:
+        type: string
+      fuelWeight:
+        type: number
+      time:
+        type: number
+      totalWeight:
+        type: number
+    type: object
+  models.FlightState:
+    enum:
+    - parked
+    - taxi_out
+    - takeoff
+    - climb
+    - cruise
+    - descend
+    - landing
+    - taxi_in
+    type: string
+    x-enum-varnames:
+    - FlightStateParked
+    - FlightStateTaxiOut
+    - FlightStateTakeoff
+    - FlightStateClimb
+    - FlightStateCruise
+    - FlightStateDescend
+    - FlightStateLanding
+    - FlightStateTaxiIn
+  models.FlightStatus:
+    properties:
+      aircraftDisplayName:
+        type: string
+      aircraftICAO:
+        type: string
+      arrivalFlightInfo:
+        $ref: '#/definitions/models.FlightInfo'
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      departureFlightInfo:
+        $ref: '#/definitions/models.FlightInfo'
+      id:
+        type: integer
+      locations:
+        items:
+          $ref: '#/definitions/models.FlightStatusLocation'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  models.FlightStatusEvent:
+    properties:
+      description:
+        type: string
+      eventType:
+        $ref: '#/definitions/models.FlightStatusEventType'
+    type: object
+  models.FlightStatusEventType:
+    enum:
+    - event:state
+    type: string
+    x-enum-varnames:
+    - StateEvent
+  models.FlightStatusLocation:
+    properties:
+      agl:
+        type: number
+      altitude:
+        type: number
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      event:
+        $ref: '#/definitions/models.FlightStatusEvent'
+      flightId:
+        type: integer
+      gearForce:
+        type: number
+      gforce:
+        type: number
+      heading:
+        type: number
+      ias:
+        type: number
+      id:
+        type: integer
+      lat:
+        type: number
+      lng:
+        type: number
+      state:
+        $ref: '#/definitions/models.FlightState'
+      timestamp:
+        type: number
+      updatedAt:
+        type: string
+      vs:
+        type: number
+    type: object
+info:
+  contact: {}
+paths:
+  /flight-logs:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: specify if it's overview
+        in: query
+        name: isOverview
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.FlightStatus'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
+      summary: Get a list of FlightLogs
+      tags:
+      - Flight_Logs
+  /flight-logs/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: id of a flight log item
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.FlightStatus'
+        "404":
+          description: Not Found
+      summary: Get one FlightLog
+      tags:
+      - Flight_Logs
+  /xplm/dataref:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: xplane dataref string
+        in: query
+        name: dataref_str
+        required: true
+        type: string
+      - description: alias name, if not set, dataref_str will be used
+        in: query
+        name: alias
+        type: string
+      - description: '-1: raw, 2: round up to two digits'
+        in: query
+        name: precision
+        required: true
+        type: integer
+      - description: transform xplane byte array to string
+        in: query
+        name: is_byte_array
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DatarefValue'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
+      summary: Get Dataref
+      tags:
+      - XPLM_Dataref
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "501":
+          description: Not Implemented
+      summary: Set Dataref
+      tags:
+      - XPLM_Dataref
+  /xplm/datarefs:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DatarefValue'
+            type: array
+        "501":
+          description: Not Implemented
+      summary: Get a list of Dataref
+      tags:
+      - XPLM_Dataref
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "501":
+          description: Not Implemented
+      summary: Set a list of Dataref
+      tags:
+      - XPLM_Dataref
+swagger: "2.0"

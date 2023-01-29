@@ -64,17 +64,17 @@ func (mr *MockDatarefServiceMockRecorder) GetNearestAirport() *gomock.Call {
 }
 
 // GetValueByDatarefName mocks base method.
-func (m *MockDatarefService) GetValueByDatarefName(dataref, name string, precision *int8) models.DatarefValue {
+func (m *MockDatarefService) GetValueByDatarefName(dataref, name string, precision *int8, isByteArray bool) models.DatarefValue {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetValueByDatarefName", dataref, name, precision)
+	ret := m.ctrl.Call(m, "GetValueByDatarefName", dataref, name, precision, isByteArray)
 	ret0, _ := ret[0].(models.DatarefValue)
 	return ret0
 }
 
 // GetValueByDatarefName indicates an expected call of GetValueByDatarefName.
-func (mr *MockDatarefServiceMockRecorder) GetValueByDatarefName(dataref, name, precision interface{}) *gomock.Call {
+func (mr *MockDatarefServiceMockRecorder) GetValueByDatarefName(dataref, name, precision, isByteArray interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetValueByDatarefName", reflect.TypeOf((*MockDatarefService)(nil).GetValueByDatarefName), dataref, name, precision)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetValueByDatarefName", reflect.TypeOf((*MockDatarefService)(nil).GetValueByDatarefName), dataref, name, precision, isByteArray)
 }
 
 // getCurrentValue mocks base method.
