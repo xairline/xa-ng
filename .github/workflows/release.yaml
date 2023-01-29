@@ -1,0 +1,45 @@
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: apps/core
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.18' # The Go version to download (if necessary) and use.
+      - run: brew install FiloSottile/musl-cross/musl-cross
+      - run: brew install mingw-w64
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: go-mod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            go-mod-
+      - run: go mod tidy
+      #      - run: make mac-test
+      - run: make all -j 3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm install -g pnpm
+      - run: pnpm i
+      - run: npx nx run xws:build
