@@ -25,7 +25,7 @@ type FlightStatusLocation struct {
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 	FlightId  int
-	Timestamp float64
+	Timestamp float64 `json:"timestamp"`
 	Vs        float64 `json:"vs"`
 	Ias       float64 `json:"ias"`
 	Lat       float64 `json:"lat"`
@@ -36,12 +36,12 @@ type FlightStatusLocation struct {
 	GForce    float64 `json:"gforce"`
 	Heading   float64
 	State     FlightState       `gorm:"embedded" json:"state"`
-	Event     FlightStatusEvent `gorm:"embedded"`
+	Event     FlightStatusEvent `gorm:"embedded" json:"event"`
 }
 
 type FlightStatusEvent struct {
-	EventType   FlightStatusEventType
-	Description string
+	EventType   FlightStatusEventType `json:"eventType"`
+	Description string                `json:"description"`
 }
 type FlightInfo struct {
 	AirportId   string  `json:"airportId"`

@@ -41,9 +41,13 @@ export function MapDetailed(props: MapArchProps) {
   }
 
   const INITIAL_VIEW_STATE = {
-    longitude: props?.data?.paths[0]?.path[0][0] || -75.6692,
-    latitude: props?.data?.paths[0]?.path[0][1] || 45.3192,
-    zoom: 14,
+    longitude: props?.data?.paths[0]?.path[0]
+      ? props?.data?.paths[0]?.path[0][0]
+      : -75.6692,
+    latitude: props?.data?.paths[0]?.path[0]
+      ? props?.data?.paths[0]?.path[0][1]
+      : 45.3192,
+    zoom: props?.data?.paths[0]?.path[0] ? 14 : 8,
     pitch: 53,
     bearing: -10,
   };
@@ -80,7 +84,7 @@ export function MapDetailed(props: MapArchProps) {
       getColor: (d: any) => d.color,
       opacity: 0.3,
       widthMinPixels: 6,
-      rounded: true,
+      // rounded: true,
       fadeTrail: false,
       trailLength,
       currentTime: time,
@@ -93,7 +97,7 @@ export function MapDetailed(props: MapArchProps) {
       controller={true}
       layers={layers}
       height={'100%'}
-      getTooltip={getTooltip}
+      // getTooltip={getTooltip}
     >
       <Map
         mapStyle="mapbox://styles/mapbox/satellite-v9"

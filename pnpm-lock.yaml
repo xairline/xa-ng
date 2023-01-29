@@ -74,6 +74,7 @@ specifiers:
   react-countup: ^6.4.0
   react-dom: 18.2.0
   react-map-gl: ^5.0.21
+  react-mapbox-gl: ^5.1.1
   react-refresh: ^0.10.0
   react-router-dom: ^6.7.0
   react-test-renderer: 18.2.0
@@ -167,6 +168,7 @@ devDependencies:
   prettier: 2.8.1
   react-countup: 6.4.0_2hfnm3m6cqriftkf73aikpdsxq
   react-map-gl: 5.3.21_react@18.2.0
+  react-mapbox-gl: 5.1.1_v7n7zyhlwgkwedhpfpbgnbr4ke
   react-refresh: 0.10.0
   react-router-dom: 6.7.0_biqbaboplfbrettd7655fr4n2y
   react-test-renderer: 18.2.0_react@18.2.0
@@ -4154,6 +4156,20 @@ packages:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
     dev: true
 
+  /@turf/bbox/4.7.3:
+    resolution: {integrity: sha512-78lSzSQuLHq0363sVlmkX9uxBejeWGyZhQBAh7oc1ucnsYsem1m4ynjDXG8/hKP4nG/yUFWPdV9xklezKdvzKw==}
+    dependencies:
+      '@turf/meta': 4.7.4
+    dev: true
+
+  /@turf/helpers/4.7.3:
+    resolution: {integrity: sha512-hk5ANVazb80zK6tjJYAG76oCRTWMQo6SAFu5E1dVnlb2kT3FHLoPcOB9P11duwDafMwywz24KZ+FUorB5e728w==}
+    dev: true
+
+  /@turf/meta/4.7.4:
+    resolution: {integrity: sha512-cvwz4EI9BjrgRHxmJ3Z3HKxq6k/fj/V95kwNZ8uWNLncCvrb7x1jUBDkQUo1tShnYdZ8eBgA+a2bvJmAM+MJ0A==}
+    dev: true
+
   /@types/aria-query/5.0.1:
     resolution: {integrity: sha512-XTIieEY+gvJ39ChLcB4If5zHtPxt3Syj5rgZR+e1ctpmK8NjPf0zFqsz4JpLJT0xla9GFDKjy8Cpu331nrmE1Q==}
     dev: true
@@ -4511,6 +4527,12 @@ packages:
       '@types/hoist-non-react-statics': 3.3.1
       '@types/react': 18.0.25
       csstype: 3.1.1
+    dev: true
+
+  /@types/supercluster/5.0.3:
+    resolution: {integrity: sha512-XMSqQEr7YDuNtFwSgaHHOjsbi0ZGL62V9Js4CW45RBuRYlNWSW/KDqN+RFFE7HdHcGhJPtN0klKvw06r9Kg7rg==}
+    dependencies:
+      '@types/geojson': 7946.0.10
     dev: true
 
   /@types/text-encoding-utf-8/1.0.2:
@@ -6739,6 +6761,10 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       type-detect: 4.0.8
+    dev: true
+
+  /deep-equal/1.0.1:
+    resolution: {integrity: sha512-bHtC0iYvWhyaTzvV3CZgPeZQqCOBGyGsVV7v4eevpdkLHfiSrXUdBG+qAuSz4RI70sszvjQ1QSZ98An1yNwpSw==}
     dev: true
 
   /deep-equal/1.1.1:
@@ -12148,6 +12174,25 @@ packages:
       react: 18.2.0
       resize-observer-polyfill: 1.5.1
       viewport-mercator-project: 7.0.4
+    dev: true
+
+  /react-mapbox-gl/5.1.1_v7n7zyhlwgkwedhpfpbgnbr4ke:
+    resolution: {integrity: sha512-8vGldFQf7pW8T5ZV2OOhwXoaBvfigB2F7dnhzaZ/bD5/KJzP9zprMbn0xMX95W3eqbKzGGHnwyD5DyTTwR6wGw==}
+    peerDependencies:
+      mapbox-gl: ^1.12.0
+      prop-types: ^15.6.2
+      react: ^16.11.0
+      react-dom: ^16.11.0
+    dependencies:
+      '@turf/bbox': 4.7.3
+      '@turf/helpers': 4.7.3
+      '@types/supercluster': 5.0.3
+      deep-equal: 1.0.1
+      mapbox-gl: 2.12.0
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      supercluster: 7.1.5
     dev: true
 
   /react-refresh/0.10.0:

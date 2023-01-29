@@ -1,5 +1,5 @@
 import {action, computed, makeObservable, observable, toJS} from 'mobx';
-import {Api, ModelsFlightStatus} from './Api';
+import {Api, ModelsFlightStatus, ModelsFlightStatusLocation} from './Api';
 import {scaleQuantile} from 'd3-scale';
 
 export const inFlowColors = [
@@ -167,6 +167,18 @@ class FlightLogStore {
   }
 
   @computed
+  get FlightEvents(): any {
+    let res = this.flightStatus.locations?.filter(
+      (location: ModelsFlightStatusLocation) => {
+        return (
+          location.event?.eventType && (location.event?.eventType as any) !== ''
+        );
+      }
+    );
+    return res;
+  }
+
+  @computed
   get TotalNumberOfHours(): number {
     let res: number = 0.0;
     this.flightStatuses.forEach((flightStatus) => {
@@ -300,7 +312,7 @@ class FlightLogStore {
       const color = [r, g, b];
       item?.locations?.forEach((location: any) => {
         const pathItem = [location.lng, location.lat, location.agl];
-        res.timestamps.push(location.Timestamp);
+        res.timestamps.push(location.timestamp);
         res.path.push(pathItem);
         res.color = color;
         let resExt: any = {
