@@ -42,4 +42,4 @@ jobs:
           node-version: 16
       - run: npm install -g pnpm
       - run: pnpm i
-      - run: npx nx run xws:build
+      - run: pnpm exec nx run xws:build
