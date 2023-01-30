@@ -18,6 +18,7 @@ type FlightStatus struct {
 	AircraftICAO        string                 `json:"aircraftICAO"`
 	AircraftDisplayName string                 `json:"aircraftDisplayName"`
 	VaFiled             bool                   `gorm:"default:false" json:"va_filed"`
+	Source              string                 `gorm:"default:xws" json:"source"`
 }
 
 type FlightStatusLocation struct {

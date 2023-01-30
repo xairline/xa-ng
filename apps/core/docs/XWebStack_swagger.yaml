@@ -92,6 +92,8 @@ definitions:
         items:
           $ref: '#/definitions/models.FlightStatusLocation'
         type: array
+      source:
+        type: string
       updatedAt:
         type: string
       va_filed:

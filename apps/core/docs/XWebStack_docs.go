@@ -366,6 +366,9 @@ const docTemplateXWebStack = `{
                         "$ref": "#/definitions/models.FlightStatusLocation"
                     }
                 },
+                "source": {
+                    "type": "string"
+                },
                 "updatedAt": {
                     "type": "string"
                 },

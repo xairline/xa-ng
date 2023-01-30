@@ -434,7 +434,7 @@ class FlightLogStore {
         departure: flightStatus.departureFlightInfo,
         arrival: flightStatus.arrivalFlightInfo || '-',
         hasLocationData: flightStatus.locations
-          ? flightStatus.locations?.length > 0
+          ? flightStatus.locations?.length > 2
           : false,
         duration: !flightStatus.arrivalFlightInfo?.time
           ? '-'
