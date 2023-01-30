@@ -1,5 +1,5 @@
 import {ColumnsType, TableProps} from 'antd/es/table';
-import {Table, Tooltip} from 'antd';
+import {Divider, Table, Tooltip} from 'antd';
 import {ModelsFlightInfo} from '../../../store/Api';
 import {Link} from 'react-router-dom';
 import {useStores} from '../../../store';
@@ -97,14 +97,26 @@ export function TableView(props: TableViewProps) {
       * */
     },
     {
-      title: 'Details',
+      title: 'Actions',
       key: 'operation',
       fixed: 'right',
       width: 100,
-      render: (record: any) => (
-        record.hasLocationData ?
-          <Link to={`/flight-logs/${record.key}`}>Details</Link> : "Not Available"
-      ),
+      render: (record: any) =>
+        record.hasLocationData ? (
+          <>
+            <Link to={`/flight-logs/${record.key}`}>Details</Link>
+            {!record.va_filed ? (
+              <>
+                <Divider type={'vertical'}/>
+                <Link to={`/va/${record.key}`}>VA</Link>
+              </>
+            ) : (
+              <></>
+            )}
+          </>
+        ) : (
+          'Not Available'
+        ),
     },
   ];
 

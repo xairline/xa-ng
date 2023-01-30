@@ -20,6 +20,7 @@ func NewRoutes(
 	gin *gin.Engine,
 	datarefController controllers.DatarefController,
 	flightLogsController controllers.FlightLogsController,
+	vaController controllers.VaController,
 	staticPath string,
 ) Routes {
 	return Routes{
@@ -27,6 +28,7 @@ func NewRoutes(
 		NewDatarefRoutes(logger, gin, datarefController),
 		NewFlightLogsRoutes(logger, gin, flightLogsController),
 		NewStaticRoutes(logger, gin, staticPath),
+		NewVaRoutes(logger, gin, vaController),
 	}
 }
 

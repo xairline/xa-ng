@@ -28,6 +28,7 @@ func main() {
 		g,
 		controllers.NewDatarefController(logger, dataref.NewDatarefService(logger)),
 		controllers.NewFlightLogsController(logger, db),
+		controllers.NewVaController(logger, db),
 		pluginPath+"/xws",
 	).Setup()
 

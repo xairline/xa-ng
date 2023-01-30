@@ -17,6 +17,7 @@ type FlightStatus struct {
 	ArrivalFlightInfo   FlightInfo             `gorm:"embedded;embeddedPrefix:arrival_" json:"arrivalFlightInfo"`
 	AircraftICAO        string                 `json:"aircraftICAO"`
 	AircraftDisplayName string                 `json:"aircraftDisplayName"`
+	VaFiled             bool                   `gorm:"default:false" json:"va_filed"`
 }
 
 type FlightStatusLocation struct {
