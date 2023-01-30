@@ -1,5 +1,5 @@
 import {action, computed, makeObservable, observable, toJS} from 'mobx';
-import {Api, ModelsFlightStatus, ModelsFlightStatusLocation} from './Api';
+import {Api, ModelsFlightState, ModelsFlightStatus, ModelsFlightStatusLocation,} from './Api';
 import {scaleQuantile} from 'd3-scale';
 
 export const inFlowColors = [
@@ -36,6 +36,18 @@ class FlightLogStore {
   public AvgGForce: number;
   @observable
   public AvgLandingVS;
+  @observable
+  public TaxiOutDuration: number;
+  @observable
+  public TaxiOutFuel: number;
+  @observable
+  public AirborneDuration: number;
+  @observable
+  public AirborneFuel: number;
+  @observable
+  public TaxiInDuration: number;
+  @observable
+  public TaxiInFuel: number;
 
   private api: Api<ModelsFlightStatus>;
 
@@ -44,6 +56,12 @@ class FlightLogStore {
     this.flightStatus = {};
     this.AvgLandingVS = 0;
     this.AvgGForce = 0;
+    this.AirborneDuration = 0;
+    this.TaxiInDuration = 0;
+    this.TaxiOutDuration = 0;
+    this.AirborneFuel = 0;
+    this.TaxiInFuel = 0;
+    this.TaxiOutFuel = 0;
     this.api = new Api<ModelsFlightStatus>();
     this.loadFlightStatuses();
     makeObservable(this);
@@ -95,6 +113,158 @@ class FlightLogStore {
       pathsExt: res.pathsExt,
       arch,
     };
+  }
+
+  @computed
+  get LandingData(): any {
+    const line: any[] = [];
+    const column: any[] = [];
+    let sampling: boolean = false;
+    let lastTs: number = 0;
+    this.flightStatus.locations?.forEach((location: any, index: number) => {
+      if (location.state == ModelsFlightState.FlightStateLanding) {
+        sampling = true;
+      }
+      if (location.state == ModelsFlightState.FlightStateTaxiIn) {
+        sampling = false;
+      }
+
+      if (sampling && location.timestamp - lastTs > 0) {
+        lastTs = location.timestamp;
+        line.push(
+          {
+            name: 'IAS',
+            ts:
+              Math.floor(
+                (location.timestamp -
+                  this.flightStatus.locations[0].timestamp) *
+                100
+              ) / 100,
+            value: location.ias,
+          },
+          {
+            name: 'VS',
+            ts:
+              Math.floor(
+                (location.timestamp -
+                  this.flightStatus.locations[0].timestamp) *
+                100
+              ) / 100,
+            value: location.vs,
+          },
+          {
+            name: 'AGL',
+            ts:
+              Math.floor(
+                (location.timestamp -
+                  this.flightStatus.locations[0].timestamp) *
+                100
+              ) / 100,
+            value: location.agl * 3.28084,
+          }
+        );
+        column.push({
+          type: 'G-Force',
+          ts:
+            Math.floor(
+              (location.timestamp - this.flightStatus.locations[0].timestamp) *
+              100
+            ) / 100,
+          count: location.gforce,
+        });
+      }
+    });
+
+    return {line, column};
+  }
+
+  @computed
+  get TakeoffData(): any {
+    const line: any[] = [];
+    const column: any[] = [];
+    let sampling: boolean = false;
+    let lastTs: number = 0;
+    this.flightStatus.locations?.forEach((location: any, index: number) => {
+      if (location.state == ModelsFlightState.FlightStateTakeoff) {
+        sampling = true;
+      }
+      if (location.state == ModelsFlightState.FlightStateClimb) {
+        sampling = false;
+      }
+
+      if (sampling && location.timestamp - lastTs > 0.5) {
+        lastTs = location.timestamp;
+        line.push(
+          {
+            name: 'IAS',
+            ts:
+              Math.floor(
+                (location.timestamp -
+                  this.flightStatus.locations[0].timestamp) *
+                10
+              ) / 10,
+            value: location.ias,
+          },
+          {
+            name: 'VS',
+            ts:
+              Math.floor(
+                (location.timestamp -
+                  this.flightStatus.locations[0].timestamp) *
+                10
+              ) / 10,
+            value: location.vs,
+          }
+        );
+        column.push({
+          type: 'AGL',
+          ts:
+            Math.floor(
+              (location.timestamp - this.flightStatus.locations[0].timestamp) *
+              10
+            ) / 10,
+          count: location.agl * 3.28084,
+        });
+      }
+    });
+
+    return {line, column};
+  }
+
+  @computed
+  get OverviewData(): any {
+    const line: any[] = [];
+    const column: any[] = [];
+    let sampling: boolean = false;
+    let lastTs: number = 0;
+    this.flightStatus.locations?.forEach((location: any, index: number) => {
+      if (location.state == ModelsFlightState.FlightStateTakeoff) {
+        sampling = true;
+      }
+      if (location.state == ModelsFlightState.FlightStateTaxiIn) {
+        sampling = false;
+      }
+
+      if (sampling && location.timestamp - lastTs > 10) {
+        lastTs = location.timestamp;
+        line.push({
+          name: 'IAS',
+          ts: Math.floor(
+            location.timestamp - (this.flightStatus.locations[0].timestamp as any)
+          ),
+          value: location.ias,
+        });
+        column.push({
+          type: 'AGL',
+          ts: Math.floor(
+            location.timestamp - this.flightStatus.locations[0].timestamp
+          ),
+          count: location.agl * 3.28084,
+        });
+      }
+    });
+
+    return {line, column};
   }
 
   @computed
@@ -179,6 +349,39 @@ class FlightLogStore {
   }
 
   @computed
+  get FlightDetailData(): ModelsFlightStatusLocation[] {
+    if (
+      !this.flightStatus.locations ||
+      this.flightStatus.locations.length == 0
+    ) {
+      return [];
+    }
+    const res = [this.flightStatus.locations[0]];
+    res.push(
+      this.flightStatus.locations[
+        this.flightStatus.locations
+          .map((el) => el.state)
+          .lastIndexOf(ModelsFlightState.FlightStateTaxiOut)
+        ]
+    );
+    res.push(
+      this.flightStatus.locations[
+        this.flightStatus.locations
+          .map((el) => el.state)
+          .indexOf(ModelsFlightState.FlightStateTaxiIn)
+        ]
+    );
+    res.push(
+      this.flightStatus.locations[
+        this.flightStatus.locations
+          .map((el) => el.state)
+          .lastIndexOf(ModelsFlightState.FlightStateTaxiIn)
+        ]
+    );
+    return res;
+  }
+
+  @computed
   get TotalNumberOfHours(): number {
     let res: number = 0.0;
     this.flightStatuses.forEach((flightStatus) => {
@@ -230,6 +433,9 @@ class FlightLogStore {
         date: flightStatus.createdAt,
         departure: flightStatus.departureFlightInfo,
         arrival: flightStatus.arrivalFlightInfo || '-',
+        hasLocationData: flightStatus.locations
+          ? flightStatus.locations?.length > 0
+          : false,
         duration: !flightStatus.arrivalFlightInfo?.time
           ? '-'
           : !flightStatus.departureFlightInfo?.time
@@ -305,22 +511,17 @@ class FlightLogStore {
         timestamps: [],
         item: item,
       };
-      const num = Math.round(0xffffff * Math.random());
-      const r = num >> 16;
-      const g = (num >> 8) & 255;
-      const b = num & 255;
-      const color = [r, g, b];
       item?.locations?.forEach((location: any) => {
         const pathItem = [location.lng, location.lat, location.agl];
         res.timestamps.push(location.timestamp);
         res.path.push(pathItem);
-        res.color = color;
+        res.color = [22, 104, 220];
         let resExt: any = {
           path: [],
         };
         resExt.path.push(pathItem);
         resExt.path.push([location.lng, location.lat, 0]);
-        resExt.color = color;
+        resExt.color = location.gearForce > 0 ? [211, 32, 41] : [22, 104, 220];
         pathsExt.push(resExt);
       });
       paths.push(res);

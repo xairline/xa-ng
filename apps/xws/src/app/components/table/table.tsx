@@ -97,12 +97,13 @@ export function TableView(props: TableViewProps) {
       * */
     },
     {
-      title: '',
+      title: 'Details',
       key: 'operation',
       fixed: 'right',
       width: 100,
       render: (record: any) => (
-        <Link to={`/flight-logs/${record.key}`}>Details</Link>
+        record.hasLocationData ?
+          <Link to={`/flight-logs/${record.key}`}>Details</Link> : "Not Available"
       ),
     },
   ];
