@@ -178,7 +178,7 @@ export function FlightLog(props: FlightLogProps) {
                         60
                       );
                       return (
-                        <Timeline.Item>
+                        <Timeline.Item key={value.id}>
                           {h.toString().length == 1 ? '0' : ''}
                           {h}:{m.toString().length == 1 ? '0' : ''}
                           {m} - {value.event?.description}
@@ -229,10 +229,10 @@ export function FlightLog(props: FlightLogProps) {
                         suffix={'min'}
                         loading={FlightLogStore.FlightDetailData.length == 0}
                         value={
-                          (FlightLogStore.FlightDetailData[3]
-                            .timestamp as any) -
-                          (FlightLogStore.FlightDetailData[2]
-                            .timestamp as any) /
+                          ((FlightLogStore.FlightDetailData[3]
+                              .timestamp as any) -
+                            (FlightLogStore.FlightDetailData[2]
+                              .timestamp as any)) /
                           60
                         }
                         precision={0}

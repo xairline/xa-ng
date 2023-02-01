@@ -63,7 +63,9 @@ export interface ModelsFlightStatus {
   departureFlightInfo?: ModelsFlightInfo;
   id?: number;
   locations?: ModelsFlightStatusLocation[];
+  source?: string;
   updatedAt?: string;
+  va_filed?: boolean;
 }
 
 export interface ModelsFlightStatusEvent {
@@ -93,6 +95,13 @@ export interface ModelsFlightStatusLocation {
   timestamp?: number;
   updatedAt?: string;
   vs?: number;
+}
+
+export interface ModelsVa {
+  Address?: string;
+  FlightInfo?: string;
+  Name?: string;
+  PIREP?: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -347,6 +356,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     flightLogsDetail: (id: string, params: RequestParams = {}) =>
       this.request<ModelsFlightStatus, void>({
         path: `/flight-logs/${id}`,
+        method: 'GET',
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+  };
+  va = {
+    /**
+     * No description
+     *
+     * @tags Va
+     * @name GetVa
+     * @summary Get a list of Va
+     * @request GET:/va
+     */
+    getVa: (params: RequestParams = {}) =>
+      this.request<ModelsVa[], ResponseError>({
+        path: `/va`,
         method: 'GET',
         type: ContentType.Json,
         format: 'json',

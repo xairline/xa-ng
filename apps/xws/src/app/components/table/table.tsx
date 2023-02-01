@@ -4,6 +4,7 @@ import {ModelsFlightInfo} from '../../../store/Api';
 import {Link} from 'react-router-dom';
 import {useStores} from '../../../store';
 import {useObserver} from 'mobx-react-lite';
+import {InfoCircleOutlined} from "@ant-design/icons";
 
 /* eslint-disable-next-line */
 export interface TableViewProps {
@@ -77,7 +78,7 @@ export function TableView(props: TableViewProps) {
         ) : (
           <Tooltip placement="topLeft" title={'format: HH:mm'}>
             {Math.floor(record / 3600) < 10 ? '0' : ''}
-            {Math.floor(record / 3600)}:{Math.floor((record % 3600) / 60)} h
+            {Math.floor(record / 3600)}:{Math.floor(record % 3600) / 60 < 10 ? '0' : ''}{Math.floor((record % 3600) / 60)} h
           </Tooltip>
         ),
       /*
@@ -115,7 +116,14 @@ export function TableView(props: TableViewProps) {
             )}
           </>
         ) : (
-          'Not Available'
+          <Tooltip
+            trigger={'click'}
+            title={
+              "This is an imported flight that we don't have enough data to show detailed report"
+            }
+          >
+            Not Available{' '}<InfoCircleOutlined/>
+          </Tooltip>
         ),
     },
   ];

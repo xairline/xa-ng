@@ -250,7 +250,8 @@ class FlightLogStore {
         line.push({
           name: 'IAS',
           ts: Math.floor(
-            location.timestamp - (this.flightStatus.locations[0].timestamp as any)
+            location.timestamp -
+            (this.flightStatus.locations[0].timestamp as any)
           ),
           value: location.ias,
         });
@@ -285,6 +286,7 @@ class FlightLogStore {
         count: 0,
       },
     ];
+    let counter = 0;
     this.flightStatuses.forEach((flightStatus) => {
       let touchDownCount = 0;
       let g: number = 0;
@@ -305,24 +307,19 @@ class FlightLogStore {
           }
         }
       });
-      line.push({
-        name: 'VS(ft/min)',
-        ts: flightStatus.id,
-        value: vs,
-      });
-      column.push(
-        {
-          type: 'G-Force',
-          ts: flightStatus.id,
-          count: g,
-        }
-        // {
-        //   type: 'Touch Down',
-        //   ts: flightStatus.id,
-        //   count: touchDownCount,
-        // }
-      );
+
       if (g != 0) {
+        counter++;
+        line.push({
+          name: 'VS(ft/min)',
+          ts: counter,
+          value: vs,
+        });
+        column.push({
+          type: 'G-Force',
+          ts: counter,
+          count: g,
+        });
         avgG.push(g);
         avgVs.push(vs);
       }

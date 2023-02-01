@@ -45,13 +45,13 @@ func (u FlightLogsController) GetFlightLogs(c *gin.Context) {
 	if isOverview == "true" {
 		result := u.db.
 			Preload("Locations" /*, "event_type = (?)", models.StateEvent*/).
-			Model(&models.FlightStatus{}).
+			Model(&models.FlightStatus{}).Order("created_at DESC").
 			Find(&res)
 		if result.Error != nil {
 			c.JSON(500, utils.ResponseError{Message: fmt.Sprintf("Failed to get flight logs: %+v", result.Error)})
 		}
 	} else {
-		result := u.db.Model(&models.FlightStatus{}).Find(&res)
+		result := u.db.Model(&models.FlightStatus{}).Order("created_at DESC").Find(&res)
 		if result.Error != nil {
 			c.JSON(500, utils.ResponseError{Message: fmt.Sprintf("Failed to get flight logs: %+v", result.Error)})
 		}

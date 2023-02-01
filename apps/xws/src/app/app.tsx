@@ -3,6 +3,7 @@ import {ConfigProvider, Layout, Menu, theme} from 'antd';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import {Nav, routes} from './components/nav/nav';
 import FlightLog from './pages/flight-log/flight-log';
+import Va from './pages/va/va';
 
 interface IRoute {
   path: string;
@@ -54,7 +55,12 @@ export function App() {
                     <Route key={index} path={route.path} element={route.comp}/>
                   );
                 })}
-                <Route path="/flight-logs/:id" element={<FlightLog/>}/>
+                <Route
+                  key={'flight-logs'}
+                  path="/flight-logs/:id"
+                  element={<FlightLog/>}
+                />
+                <Route key={'va'} path="/va/:id" element={<Va/>}/>
               </Routes>
             </Content>
             <Footer style={{textAlign: 'center'}}>
