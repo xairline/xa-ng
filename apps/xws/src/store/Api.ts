@@ -363,6 +363,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
+  flightStatus = {
+    /**
+     * No description
+     *
+     * @tags Flight_Status
+     * @name FlightStatusList
+     * @summary Get current of FlightStatus
+     * @request GET:/flightStatus
+     */
+    flightStatusList: (params: RequestParams = {}) =>
+      this.request<ModelsFlightStatus, ResponseError>({
+        path: `/flightStatus`,
+        method: 'GET',
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+  };
   va = {
     /**
      * No description

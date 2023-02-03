@@ -117,6 +117,7 @@ func (s xplaneService) setupGin() {
 		controllers.NewDatarefController(s.Logger, s.DatarefSvc),
 		controllers.NewFlightLogsController(s.Logger, s.db),
 		controllers.NewVaController(s.Logger, s.db),
+		controllers.NewFlightStatusController(s.Logger, s.FlightStatusService),
 		pluginPath+"/xws",
 	).Setup()
 	err := godotenv.Load(filepath.Join(pluginPath, "config"))

@@ -5,6 +5,7 @@ import (
 	_ "apps/core/docs"
 	"apps/core/routes"
 	"apps/core/services/dataref"
+	flight_status "apps/core/services/flight-status"
 	"apps/core/utils"
 	"apps/core/utils/logger"
 	"github.com/gin-gonic/gin"
@@ -29,6 +30,7 @@ func main() {
 		controllers.NewDatarefController(logger, dataref.NewDatarefService(logger)),
 		controllers.NewFlightLogsController(logger, db),
 		controllers.NewVaController(logger, db),
+		controllers.NewFlightStatusController(logger, flight_status.NewFlightStatusService(dataref.NewDatarefService(logger), logger, db)),
 		pluginPath+"/xws",
 	).Setup()
 
