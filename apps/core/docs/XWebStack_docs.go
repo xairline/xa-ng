@@ -418,6 +418,9 @@ const docTemplateXWebStack = `{
                 "flightId": {
                     "type": "integer"
                 },
+                "fuel": {
+                    "type": "number"
+                },
                 "gearForce": {
                     "type": "number"
                 },

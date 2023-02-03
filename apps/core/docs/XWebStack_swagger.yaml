@@ -126,6 +126,8 @@ definitions:
         $ref: '#/definitions/models.FlightStatusEvent'
       flightId:
         type: integer
+      fuel:
+        type: number
       gearForce:
         type: number
       gforce:

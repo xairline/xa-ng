@@ -84,6 +84,7 @@ export interface ModelsFlightStatusLocation {
   deletedAt?: GormDeletedAt;
   event?: ModelsFlightStatusEvent;
   flightId?: number;
+  fuel?: number;
   gearForce?: number;
   gforce?: number;
   heading?: number;

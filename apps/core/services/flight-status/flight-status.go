@@ -47,6 +47,7 @@ type flightStatusService struct {
 
 func (f flightStatusService) addLocation(datarefValues models.DatarefValues, distance_threshold float64, event *models.FlightStatusEvent) {
 	newLocation := models.FlightStatusLocation{
+		ID:        0,
 		FlightId:  int(f.FlightStatus.ID),
 		Timestamp: datarefValues["ts"].Value.(float64),
 		Vs:        datarefValues["vs"].Value.(float64),
@@ -57,6 +58,7 @@ func (f flightStatusService) addLocation(datarefValues models.DatarefValues, dis
 		Agl:       datarefValues["agl"].Value.(float64),
 		GearForce: datarefValues["gear_force"].Value.(float64),
 		GForce:    datarefValues["g_force"].Value.(float64),
+		Fuel:      datarefValues["fuel_weight"].Value.(float64),
 		Heading:   datarefValues["heading"].Value.(float64),
 		State:     f.FlightStatus.CurrentState,
 	}

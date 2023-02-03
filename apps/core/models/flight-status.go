@@ -32,10 +32,11 @@ type FlightStatusLocation struct {
 	Ias       float64 `json:"ias"`
 	Lat       float64 `json:"lat"`
 	Lng       float64 `json:"lng"`
-	Altitude  float64
+	Altitude  float64 `json:"altitude"`
 	Agl       float64 `json:"agl"`
 	GearForce float64 `json:"gearForce"`
 	GForce    float64 `json:"gforce"`
+	Fuel      float64 `json:"fuel"`
 	Heading   float64
 	State     FlightState       `gorm:"embedded" json:"state"`
 	Event     FlightStatusEvent `gorm:"embedded" json:"event"`
