@@ -35,3 +35,15 @@ func NewFlightStatusController(
 func (u FlightStatusController) GetFlightStatus(c *gin.Context) {
 	c.JSON(200, u.flightStatusSvc.GetFlightStatus())
 }
+
+// GetFlightStatusLocation
+// @Summary  Get current of location
+// @Tags     Flight_Status
+// @Accept   json
+// @Produce  json
+// @Success  200  {object}  models.FlightStatusLocation
+// @Failure  500  {object}  utils.ResponseError
+// @Router   /flightStatus/location [get]
+func (u FlightStatusController) GetFlightStatusLocation(c *gin.Context) {
+	c.JSON(200, u.flightStatusSvc.GetLocation())
+}

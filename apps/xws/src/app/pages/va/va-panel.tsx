@@ -1,4 +1,18 @@
-import {Button, Card, Col, Descriptions, Divider, Dropdown, Input, MenuProps, message, Row, Spin, Tooltip,} from 'antd';
+import {
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Divider,
+  Dropdown,
+  Form,
+  Input,
+  MenuProps,
+  message,
+  Row,
+  Spin,
+  Tooltip,
+} from 'antd';
 import {useEffect, useState} from 'react';
 import {useStores} from '../../../store';
 import {useObserver} from 'mobx-react-lite';
@@ -8,6 +22,7 @@ import {InfoCircleOutlined} from '@ant-design/icons';
 /* eslint-disable-next-line */
 export interface VaProps {
   id?: string;
+  form: any;
 }
 
 function getWindowDimensions() {
@@ -107,18 +122,28 @@ export function VaPanel(props: VaProps) {
                 </Descriptions.Item>
               </Descriptions>
               <Divider/>
-              Username:
-              <Input
-                placeholder="Username"
-                style={{minWidth: '100px'}}
-                onChange={(v) =>
-                  console.log(v?.nativeEvent?.target?.value as any)
-                }
-              />
-              Password:
-              <Input.Password placeholder="Password"/>
+              <Form form={props.form}>
+                <Form.Item>
+                  Username:
+                  <Input
+                    placeholder="Username"
+                    style={{minWidth: '100px'}}
+                    onChange={(v) =>
+                      console.log(v?.nativeEvent?.target?.value as any)
+                    }
+                  />
+                </Form.Item>
+                <Form.Item name={'password'}>
+                  Password:
+                  <Input.Password placeholder="Password"/>
+                </Form.Item>
+              </Form>
               <Button
-                onClick={() => message.info('file')}
+                onClick={() => {
+                  props.form.validateFields().then((values: any) => {
+                    console.log(values);
+                  });
+                }}
                 style={{marginTop: '10px', width: '100%'}}
               >
                 File PIREP

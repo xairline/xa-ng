@@ -132,6 +132,8 @@ definitions:
         type: number
       gforce:
         type: number
+      gs:
+        type: number
       heading:
         type: number
       ias:
@@ -141,6 +143,8 @@ definitions:
       lat:
         type: number
       lng:
+        type: number
+      pitch:
         type: number
       state:
         $ref: '#/definitions/models.FlightState'
@@ -228,6 +232,24 @@ paths:
           schema:
             $ref: '#/definitions/ResponseError'
       summary: Get current of FlightStatus
+      tags:
+      - Flight_Status
+  /flightStatus/location:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.FlightStatusLocation'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
+      summary: Get current of location
       tags:
       - Flight_Status
   /va:

@@ -11,6 +11,8 @@ const MAPBOX_ACCESS_TOKEN =
 
 export interface MapArchProps {
   data: any;
+  viewState?: any;
+  mapStyle?: string;
 }
 
 // DeckGL react component
@@ -93,14 +95,14 @@ export function MapDetailed(props: MapArchProps) {
   ];
   return useObserver(() => (
     <DeckGL
-      initialViewState={INITIAL_VIEW_STATE}
+      initialViewState={props.viewState || INITIAL_VIEW_STATE}
       controller={true}
       layers={layers}
       height={'100%'}
       // getTooltip={getTooltip}
     >
       <Map
-        mapStyle="mapbox://styles/mapbox/satellite-v9"
+        mapStyle={props.mapStyle || 'mapbox://styles/mapbox/satellite-v9'}
         mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
       ></Map>
     </DeckGL>

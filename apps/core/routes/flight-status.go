@@ -19,7 +19,7 @@ func (s FlightStatusRoutes) Setup() {
 	api := s.gin.Group("/apis/flightStatus")
 	{
 		api.GET("", s.flightStatusController.GetFlightStatus)
-
+		api.GET("location", s.flightStatusController.GetFlightStatusLocation)
 	}
 }
 

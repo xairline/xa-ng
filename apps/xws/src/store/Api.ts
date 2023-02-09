@@ -87,11 +87,13 @@ export interface ModelsFlightStatusLocation {
   fuel?: number;
   gearForce?: number;
   gforce?: number;
+  gs?: number;
   heading?: number;
   ias?: number;
   id?: number;
   lat?: number;
   lng?: number;
+  pitch?: number;
   state?: ModelsFlightState;
   timestamp?: number;
   updatedAt?: string;
@@ -375,6 +377,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     flightStatusList: (params: RequestParams = {}) =>
       this.request<ModelsFlightStatus, ResponseError>({
         path: `/flightStatus`,
+        method: 'GET',
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Flight_Status
+     * @name LocationList
+     * @summary Get current of location
+     * @request GET:/flightStatus/location
+     */
+    locationList: (params: RequestParams = {}) =>
+      this.request<ModelsFlightStatusLocation, ResponseError>({
+        path: `/flightStatus/location`,
         method: 'GET',
         type: ContentType.Json,
         format: 'json',

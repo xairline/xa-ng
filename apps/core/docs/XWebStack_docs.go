@@ -117,6 +117,34 @@ const docTemplateXWebStack = `{
                 }
             }
         },
+        "/flightStatus/location": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flight_Status"
+                ],
+                "summary": "Get current of location",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.FlightStatusLocation"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseError"
+                        }
+                    }
+                }
+            }
+        },
         "/va": {
             "get": {
                 "consumes": [
@@ -455,6 +483,9 @@ const docTemplateXWebStack = `{
                 "gforce": {
                     "type": "number"
                 },
+                "gs": {
+                    "type": "number"
+                },
                 "heading": {
                     "type": "number"
                 },
@@ -468,6 +499,9 @@ const docTemplateXWebStack = `{
                     "type": "number"
                 },
                 "lng": {
+                    "type": "number"
+                },
+                "pitch": {
                     "type": "number"
                 },
                 "state": {

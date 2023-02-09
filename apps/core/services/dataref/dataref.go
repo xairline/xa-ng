@@ -40,8 +40,8 @@ func (d datarefService) GetNearestAirport() (string, string) {
 	navRef := navigation.FindNavAid(
 		"",
 		"",
-		float32(latDataref.Value.(float64)),
-		float32(lngDataref.Value.(float64)),
+		float32(latDataref.GetFloat64()),
+		float32(lngDataref.GetFloat64()),
 		math.MaxInt32,
 		navigation.Nav_Airport,
 	)
