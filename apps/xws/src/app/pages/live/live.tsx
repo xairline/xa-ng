@@ -6,7 +6,6 @@ import {useEffect, useState} from 'react';
 import MapDetailed from '../../components/map/mapDetailed';
 import Overview from './components/overview';
 import AutoPilot from './components/autopilot';
-import FMC from './components/fmc';
 import {runInAction} from 'mobx'; /* eslint-disable-next-line */
 
 /* eslint-disable-next-line */
@@ -111,11 +110,6 @@ export function Live(props: LiveProps) {
                               key: `ap`,
                               children: <AutoPilot/>,
                             },
-                            {
-                              label: `FMC`,
-                              key: `fmc`,
-                              children: <FMC/>,
-                            },
                           ]}
                         />
                       </Col>
@@ -136,10 +130,11 @@ export function Live(props: LiveProps) {
                     size={windowDimensions.width > 992 ? 'small' : 'default'}
                     draggable={'true'}
                   >
-                    {LiveStore.flightStatus.locations?.length > 0 ? (
+                    {LiveStore?.flightStatus?.locations &&
+                    LiveStore?.flightStatus?.locations?.length > 0 ? (
                       LiveStore?.flightStatus?.locations[
                       LiveStore?.flightStatus?.locations?.length - 1
-                        ]?.vs + " ft/min"
+                        ]?.vs + ' ft/min'
                     ) : (
                       <Spin tip="Loading" size="large"/>
                     )}
@@ -150,7 +145,8 @@ export function Live(props: LiveProps) {
                     title={'Heading'}
                     size={windowDimensions.width > 992 ? 'small' : 'default'}
                   >
-                    {LiveStore.flightStatus.locations?.length > 0 ? (
+                    {LiveStore?.flightStatus?.locations &&
+                    LiveStore.flightStatus.locations?.length > 0 ? (
                       LiveStore?.flightStatus?.locations[
                       LiveStore?.flightStatus?.locations?.length - 1
                         ]?.heading
@@ -164,12 +160,13 @@ export function Live(props: LiveProps) {
                     title={'Altitude'}
                     size={windowDimensions.width > 992 ? 'small' : 'default'}
                   >
-                    {LiveStore.flightStatus.locations?.length > 0 ? (
+                    {LiveStore?.flightStatus?.locations &&
+                    LiveStore.flightStatus.locations?.length > 0 ? (
                       Math.floor(
                         LiveStore?.flightStatus?.locations[
                         LiveStore?.flightStatus?.locations?.length - 1
                           ]?.altitude * 3.28084
-                      ) + " ft"
+                      ) + ' ft'
                     ) : (
                       <Spin tip="Loading" size="large"/>
                     )}
@@ -180,7 +177,8 @@ export function Live(props: LiveProps) {
                     title={'IAS'}
                     size={windowDimensions.width > 992 ? 'small' : 'default'}
                   >
-                    {LiveStore.flightStatus.locations?.length > 0 ? (
+                    {LiveStore?.flightStatus?.locations &&
+                    LiveStore.flightStatus.locations?.length > 0 ? (
                       LiveStore?.flightStatus?.locations[
                       LiveStore?.flightStatus?.locations?.length - 1
                         ]?.ias
@@ -199,7 +197,8 @@ export function Live(props: LiveProps) {
               height: `${windowDimensions.width > 992 ? '100%' : '50%'}`,
             }}
           >
-            {LiveStore?.flightStatus?.locations?.length > 0 ? (
+            {LiveStore?.flightStatus?.locations &&
+            LiveStore?.flightStatus?.locations?.length > 0 ? (
               <MapDetailed
                 data={LiveStore.mapData}
                 mapStyle={'mapbox://styles/mapbox/satellite-streets-v12'}

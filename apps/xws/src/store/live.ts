@@ -79,7 +79,9 @@ class LiveStore {
           name: 'IAS',
           ts: Math.floor(
             location.timestamp -
-            (this.flightStatus.locations[0].timestamp as any)
+            (this.flightStatus?.locations
+              ? (this.flightStatus.locations[0].timestamp as any)
+              : 0)
           ),
           value: location.ias,
         });
