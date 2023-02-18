@@ -1,4 +1,4 @@
-import {action, makeObservable, observable} from 'mobx';
+import {action, makeObservable, observable, runInAction} from 'mobx';
 import {Api, ModelsVa} from './Api';
 
 class VaStore {
@@ -17,9 +17,10 @@ class VaStore {
   @action
   async loadVaInfo() {
     let res = await this.api.va.getVa();
-    this.VaInfo = res.data;
+    runInAction(() => {
+      this.VaInfo = res.data;
+    });
   }
-
 }
 
 export const vaStore = new VaStore();

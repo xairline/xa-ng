@@ -11,7 +11,7 @@ import (
 const dbFileName = "xws.dat"
 
 func CreateDatabase(logger logger.Logger, myPath string) (*gorm.DB, error) {
-	dbFilePath := path.Join(myPath, dbFileName)
+	dbFilePath := path.Join(myPath, "..", dbFileName)
 	logger.Infof("DB file path: %s", dbFilePath)
 	db, err := gorm.Open(sqlite.Open(dbFilePath), &gorm.Config{})
 	if err != nil {

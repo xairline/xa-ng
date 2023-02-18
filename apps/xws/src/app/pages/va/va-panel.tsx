@@ -34,6 +34,7 @@ function getWindowDimensions() {
 }
 
 export function VaPanel(props: VaProps) {
+  let localStore: any = {};
   const {VaStore} = useStores();
   const [loading, setLoading] = useState(true);
   const [windowDimensions, setWindowDimensions] = useState(
@@ -123,25 +124,25 @@ export function VaPanel(props: VaProps) {
               </Descriptions>
               <Divider/>
               <Form form={props.form}>
-                <Form.Item>
-                  Username:
-                  <Input
-                    placeholder="Username"
-                    style={{minWidth: '100px'}}
-                    onChange={(v) =>
-                      console.log(v?.nativeEvent?.target?.value as any)
-                    }
-                  />
+                Username
+                <Form.Item name={'username'}>
+                  <Input style={{minWidth: '100px'}}/>
                 </Form.Item>
+                Password
                 <Form.Item name={'password'}>
-                  Password:
                   <Input.Password placeholder="Password"/>
                 </Form.Item>
               </Form>
               <Button
                 onClick={() => {
                   props.form.validateFields().then((values: any) => {
-                    console.log(values);
+                    // window.open(`${VaStore.VaInfo[selectedVaIndex].Address}?DATA1=XACARS|1.0&DATA2=ENDFLIGHT&DATA3=1356`)
+                    window.open(`${VaStore.VaInfo[selectedVaIndex].Address}?DATA1=XACARS|2.0&DATA2=BEGINFLIGHT&DATA3=${values.username}|${values.password}|${values.flightNo}|${values.aircraftICAO}||${values.depAirport}~DCT~${values.arrAirport}||602||||155|120|20605|29|IFR|0|keines`)
+                    window.open(
+                      `${VaStore.VaInfo[selectedVaIndex].PIREP}?DATA1=XACARS|2.0&DATA2=${values.username}~${values.password}~${values.flightNo}~${values.aircraftICAO}~${values.flightLevel}~IFR~${values.depAirport}~${values.arrAirport}~${values.altAirport}~${values.depTime}~${values.blockTime}~${values.flightTime}~${values.blockFuel}~${values.flightFuel}~${values.pax}~${values.cargo}~other`,
+                      '_blank',
+                      'noreferrer'
+                    );
                   });
                 }}
                 style={{marginTop: '10px', width: '100%'}}
