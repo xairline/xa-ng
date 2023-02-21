@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/xairline/goplane/extra"
 	"github.com/xairline/goplane/xplm/processing"
 	"github.com/xairline/goplane/xplm/utilities"
@@ -90,7 +91,7 @@ func (s xplaneService) onPluginStateChanged(state extra.PluginState, plugin *ext
 func (s xplaneService) onPluginStart() {
 	s.Logger.Info("Plugin started")
 	// import xplane logs
-	//s.ImportXplanePilotLogs()
+	s.ImportXplanePilotLogs()
 
 	s.setupGin()
 	processing.RegisterFlightLoopCallback(s.flightLoop, -1, nil)
@@ -115,11 +116,23 @@ func (s xplaneService) setupGin() {
 		g,
 		controllers.NewDatarefController(s.Logger, s.DatarefSvc),
 		controllers.NewFlightLogsController(s.Logger, s.db),
+		controllers.NewVaController(s.Logger, s.db),
+		controllers.NewFlightStatusController(s.Logger, s.FlightStatusService),
 		pluginPath+"/xws",
 	).Setup()
+	err := godotenv.Load(filepath.Join(pluginPath, "config"))
+	if err != nil {
+		log.Fatalf("Some error occured. Err: %s", err)
+	}
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "9090"
+	}
+	s.Logger.Infof("Server port: %s", port)
 
 	go func() {
-		err := g.Run(":9090")
+		err := g.Run(":" + port)
 		if err != nil {
 			s.Logger.Errorf("Failed to start gin server, %v", err)
 		}
@@ -128,7 +141,7 @@ func (s xplaneService) setupGin() {
 
 func (s xplaneService) ImportXplanePilotLogs() {
 	var count int64 = 0
-	s.db.Model(&models.FlightStatus{}).Count(&count)
+	s.db.Model(&models.FlightStatus{}).Count(&count).Where("source <> ?", "xplane")
 	if count != 0 {
 		s.Logger.Infof("Pilot logs have been imported")
 		//return
@@ -206,6 +219,7 @@ func (s xplaneService) ImportXplanePilotLogs() {
 				},
 				AircraftICAO:        "",
 				AircraftDisplayName: row[10],
+				Source:              "xplane",
 			}
 			flightStatuses = append(flightStatuses, flightStatus)
 		}

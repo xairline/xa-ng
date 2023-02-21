@@ -38,8 +38,8 @@
 #- name: icao
 #  value: sim/aircraft/view/acf_ICAO
 #  isBytesArray: true
-#- name: fuel_weight
-#  value: sim/flightmodel/weight/m_fuel_total
+- name: fuel_weight
+  value: sim/flightmodel/weight/m_fuel_total
 #  precision: 1
 #- name: total_weight
 #  value: sim/flightmodel/weight/m_total

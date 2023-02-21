@@ -13,12 +13,12 @@ func (f flightStatusService) processDatarefTaxiOut(datarefValues models.DatarefV
 		break
 	}
 	if n1 > 75 &&
-		datarefValues["gs"].Value.(float64) > 30/1.9438 {
+		datarefValues["gs"].GetFloat64() > 30/1.9438 {
 		event := f.addFlightEvent("Takeoff")
 		f.addLocation(datarefValues, -1, &event)
 		f.changeState(models.FlightStateTakeoff, 0.1)
 	} else {
-		currentHeading := datarefValues["heading"].Value.(float64)
+		currentHeading := datarefValues["heading"].GetFloat64()
 		lastHeading := f.FlightStatus.Locations[len(f.FlightStatus.Locations)-1].Heading
 		if math.Abs(lastHeading-currentHeading) > 10 {
 			f.addLocation(datarefValues, -1, nil)

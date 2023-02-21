@@ -7,6 +7,7 @@ import (
 	"apps/core/services/flight-status"
 	"apps/core/utils"
 	"apps/core/utils/logger"
+	"github.com/gin-gonic/gin"
 	"github.com/xairline/goplane/extra/logging"
 	"github.com/xairline/goplane/xplm/plugins"
 	"github.com/xairline/goplane/xplm/utilities"
@@ -19,6 +20,7 @@ func main() {
 }
 
 func init() {
+	gin.SetMode(gin.ReleaseMode)
 	logger := logger.NewXplaneLogger()
 	plugins.EnableFeature("XPLM_USE_NATIVE_PATHS", true)
 	logging.MinLevel = logging.Info_Level

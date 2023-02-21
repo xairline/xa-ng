@@ -4,7 +4,6 @@ import (
 	"apps/core/services/dataref"
 	"apps/core/utils"
 	"apps/core/utils/logger"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -51,7 +50,7 @@ func (u DatarefController) GetDataref(c *gin.Context) {
 	precisionInt8 := int8(precisionInt)
 	precision = &(precisionInt8)
 	res := u.datarefSvc.GetValueByDatarefName(dataref, alias, precision, c.GetBool("is_byte_array"))
-	c.JSON(200, fmt.Sprintf("%+v", res))
+	c.JSON(200, res)
 }
 
 // GetDatarefs

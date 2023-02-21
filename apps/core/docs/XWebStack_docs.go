@@ -89,6 +89,93 @@ const docTemplateXWebStack = `{
                 }
             }
         },
+        "/flightStatus": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flight_Status"
+                ],
+                "summary": "Get current of FlightStatus",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.FlightStatus"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/flightStatus/location": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flight_Status"
+                ],
+                "summary": "Get current of location",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.FlightStatusLocation"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/va": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Va"
+                ],
+                "summary": "Get a list of Va",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Va"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseError"
+                        }
+                    }
+                }
+            }
+        },
         "/xplm/dataref": {
             "get": {
                 "consumes": [
@@ -335,8 +422,14 @@ const docTemplateXWebStack = `{
                         "$ref": "#/definitions/models.FlightStatusLocation"
                     }
                 },
+                "source": {
+                    "type": "string"
+                },
                 "updatedAt": {
                     "type": "string"
+                },
+                "va_filed": {
+                    "type": "boolean"
                 }
             }
         },
@@ -381,10 +474,16 @@ const docTemplateXWebStack = `{
                 "flightId": {
                     "type": "integer"
                 },
+                "fuel": {
+                    "type": "number"
+                },
                 "gearForce": {
                     "type": "number"
                 },
                 "gforce": {
+                    "type": "number"
+                },
+                "gs": {
                     "type": "number"
                 },
                 "heading": {
@@ -402,6 +501,9 @@ const docTemplateXWebStack = `{
                 "lng": {
                     "type": "number"
                 },
+                "pitch": {
+                    "type": "number"
+                },
                 "state": {
                     "$ref": "#/definitions/models.FlightState"
                 },
@@ -413,6 +515,23 @@ const docTemplateXWebStack = `{
                 },
                 "vs": {
                     "type": "number"
+                }
+            }
+        },
+        "models.Va": {
+            "type": "object",
+            "properties": {
+                "Address": {
+                    "type": "string"
+                },
+                "FlightInfo": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "PIREP": {
+                    "type": "string"
                 }
             }
         }

@@ -63,7 +63,9 @@ export interface ModelsFlightStatus {
   departureFlightInfo?: ModelsFlightInfo;
   id?: number;
   locations?: ModelsFlightStatusLocation[];
+  source?: string;
   updatedAt?: string;
+  va_filed?: boolean;
 }
 
 export interface ModelsFlightStatusEvent {
@@ -82,17 +84,27 @@ export interface ModelsFlightStatusLocation {
   deletedAt?: GormDeletedAt;
   event?: ModelsFlightStatusEvent;
   flightId?: number;
+  fuel?: number;
   gearForce?: number;
   gforce?: number;
+  gs?: number;
   heading?: number;
   ias?: number;
   id?: number;
   lat?: number;
   lng?: number;
+  pitch?: number;
   state?: ModelsFlightState;
   timestamp?: number;
   updatedAt?: string;
   vs?: number;
+}
+
+export interface ModelsVa {
+  Address?: string;
+  FlightInfo?: string;
+  Name?: string;
+  PIREP?: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -347,6 +359,59 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     flightLogsDetail: (id: string, params: RequestParams = {}) =>
       this.request<ModelsFlightStatus, void>({
         path: `/flight-logs/${id}`,
+        method: 'GET',
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+  };
+  flightStatus = {
+    /**
+     * No description
+     *
+     * @tags Flight_Status
+     * @name FlightStatusList
+     * @summary Get current of FlightStatus
+     * @request GET:/flightStatus
+     */
+    flightStatusList: (params: RequestParams = {}) =>
+      this.request<ModelsFlightStatus, ResponseError>({
+        path: `/flightStatus`,
+        method: 'GET',
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Flight_Status
+     * @name LocationList
+     * @summary Get current of location
+     * @request GET:/flightStatus/location
+     */
+    locationList: (params: RequestParams = {}) =>
+      this.request<ModelsFlightStatusLocation, ResponseError>({
+        path: `/flightStatus/location`,
+        method: 'GET',
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+  };
+  va = {
+    /**
+     * No description
+     *
+     * @tags Va
+     * @name GetVa
+     * @summary Get a list of Va
+     * @request GET:/va
+     */
+    getVa: (params: RequestParams = {}) =>
+      this.request<ModelsVa[], ResponseError>({
+        path: `/va`,
         method: 'GET',
         type: ContentType.Json,
         format: 'json',

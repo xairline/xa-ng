@@ -1,10 +1,11 @@
-import {Card, Col, Divider, Row, Spin, Tabs, Timeline} from 'antd';
+import {Card, Col, Divider, Row, Spin, Statistic, Tabs, Timeline} from 'antd';
 import {useEffect, useState} from 'react';
 import {useStores} from '../../../store';
 import {useObserver} from 'mobx-react-lite';
-import MapDetailed from '../../components/map/mapDetailed';
 import {useParams} from 'react-router-dom';
 import {ModelsFlightStatusLocation} from '../../../store/Api';
+import MapDetailed from '../../components/map/mapDetailed';
+import {DualAxes} from '@ant-design/plots';
 
 /* eslint-disable-next-line */
 export interface FlightLogProps {
@@ -40,6 +41,103 @@ export function FlightLog(props: FlightLogProps) {
       setLoading(false);
     });
   }, []);
+  const config = {
+    data: [
+      FlightLogStore.LandingLineData.line as any[],
+      FlightLogStore.LandingLineData.column as any[],
+    ],
+    xField: 'ts',
+    yField: ['value', 'count'],
+    height: 200,
+    geometryOptions: [
+      {
+        geometry: 'line',
+        seriesField: 'name',
+        smooth: true,
+        connectNull: true,
+      },
+      {
+        geometry: 'column',
+        isStack: false,
+        isGroup: true,
+        seriesField: 'type',
+        columnWidthRatio: 0.4,
+      },
+    ],
+  };
+
+  const overviewConfig = {
+    data: [
+      FlightLogStore.OverviewData.line as any[],
+      FlightLogStore.OverviewData.column as any[],
+    ],
+    xField: 'ts',
+    yField: ['value', 'count'],
+    height: 200,
+    geometryOptions: [
+      {
+        geometry: 'line',
+        seriesField: 'name',
+        smooth: true,
+        connectNull: true,
+      },
+      {
+        geometry: 'column',
+        isStack: false,
+        isGroup: true,
+        seriesField: 'type',
+        columnWidthRatio: 0.4,
+      },
+    ],
+  };
+  const takeoffConfig = {
+    data: [
+      FlightLogStore.TakeoffData.line as any[],
+      FlightLogStore.TakeoffData.column as any[],
+    ],
+    xField: 'ts',
+    yField: ['value', 'count'],
+    height: 200,
+    geometryOptions: [
+      {
+        geometry: 'line',
+        seriesField: 'name',
+        smooth: true,
+        connectNull: true,
+      },
+      {
+        geometry: 'column',
+        isStack: false,
+        isGroup: true,
+        seriesField: 'type',
+        columnWidthRatio: 0.4,
+      },
+    ],
+  };
+  const landingConfig = {
+    data: [
+      FlightLogStore.LandingData.line as any[],
+      FlightLogStore.LandingData.column as any[],
+    ],
+    xField: 'ts',
+    yField: ['value', 'count'],
+    height: 200,
+    geometryOptions: [
+      {
+        geometry: 'line',
+        seriesField: 'name',
+        smooth: true,
+        connectNull: true,
+      },
+      {
+        geometry: 'column',
+        isStack: false,
+        isGroup: true,
+        seriesField: 'type',
+        columnWidthRatio: 0.4,
+      },
+    ],
+  };
 
   return useObserver(() =>
     loading ? (
@@ -80,7 +178,7 @@ export function FlightLog(props: FlightLogProps) {
                         60
                       );
                       return (
-                        <Timeline.Item>
+                        <Timeline.Item key={value.id}>
                           {h.toString().length == 1 ? '0' : ''}
                           {h}:{m.toString().length == 1 ? '0' : ''}
                           {m} - {value.event?.description}
@@ -92,36 +190,82 @@ export function FlightLog(props: FlightLogProps) {
               </Col>
               <Col span={16} md={18}>
                 <Card>
-                  <Row gutter={8}>Working in progress ...</Row>
+                  <Row gutter={8}>
+                    <Col span={6}>
+                      <Statistic
+                        title={'Taxi Out'}
+                        suffix={'min'}
+                        loading={FlightLogStore.FlightDetailData.length == 0}
+                        value={
+                          ((FlightLogStore.FlightDetailData[1]
+                              .timestamp as any) -
+                            (FlightLogStore.FlightDetailData[0]
+                              .timestamp as any)) /
+                          60
+                        }
+                        precision={0}
+                        valueStyle={{fontSize: 'small'}}
+                      />
+                    </Col>
+                    <Col span={6} offset={2}>
+                      <Statistic
+                        title={'Airborne'}
+                        suffix={'min'}
+                        loading={FlightLogStore.FlightDetailData.length == 0}
+                        value={
+                          ((FlightLogStore.FlightDetailData[2]
+                              .timestamp as any) -
+                            (FlightLogStore.FlightDetailData[1]
+                              .timestamp as any)) /
+                          60
+                        }
+                        precision={0}
+                        valueStyle={{fontSize: 'small'}}
+                      />
+                    </Col>
+                    <Col span={6} offset={2}>
+                      <Statistic
+                        title={'Taxi in'}
+                        suffix={'min'}
+                        loading={FlightLogStore.FlightDetailData.length == 0}
+                        value={
+                          ((FlightLogStore.FlightDetailData[3]
+                              .timestamp as any) -
+                            (FlightLogStore.FlightDetailData[2]
+                              .timestamp as any)) /
+                          60
+                        }
+                        precision={0}
+                        valueStyle={{fontSize: 'small'}}
+                      />
+                    </Col>
+                  </Row>
                   <Divider/>
                   <Row gutter={8}>
-                    <Tabs
-                      defaultActiveKey="1"
-                      type="card"
-                      size={'small'}
-                      items={[
-                        {
-                          label: `Overview`,
-                          key: `overview`,
-                          children: `Working in progress ... `,
-                        },
-                        {
-                          label: `Taxi`,
-                          key: `taxi`,
-                          children: `Working in progress ...`,
-                        },
-                        {
-                          label: `Takeoff & Climb`,
-                          key: `takeoffAndClimb`,
-                          children: `Working in progress ...`,
-                        },
-                        {
-                          label: `Landing`,
-                          key: `landing`,
-                          children: `Working in progress ...`,
-                        },
-                      ]}
-                    />
+                    <Col span={24}>
+                      <Tabs
+                        defaultActiveKey="1"
+                        type="card"
+                        size={'small'}
+                        items={[
+                          {
+                            label: `Overview`,
+                            key: `overview`,
+                            children: <DualAxes {...(overviewConfig as any)} />,
+                          },
+                          {
+                            label: `Takeoff`,
+                            key: `takeoff`,
+                            children: <DualAxes {...(takeoffConfig as any)} />,
+                          },
+                          {
+                            label: `Landing`,
+                            key: `landing`,
+                            children: <DualAxes {...(landingConfig as any)} />,
+                          },
+                        ]}
+                      />
+                    </Col>
                   </Row>
                 </Card>
               </Col>

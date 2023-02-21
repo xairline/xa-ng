@@ -1,9 +1,10 @@
 import {ColumnsType, TableProps} from 'antd/es/table';
-import {Table, Tooltip} from 'antd';
+import {Divider, Table, Tooltip} from 'antd';
 import {ModelsFlightInfo} from '../../../store/Api';
 import {Link} from 'react-router-dom';
 import {useStores} from '../../../store';
 import {useObserver} from 'mobx-react-lite';
+import {InfoCircleOutlined} from "@ant-design/icons";
 
 /* eslint-disable-next-line */
 export interface TableViewProps {
@@ -77,7 +78,7 @@ export function TableView(props: TableViewProps) {
         ) : (
           <Tooltip placement="topLeft" title={'format: HH:mm'}>
             {Math.floor(record / 3600) < 10 ? '0' : ''}
-            {Math.floor(record / 3600)}:{Math.floor((record % 3600) / 60)} h
+            {Math.floor(record / 3600)}:{Math.floor(record % 3600) / 60 < 10 ? '0' : ''}{Math.floor((record % 3600) / 60)} h
           </Tooltip>
         ),
       /*
@@ -97,13 +98,33 @@ export function TableView(props: TableViewProps) {
       * */
     },
     {
-      title: '',
+      title: 'Actions',
       key: 'operation',
       fixed: 'right',
       width: 100,
-      render: (record: any) => (
-        <Link to={`/flight-logs/${record.key}`}>Details</Link>
-      ),
+      render: (record: any) =>
+        record.hasLocationData ? (
+          <>
+            <Link to={`/flight-logs/${record.key}`}>Details</Link>
+            {!record.va_filed ? (
+              <>
+                <Divider type={'vertical'}/>
+                <Link to={`/va/${record.key}`}>VA</Link>
+              </>
+            ) : (
+              <></>
+            )}
+          </>
+        ) : (
+          <Tooltip
+            trigger={'click'}
+            title={
+              "This is an imported flight that we don't have enough data to show detailed report"
+            }
+          >
+            Not Available{' '}<InfoCircleOutlined/>
+          </Tooltip>
+        ),
     },
   ];
 

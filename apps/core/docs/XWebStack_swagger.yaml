@@ -92,8 +92,12 @@ definitions:
         items:
           $ref: '#/definitions/models.FlightStatusLocation'
         type: array
+      source:
+        type: string
       updatedAt:
         type: string
+      va_filed:
+        type: boolean
     type: object
   models.FlightStatusEvent:
     properties:
@@ -122,9 +126,13 @@ definitions:
         $ref: '#/definitions/models.FlightStatusEvent'
       flightId:
         type: integer
+      fuel:
+        type: number
       gearForce:
         type: number
       gforce:
+        type: number
+      gs:
         type: number
       heading:
         type: number
@@ -136,6 +144,8 @@ definitions:
         type: number
       lng:
         type: number
+      pitch:
+        type: number
       state:
         $ref: '#/definitions/models.FlightState'
       timestamp:
@@ -144,6 +154,17 @@ definitions:
         type: string
       vs:
         type: number
+    type: object
+  models.Va:
+    properties:
+      Address:
+        type: string
+      FlightInfo:
+        type: string
+      Name:
+        type: string
+      PIREP:
+        type: string
     type: object
 info:
   contact: {}
@@ -195,6 +216,62 @@ paths:
       summary: Get one FlightLog
       tags:
       - Flight_Logs
+  /flightStatus:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.FlightStatus'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
+      summary: Get current of FlightStatus
+      tags:
+      - Flight_Status
+  /flightStatus/location:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.FlightStatusLocation'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
+      summary: Get current of location
+      tags:
+      - Flight_Status
+  /va:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Va'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
+      summary: Get a list of Va
+      tags:
+      - Va
   /xplm/dataref:
     get:
       consumes:

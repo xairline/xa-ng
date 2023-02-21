@@ -6,7 +6,7 @@ import (
 )
 
 func (f flightStatusService) processDatarefParked(datarefValues models.DatarefValues) {
-	if datarefValues["gs"].Value.(float64) > 1 {
+	if datarefValues["gs"].GetFloat64() > 1 {
 		// get the nearest airport
 		airportId, airportName := f.DatarefSvc.GetNearestAirport()
 		// get weight information
@@ -16,9 +16,9 @@ func (f flightStatusService) processDatarefParked(datarefValues models.DatarefVa
 		f.setDepartureFlightInfo(
 			airportId,
 			airportName,
-			datarefValues["ts"].Value.(float64),
-			fuelWeight.Value.(float64),
-			totalWeight.Value.(float64),
+			datarefValues["ts"].GetFloat64(),
+			fuelWeight.GetFloat64(),
+			totalWeight.GetFloat64(),
 		)
 		// get aircraft name
 		aircraftICAO := f.DatarefSvc.GetValueByDatarefName("sim/aircraft/view/acf_ICAO", "icao", nil, true)

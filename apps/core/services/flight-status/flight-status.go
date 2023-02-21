@@ -33,31 +33,55 @@ type FlightStatusService interface {
 	setDepartureFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64)
 	setArrivalFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64)
 	addLocation(datarefValues models.DatarefValues, distance_threshold float64, event *models.FlightStatusEvent)
+	GetLocation() models.FlightStatusLocation
 }
 
 type flightStatusService struct {
-	FlightStatus   *models.FlightStatus
-	DatarefSvc     dataref.DatarefService
-	cruiseCounter  *int
-	climbCounter   *int
-	descendCounter *int
-	db             *gorm.DB
-	Logger         logger.Logger
+	FlightStatus    *models.FlightStatus
+	DatarefSvc      dataref.DatarefService
+	cruiseCounter   *int
+	climbCounter    *int
+	descendCounter  *int
+	db              *gorm.DB
+	Logger          logger.Logger
+	CurrentLocation *models.FlightStatusLocation
+}
+
+func (f flightStatusService) GetLocation() models.FlightStatusLocation {
+	var datarefValues = f.DatarefSvc.GetCurrentValues()
+	return models.FlightStatusLocation{
+		ID:        0,
+		FlightId:  int(f.FlightStatus.ID),
+		Timestamp: datarefValues["ts"].GetFloat64(),
+		Vs:        datarefValues["vs"].GetFloat64(),
+		Ias:       datarefValues["ias"].GetFloat64(),
+		Lat:       datarefValues["lat"].GetFloat64(),
+		Lng:       datarefValues["lng"].GetFloat64(),
+		Altitude:  datarefValues["elevation"].GetFloat64(),
+		Agl:       datarefValues["agl"].GetFloat64(),
+		GearForce: datarefValues["gear_force"].GetFloat64(),
+		GForce:    datarefValues["g_force"].GetFloat64(),
+		Fuel:      datarefValues["fuel_weight"].GetFloat64(),
+		Heading:   datarefValues["heading"].GetFloat64(),
+		State:     f.FlightStatus.CurrentState,
+	}
 }
 
 func (f flightStatusService) addLocation(datarefValues models.DatarefValues, distance_threshold float64, event *models.FlightStatusEvent) {
 	newLocation := models.FlightStatusLocation{
+		ID:        0,
 		FlightId:  int(f.FlightStatus.ID),
-		Timestamp: datarefValues["ts"].Value.(float64),
-		Vs:        datarefValues["vs"].Value.(float64),
-		Ias:       datarefValues["ias"].Value.(float64),
-		Lat:       datarefValues["lat"].Value.(float64),
-		Lng:       datarefValues["lng"].Value.(float64),
-		Altitude:  datarefValues["elevation"].Value.(float64),
-		Agl:       datarefValues["agl"].Value.(float64),
-		GearForce: datarefValues["gear_force"].Value.(float64),
-		GForce:    datarefValues["g_force"].Value.(float64),
-		Heading:   datarefValues["heading"].Value.(float64),
+		Timestamp: datarefValues["ts"].GetFloat64(),
+		Vs:        datarefValues["vs"].GetFloat64(),
+		Ias:       datarefValues["ias"].GetFloat64(),
+		Lat:       datarefValues["lat"].GetFloat64(),
+		Lng:       datarefValues["lng"].GetFloat64(),
+		Altitude:  datarefValues["elevation"].GetFloat64(),
+		Agl:       datarefValues["agl"].GetFloat64(),
+		GearForce: datarefValues["gear_force"].GetFloat64(),
+		GForce:    datarefValues["g_force"].GetFloat64(),
+		Fuel:      datarefValues["fuel_weight"].GetFloat64(),
+		Heading:   datarefValues["heading"].GetFloat64(),
 		State:     f.FlightStatus.CurrentState,
 	}
 	if event != nil {
@@ -72,8 +96,8 @@ func (f flightStatusService) addLocation(datarefValues models.DatarefValues, dis
 	} else {
 		lastLat := f.FlightStatus.Locations[len(f.FlightStatus.Locations)-1].Lat
 		lastLng := f.FlightStatus.Locations[len(f.FlightStatus.Locations)-1].Lng
-		curLat := datarefValues["lat"].Value.(float64)
-		curLng := datarefValues["lng"].Value.(float64)
+		curLat := datarefValues["lat"].GetFloat64()
+		curLng := datarefValues["lng"].GetFloat64()
 		delta := distance(lastLat, lastLng, curLat, curLng)
 		if delta > distance_threshold {
 			f.FlightStatus.Locations = append(
@@ -121,6 +145,23 @@ func (f flightStatusService) GetFlightStatus() *models.FlightStatus {
 }
 
 func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) float32 {
+
+	f.CurrentLocation = &models.FlightStatusLocation{
+		ID:        0,
+		FlightId:  int(f.FlightStatus.ID),
+		Timestamp: datarefValues["ts"].GetFloat64(),
+		Vs:        datarefValues["vs"].GetFloat64(),
+		Ias:       datarefValues["ias"].GetFloat64(),
+		Lat:       datarefValues["lat"].GetFloat64(),
+		Lng:       datarefValues["lng"].GetFloat64(),
+		Altitude:  datarefValues["elevation"].GetFloat64(),
+		Agl:       datarefValues["agl"].GetFloat64(),
+		GearForce: datarefValues["gear_force"].GetFloat64(),
+		GForce:    datarefValues["g_force"].GetFloat64(),
+		Fuel:      datarefValues["fuel_weight"].GetFloat64(),
+		Heading:   datarefValues["heading"].GetFloat64(),
+		State:     f.FlightStatus.CurrentState,
+	}
 	switch f.FlightStatus.CurrentState {
 	case models.FlightStateParked:
 		f.processDatarefParked(datarefValues)
@@ -166,13 +207,14 @@ func NewFlightStatusService(datarefSvc dataref.DatarefService, logger logger.Log
 		defer flightStatusSvcLock.Unlock()
 		flightStatus := models.FlightStatus{}
 		flightStatusSvc = flightStatusService{
-			FlightStatus:   &flightStatus,
-			DatarefSvc:     datarefSvc,
-			cruiseCounter:  new(int),
-			climbCounter:   new(int),
-			descendCounter: new(int),
-			Logger:         logger,
-			db:             db,
+			FlightStatus:    &flightStatus,
+			CurrentLocation: new(models.FlightStatusLocation),
+			DatarefSvc:      datarefSvc,
+			cruiseCounter:   new(int),
+			climbCounter:    new(int),
+			descendCounter:  new(int),
+			Logger:          logger,
+			db:              db,
 		}
 		flightStatusSvc.ResetFlightStatus()
 		return flightStatusSvc

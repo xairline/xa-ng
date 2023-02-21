@@ -3,13 +3,13 @@ package flight_status
 import "apps/core/models"
 
 func (f flightStatusService) processDatarefClimb(datarefValues models.DatarefValues) {
-	if datarefValues["vs"].Value.(float64) > -500 &&
-		datarefValues["vs"].Value.(float64) < 500 {
+	if datarefValues["vs"].GetFloat64() > -500 &&
+		datarefValues["vs"].GetFloat64() < 500 {
 		*f.cruiseCounter += 1
 	} else {
 		*f.cruiseCounter = 0
 	}
-	if datarefValues["vs"].Value.(float64) < -500 {
+	if datarefValues["vs"].GetFloat64() < -500 {
 		*f.descendCounter += 1
 	} else {
 		*f.descendCounter = 0

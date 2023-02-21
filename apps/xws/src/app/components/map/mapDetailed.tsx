@@ -11,6 +11,8 @@ const MAPBOX_ACCESS_TOKEN =
 
 export interface MapArchProps {
   data: any;
+  viewState?: any;
+  mapStyle?: string;
 }
 
 // DeckGL react component
@@ -58,8 +60,8 @@ export function MapDetailed(props: MapArchProps) {
       data: props.data.pathsExt,
       pickable: true,
       widthScale: 20,
-      widthMinPixels: 1,
-      widthMaxPixels: 2,
+      widthMinPixels: 4,
+      widthMaxPixels: 4,
       getPath: (d: any) => d.path,
       getColor: (d: any) => d.color,
       billboard: true,
@@ -70,8 +72,8 @@ export function MapDetailed(props: MapArchProps) {
       data: props.data.paths,
       pickable: true,
       widthScale: 20,
-      widthMinPixels: 2,
-      widthMaxPixels: 2,
+      widthMinPixels: 3,
+      widthMaxPixels: 3,
       getPath: (d: any) => d.path,
       getColor: (d: any) => d.color,
       getWidth: (d) => 2,
@@ -82,7 +84,7 @@ export function MapDetailed(props: MapArchProps) {
       getPath: (d) => d.path,
       getTimestamps: (d) => d.timestamps,
       getColor: (d: any) => d.color,
-      opacity: 0.3,
+      opacity: 0.1,
       widthMinPixels: 6,
       // rounded: true,
       fadeTrail: false,
@@ -93,14 +95,14 @@ export function MapDetailed(props: MapArchProps) {
   ];
   return useObserver(() => (
     <DeckGL
-      initialViewState={INITIAL_VIEW_STATE}
+      initialViewState={props.viewState || INITIAL_VIEW_STATE}
       controller={true}
       layers={layers}
       height={'100%'}
       // getTooltip={getTooltip}
     >
       <Map
-        mapStyle="mapbox://styles/mapbox/satellite-v9"
+        mapStyle={props.mapStyle || 'mapbox://styles/mapbox/satellite-v9'}
         mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
       ></Map>
     </DeckGL>
