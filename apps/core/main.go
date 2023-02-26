@@ -30,7 +30,7 @@ func init() {
 	pluginPath := filepath.Join(systemPath, "Resources", "plugins", "XWebStack")
 	logger.Infof("Plugin path: %s", pluginPath)
 
-	db, err := utils.CreateDatabase(logger, pluginPath)
+	db, err := utils.CreateDatabase(logger, pluginPath, false)
 	if err != nil {
 		logger.Errorf("Failed to create/connect database, %v", err)
 	}

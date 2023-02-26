@@ -20,7 +20,7 @@ func main() {
 	logger := logger.NewGenericLogger()
 	home, _ := os.UserHomeDir()
 	pluginPath := path.Join(home, "/X-Plane 12/Resources/plugins/XWebStack")
-	db, err := utils.CreateDatabase(logger, pluginPath)
+	db, err := utils.CreateDatabase(logger, pluginPath, true)
 	if err != nil {
 		logger.Errorf("Failed to create/connect database, %v", err)
 	}

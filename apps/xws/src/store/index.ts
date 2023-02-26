@@ -3,12 +3,14 @@ import {routerStore} from './router';
 import {flightLogStore} from './flight-log';
 import {vaStore} from './va';
 import {liveStore} from './live';
+import {analyticsStore} from './analytics';
 
 export const rootStoreContext = createContext({
   RouterStore: routerStore,
   FlightLogStore: flightLogStore,
   VaStore: vaStore,
   LiveStore: liveStore,
+  AnalyticsStore: analyticsStore,
 });
 
 export const useStores = () => {
