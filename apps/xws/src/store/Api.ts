@@ -336,6 +336,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query?: {
         /** specify if it's overview */
         isOverview?: string;
+        /** departure airport */
+        departureAirportId?: string;
+        /** arrival airport */
+        arrivalAirportId?: string;
+        /** aircraft ICAO */
+        aircraftICAO?: string;
+        /** xplane or xws */
+        source?: string;
       },
       params: RequestParams = {},
     ) =>

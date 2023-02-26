@@ -34,6 +34,30 @@ const docTemplateXWebStack = `{
                         "description": "specify if it's overview",
                         "name": "isOverview",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "departure airport",
+                        "name": "departureAirportId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "arrival airport",
+                        "name": "arrivalAirportId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "aircraft ICAO",
+                        "name": "aircraftICAO",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "xplane or xws",
+                        "name": "source",
+                        "in": "query"
                     }
                 ],
                 "responses": {
