@@ -178,6 +178,22 @@ paths:
         in: query
         name: isOverview
         type: string
+      - description: departure airport
+        in: query
+        name: departureAirportId
+        type: string
+      - description: arrival airport
+        in: query
+        name: arrivalAirportId
+        type: string
+      - description: aircraft ICAO
+        in: query
+        name: aircraftICAO
+        type: string
+      - description: xplane or xws
+        in: query
+        name: source
+        type: string
       produces:
       - application/json
       responses:
