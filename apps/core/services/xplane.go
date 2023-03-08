@@ -18,7 +18,6 @@ import (
 	"github.com/xairline/goplane/xplm/processing"
 	"github.com/xairline/goplane/xplm/utilities"
 	"gorm.io/gorm"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -122,7 +121,7 @@ func (s xplaneService) setupGin() {
 	).Setup()
 	err := godotenv.Load(filepath.Join(pluginPath, "config"))
 	if err != nil {
-		log.Fatalf("Some error occured. Err: %s", err)
+		s.Logger.Errorf("Some error occured. Err: %s", err)
 	}
 
 	port := os.Getenv("PORT")
@@ -141,7 +140,7 @@ func (s xplaneService) setupGin() {
 
 func (s xplaneService) ImportXplanePilotLogs() {
 	var count int64 = 0
-	s.db.Model(&models.FlightStatus{}).Count(&count).Where("source <> ?", "xplane")
+	s.db.Model(&models.FlightStatus{}).Count(&count)
 	if count != 0 {
 		s.Logger.Infof("Pilot logs have been imported")
 		//return
@@ -153,7 +152,7 @@ func (s xplaneService) ImportXplanePilotLogs() {
 
 	f, err := os.Open(pilotLogPath)
 	if err != nil {
-		log.Fatal("Unable to read input file "+pilotLogPath, err)
+		s.Logger.Infof("Unable to read input file "+pilotLogPath, err)
 	}
 	defer f.Close()
 

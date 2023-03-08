@@ -26,11 +26,11 @@ export const routes: Array<IRoute> = [
     icon: (
       <FontAwesomeIcon
         icon={faBuilding}
-        style={{marginLeft: '10px', marginRight: '14px'}}
+        style={{ marginLeft: '10px', marginRight: '14px' }}
         size={'1x'}
       />
     ),
-    comp: <Headquarter/>,
+    comp: <Headquarter />,
   },
   // hq sub menus
   {
@@ -46,23 +46,23 @@ export const routes: Array<IRoute> = [
         size={'1x'}
       />
     ),
-    comp: <Live/>,
+    comp: <Live />,
   },
-  {
-    path: '/analytics',
-    name: 'Analytics',
-    icon: (
-      <FontAwesomeIcon
-        icon={faChartLine}
-        style={{
-          marginLeft: '6px',
-          marginRight: '20px',
-        }}
-        size={'1x'}
-      />
-    ),
-    comp: <Analytics/>,
-  },
+  // {
+  //   path: '/analytics',
+  //   name: 'Analytics',
+  //   icon: (
+  //     <FontAwesomeIcon
+  //       icon={faChartLine}
+  //       style={{
+  //         marginLeft: '6px',
+  //         marginRight: '20px',
+  //       }}
+  //       size={'1x'}
+  //     />
+  //   ),
+  //   comp: <Analytics/>,
+  // },
 ];
 
 /* eslint-disable-next-line */

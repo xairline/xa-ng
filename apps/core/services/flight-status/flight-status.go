@@ -81,6 +81,8 @@ func (f flightStatusService) addLocation(datarefValues models.DatarefValues, dis
 		GearForce: datarefValues["gear_force"].GetFloat64(),
 		GForce:    datarefValues["g_force"].GetFloat64(),
 		Fuel:      datarefValues["fuel_weight"].GetFloat64(),
+		GS:        datarefValues["gs"].GetFloat64(),
+		Pitch:     datarefValues["pitch"].GetFloat64(),
 		Heading:   datarefValues["heading"].GetFloat64(),
 		State:     f.FlightStatus.CurrentState,
 	}
@@ -159,6 +161,8 @@ func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) 
 		GearForce: datarefValues["gear_force"].GetFloat64(),
 		GForce:    datarefValues["g_force"].GetFloat64(),
 		Fuel:      datarefValues["fuel_weight"].GetFloat64(),
+		GS:        datarefValues["gs"].GetFloat64(),
+		Pitch:     datarefValues["pitch"].GetFloat64(),
 		Heading:   datarefValues["heading"].GetFloat64(),
 		State:     f.FlightStatus.CurrentState,
 	}
@@ -261,7 +265,8 @@ func (f flightStatusService) cleanupDataPointsAndStore() {
 		for index, _ := range locations {
 			if locations[index].State == models.FlightStateLanding &&
 				locations[index+1].State == models.FlightStateTaxiIn {
-				locations[index].Event = f.addFlightEvent(fmt.Sprintf("Taxi in at %s", f.FlightStatus.ArrivalFlightInfo.AirportId))
+				locations[index+1].Event = f.addFlightEvent(fmt.Sprintf("Taxi in at %s", f.FlightStatus.ArrivalFlightInfo.AirportId))
+				f.Logger.Infof("add missing taxi in event: %v", locations[index+1].Event)
 			}
 			break
 		}

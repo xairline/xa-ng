@@ -1,9 +1,20 @@
-import {Card, Col, Descriptions, Divider, Form, FormInstance, Input, Row, Spin, Tooltip,} from 'antd';
-import {useEffect, useState} from 'react';
-import {useStores} from '../../../store';
-import {useParams} from 'react-router-dom';
-import {InfoCircleOutlined} from '@ant-design/icons';
-import {useObserver} from 'mobx-react-lite';
+import {
+  Card,
+  Col,
+  Descriptions,
+  Divider,
+  Form,
+  FormInstance,
+  Input,
+  Row,
+  Spin,
+  Tooltip,
+} from 'antd';
+import { useEffect, useState } from 'react';
+import { useStores } from '../../../store';
+import { useParams } from 'react-router-dom';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { useObserver } from 'mobx-react-lite';
 
 /* eslint-disable-next-line */
 export interface VaProps {
@@ -12,7 +23,7 @@ export interface VaProps {
 }
 
 function getWindowDimensions() {
-  const {innerWidth: width, innerHeight: height} = window;
+  const { innerWidth: width, innerHeight: height } = window;
   return {
     width,
     height,
@@ -20,9 +31,9 @@ function getWindowDimensions() {
 }
 
 export function VaFlight(props: VaProps) {
-  const {FlightLogStore} = useStores();
+  const { FlightLogStore } = useStores();
   // Get the userId param from the URL.
-  let {id} = useParams();
+  let { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [windowDimensions, setWindowDimensions] = useState(
     getWindowDimensions()
@@ -45,68 +56,71 @@ export function VaFlight(props: VaProps) {
         arrAirport: FlightLogStore.flightStatus.arrivalFlightInfo?.airportId,
         depTime: `${date.getDate()}.${
           date.getMonth() + 1
-        }.${date.getFullYear()} ${date.getHours() + 1}:${date.getMinutes() < 10 ? "0" : ""}${date.getMinutes()}`,
+        }.${date.getFullYear()} ${date.getHours() + 1}:${
+          date.getMinutes() < 10 ? '0' : ''
+        }${date.getMinutes()}`,
         blockTime: `${
           Math.floor(
             (FlightLogStore?.flightStatus?.arrivalFlightInfo?.time -
               FlightLogStore.flightStatus.departureFlightInfo?.time) /
-            3600
-          ) > 10 || '0'
+              3600
+          ) > 10
+            ? ''
+            : '0'
         }${Math.floor(
           (FlightLogStore.flightStatus.arrivalFlightInfo?.time -
             FlightLogStore.flightStatus.departureFlightInfo?.time) /
-          3600
+            3600
         )}:${
           Math.floor(
             ((FlightLogStore.flightStatus.arrivalFlightInfo?.time -
-                FlightLogStore.flightStatus.departureFlightInfo?.time) %
+              FlightLogStore.flightStatus.departureFlightInfo?.time) %
               3600) /
-            60
-          ) > 10 || '0'
+              60
+          ) > 10
+            ? ''
+            : '0'
         }${Math.floor(
           ((FlightLogStore.flightStatus.arrivalFlightInfo?.time -
-              FlightLogStore.flightStatus.departureFlightInfo?.time) %
+            FlightLogStore.flightStatus.departureFlightInfo?.time) %
             3600) /
-          60
-        )}`
-        ,
-        flightTime:
-          `${
-            Math.floor(
-              ((FlightLogStore.FlightDetailData[2].timestamp as any) -
-                (FlightLogStore.FlightDetailData[1].timestamp as any)) /
-              3600
-            ) > 10 || '0'
-          }${Math.floor(
+            60
+        )}`,
+        flightTime: `${
+          Math.floor(
             ((FlightLogStore.FlightDetailData[2].timestamp as any) -
               (FlightLogStore.FlightDetailData[1].timestamp as any)) /
+              3600
+          ) > 10
+            ? ''
+            : '0'
+        }${Math.floor(
+          ((FlightLogStore.FlightDetailData[2].timestamp as any) -
+            (FlightLogStore.FlightDetailData[1].timestamp as any)) /
             3600
-          )}:${
-            Math.floor(
-              (((FlightLogStore.FlightDetailData[2].timestamp as any) -
-                  (FlightLogStore.FlightDetailData[1].timestamp as any)) %
-                3600) /
-              60
-            ) > 10 || '0'
-          }${Math.floor(
+        )}:${
+          Math.floor(
             (((FlightLogStore.FlightDetailData[2].timestamp as any) -
-                (FlightLogStore.FlightDetailData[1].timestamp as any)) %
+              (FlightLogStore.FlightDetailData[1].timestamp as any)) %
               3600) /
+              60
+          ) > 10
+            ? ''
+            : '0'
+        }${Math.floor(
+          (((FlightLogStore.FlightDetailData[2].timestamp as any) -
+            (FlightLogStore.FlightDetailData[1].timestamp as any)) %
+            3600) /
             60
-          )}`
-        ,
-        blockFuel:
-          `${
-            FlightLogStore.FlightDetailData[3].fuel -
-            FlightLogStore.FlightDetailData[0].fuel
-          }`
-        ,
-        flightFuel:
-          `${
-            FlightLogStore.FlightDetailData[2].fuel -
-            FlightLogStore.FlightDetailData[1].fuel
-          }`
-        ,
+        )}`,
+        blockFuel: `${
+          FlightLogStore.FlightDetailData[0].fuel -
+          FlightLogStore.FlightDetailData[3].fuel
+        }`,
+        flightFuel: `${
+          FlightLogStore.FlightDetailData[1].fuel -
+          FlightLogStore.FlightDetailData[2].fuel
+        }`,
       });
     });
   }, []);
@@ -115,7 +129,7 @@ export function VaFlight(props: VaProps) {
   return useObserver(() => {
     return loading ? (
       <Spin tip="Loading" size="large">
-        <div className="content"/>
+        <div className="content" />
       </Spin>
     ) : (
       <>
@@ -125,7 +139,7 @@ export function VaFlight(props: VaProps) {
               title={
                 <Row justify={'end'}>
                   <Col span={2}>PIREP</Col>
-                  <Col xl={16} lg={12} md={7}/>
+                  <Col xl={16} lg={12} md={7} />
                   <Col xl={6} lg={10} md={15}>
                     {/*<Form.Item>*/}
                     {/*  <Button>Load</Button>*/}
@@ -142,11 +156,11 @@ export function VaFlight(props: VaProps) {
               // layout={`${
               //   windowDimensions.width > 992 ? 'horizontal' : 'vertical'
               // }`}
-              column={{xxl: 2, xl: 2, lg: 2, md: 1, sm: 2, xs: 1}}
+              column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 2, xs: 1 }}
             >
               <Descriptions.Item label="Flight No.">
-                <Form.Item name={'flightNo'} rules={[{required: true}]}>
-                  <Input required/>
+                <Form.Item name={'flightNo'} rules={[{ required: true }]}>
+                  <Input required />
                 </Form.Item>
               </Descriptions.Item>
               <Descriptions.Item
@@ -156,7 +170,7 @@ export function VaFlight(props: VaProps) {
                       title={
                         <>
                           <h3>Why ICAO doesn't match my aircraft?</h3>
-                          <Divider/>
+                          <Divider />
                           We are reading from x-plane directly so as long as
                           your plugin airplane's dev put what should be in the
                           acf file. You shouldn't have any problems. In the
@@ -170,79 +184,78 @@ export function VaFlight(props: VaProps) {
                       trigger={'click'}
                     >
                       Aircraft ICAO{' '}
-                      <InfoCircleOutlined style={{marginLeft: '6px'}}/>
+                      <InfoCircleOutlined style={{ marginLeft: '6px' }} />
                     </Tooltip>
                   </>
                 }
               >
-                <Form.Item name={'aircraftICAO'} rules={[{required: true}]}>
-                  <Input required/>
+                <Form.Item name={'aircraftICAO'} rules={[{ required: true }]}>
+                  <Input required />
                 </Form.Item>
               </Descriptions.Item>
 
               <Descriptions.Item label="Flight Level">
-                <Form.Item name={'flightLevel'} rules={[{required: true}]}>
-                  <Input required/>
+                <Form.Item name={'flightLevel'} rules={[{ required: true }]}>
+                  <Input required />
                 </Form.Item>
               </Descriptions.Item>
               <Descriptions.Item label="Flight Rules">IFR</Descriptions.Item>
               <Descriptions.Item label="Departure Airport">
-                <Form.Item name={'depAirport'} rules={[{required: true}]}>
-                  <Input disabled={true}/>
+                <Form.Item name={'depAirport'} rules={[{ required: true }]}>
+                  <Input disabled={true} />
                 </Form.Item>
               </Descriptions.Item>
               <Descriptions.Item label="Arrival Airport">
-                <Form.Item name={'arrAirport'} rules={[{required: true}]}>
-                  <Input disabled={true}/>
+                <Form.Item name={'arrAirport'} rules={[{ required: true }]}>
+                  <Input disabled={true} />
                 </Form.Item>
               </Descriptions.Item>
               <Descriptions.Item label="Alternative Airport">
-                <Form.Item name={'altAirport'} rules={[{required: true}]}>
-                  <Input placeholder={'Alternative Airport'}/>
+                <Form.Item name={'altAirport'} rules={[{ required: true }]}>
+                  <Input placeholder={'Alternative Airport'} />
                 </Form.Item>
               </Descriptions.Item>
               <Descriptions.Item label="Departure Time">
-                <Form.Item name={'depTime'} rules={[{required: true}]}>
-                  <Input disabled={true}/>
+                <Form.Item name={'depTime'} rules={[{ required: true }]}>
+                  <Input disabled={true} />
                 </Form.Item>
               </Descriptions.Item>
               <Descriptions.Item label="Block Time(hh:mm)">
-                <Form.Item name={'blockTime'} rules={[{required: true}]}>
-                  <Input disabled={true}/>
+                <Form.Item name={'blockTime'} rules={[{ required: true }]}>
+                  <Input disabled={true} />
                 </Form.Item>
               </Descriptions.Item>
               <Descriptions.Item label="Flight Time(hh:mm)">
-                <Form.Item name={'flightTime'} rules={[{required: true}]}>
-                  <Input disabled={true}/>
+                <Form.Item name={'flightTime'} rules={[{ required: true }]}>
+                  <Input disabled={true} />
                 </Form.Item>
               </Descriptions.Item>
 
               <Descriptions.Item label="Block Fuel">
-                <Form.Item name={'blockFuel'} rules={[{required: true}]}>
-                  <Input disabled={true}/>
+                <Form.Item name={'blockFuel'} rules={[{ required: true }]}>
+                  <Input disabled={true} />
                 </Form.Item>
               </Descriptions.Item>
               <Descriptions.Item label="Flight Fuel">
-                <Form.Item name={'flightFuel'} rules={[{required: true}]}>
-                  <Input disabled={true}/>
+                <Form.Item name={'flightFuel'} rules={[{ required: true }]}>
+                  <Input disabled={true} />
                 </Form.Item>
               </Descriptions.Item>
               <Descriptions.Item label="Pax">
-                <Form.Item name={'pax'} rules={[{required: true}]}>
-                  <Input required/>
+                <Form.Item name={'pax'} rules={[{ required: true }]}>
+                  <Input required />
                 </Form.Item>
               </Descriptions.Item>
               <Descriptions.Item label="Cargo">
-                <Form.Item name={'cargo'} rules={[{required: true}]}>
-                  <Input required/>
+                <Form.Item name={'cargo'} rules={[{ required: true }]}>
+                  <Input required />
                 </Form.Item>
               </Descriptions.Item>
             </Descriptions>
           </Card>
         </Form>
       </>
-    )
-      ;
+    );
   });
 }
 
