@@ -245,6 +245,7 @@ func (f flightStatusService) cleanupDataPointsAndStore() {
 			}
 			if location.State == models.FlightStateTaxiIn {
 				indexOfFirstTaxiIn = index
+				f.FlightStatus.Locations[indexOfFirstTaxiIn].Event = f.addFlightEvent(fmt.Sprintf("Taxi in at %s", f.FlightStatus.ArrivalFlightInfo.AirportId))
 				break
 			}
 		}
@@ -261,15 +262,6 @@ func (f flightStatusService) cleanupDataPointsAndStore() {
 
 		f.Logger.Infof("Original: %v, now: %v", len(f.FlightStatus.Locations), len(locations))
 
-		// add missing taxi in event
-		for index, _ := range locations {
-			if locations[index].State == models.FlightStateLanding &&
-				locations[index+1].State == models.FlightStateTaxiIn {
-				locations[index+1].Event = f.addFlightEvent(fmt.Sprintf("Taxi in at %s", f.FlightStatus.ArrivalFlightInfo.AirportId))
-				f.Logger.Infof("add missing taxi in event: %v", locations[index+1].Event)
-			}
-			break
-		}
 		// store to db
 		result := f.db.CreateInBatches(&locations, 500)
 		if result.Error != nil {

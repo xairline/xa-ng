@@ -49,7 +49,6 @@ export function App() {
             >
               <Routes>
                 {routes.map((route: IRoute, index) => {
-                  console.log(route);
                   return (
                     <Route key={index} path={route.path} element={route.comp} />
                   );

@@ -1,5 +1,17 @@
-import {action, computed, makeObservable, observable, runInAction, toJS,} from 'mobx';
-import {Api, ModelsDatarefValue, ModelsFlightState, ModelsFlightStatus,} from './Api';
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+  toJS,
+} from 'mobx';
+import {
+  Api,
+  ModelsDatarefValue,
+  ModelsFlightState,
+  ModelsFlightStatus,
+} from './Api';
 
 class LiveStore {
   @observable
@@ -7,26 +19,26 @@ class LiveStore {
   @observable
   public apState:
     | {
-    AutothrottleEngage: boolean;
-    HeadingHoldEngaged: boolean;
-    WingLevelerEngaged: boolean;
-    AirspeedHoldWithPitchEngaged: boolean;
-    VVIClimbEngaged: boolean;
-    AltitudeHoldArm: boolean;
-    FlightLevelChangeEngage: boolean;
-    PitchSyncEngage: boolean;
-    HNAVArmed: boolean;
-    HNAVEngaged: boolean;
-    GlideslopeArmed: boolean;
-    GlideslopeEngaged: boolean;
-    FMSArmed: boolean;
-    FMSEnaged: boolean;
-    AltitudeHoldEngaged: boolean;
-    HorizontalTOGAEngaged: boolean;
-    VerticalTOGAEngaged: boolean;
-    VNAVArmed: boolean;
-    VNAVEngaged: boolean;
-  }
+        AutothrottleEngage: boolean;
+        HeadingHoldEngaged: boolean;
+        WingLevelerEngaged: boolean;
+        AirspeedHoldWithPitchEngaged: boolean;
+        VVIClimbEngaged: boolean;
+        AltitudeHoldArm: boolean;
+        FlightLevelChangeEngage: boolean;
+        PitchSyncEngage: boolean;
+        HNAVArmed: boolean;
+        HNAVEngaged: boolean;
+        GlideslopeArmed: boolean;
+        GlideslopeEngaged: boolean;
+        FMSArmed: boolean;
+        FMSEnaged: boolean;
+        AltitudeHoldEngaged: boolean;
+        HorizontalTOGAEngaged: boolean;
+        VerticalTOGAEngaged: boolean;
+        VNAVArmed: boolean;
+        VNAVEngaged: boolean;
+      }
     | any;
   private api: Api<ModelsFlightStatus>;
   private xplmApi: Api<ModelsDatarefValue>;
@@ -79,9 +91,9 @@ class LiveStore {
           name: 'IAS',
           ts: Math.floor(
             location.timestamp -
-            (this.flightStatus?.locations
-              ? (this.flightStatus.locations[0].timestamp as any)
-              : 0)
+              (this.flightStatus?.locations
+                ? (this.flightStatus.locations[0].timestamp as any)
+                : 0)
           ),
           value: location.ias,
         });
@@ -95,7 +107,7 @@ class LiveStore {
       }
     });
 
-    return {line, column};
+    return { line, column };
   }
 
   @action
@@ -126,7 +138,6 @@ class LiveStore {
       VNAVArmed: apStateArray[17] == '1' ? true : false,
       VNAVEngaged: apStateArray[18] == '1' ? true : false,
     };
-    console.log(JSON.stringify(this.apState));
   }
 
   @action
@@ -166,7 +177,7 @@ class LiveStore {
       });
       paths.push(res);
     });
-    return {paths, pathsExt};
+    return { paths, pathsExt };
   }
 }
 

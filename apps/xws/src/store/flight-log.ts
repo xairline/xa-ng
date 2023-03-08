@@ -125,11 +125,18 @@ class FlightLogStore {
     const line: any[] = [];
     const column: any[] = [];
     const gearForce: any[] = [];
+    const touchdownIndex: number[] = [];
     let sampling: boolean = false;
     let lastTs: number = 0;
     this.flightStatus.locations?.forEach((location: any, index: number) => {
       if (location.state == ModelsFlightState.FlightStateLanding) {
         sampling = true;
+        if (
+          location.gearForce <= 1 &&
+          this.flightStatus?.locations[index + 1]?.gearForce > 1
+        ) {
+          touchdownIndex.push(index);
+        }
       }
       if (location.state == ModelsFlightState.FlightStateTaxiIn) {
         sampling = false;
@@ -189,7 +196,7 @@ class FlightLogStore {
       }
     });
 
-    return { line, column, gearForce };
+    return { line, column, gearForce, touchdownIndex };
   }
 
   @computed
