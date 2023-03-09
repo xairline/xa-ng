@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             go-mod-
       - run: go mod tidy
-      - run: cd ../../ && make all -j 3
+      - run: make all -j 3
 
       - name: Release
         uses: softprops/action-gh-release@v1
