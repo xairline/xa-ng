@@ -35,8 +35,7 @@ jobs:
           restore-keys: |
             go-mod-
       - run: go mod tidy
-      #      - run: make mac-test
-      - run: cd ../../ && ./tools/release.sh && mv dist/apps/xws.zip xws.zip
+      - run: cd ../../ && make all -j 3
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -44,5 +43,5 @@ jobs:
         with:
           body_path: ${{ github.workspace }}/CHANGELOG.md
           files: |
-            ../../xws.zip
-          prerelease: true
+            ${{ github.workspace }}/dist/apps/XWebStack/*.xpl
+          prerelease: false
