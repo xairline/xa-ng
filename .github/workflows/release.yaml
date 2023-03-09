@@ -10,7 +10,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: macos-latest
+    runs-on: macos-10.15
     defaults:
       run:
         working-directory: apps/core
@@ -36,10 +36,13 @@ jobs:
             go-mod-
       - run: go mod tidy
       #      - run: make mac-test
-      - run: make all -j 3
-      - uses: actions/setup-node@v3
+      - run: ./tools/release.sh && mv dist/apps/xws.zip xws.zip
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          node-version: 16
-      - run: npm install -g pnpm
-      - run: pnpm i
-      - run: pnpm exec nx run xws:build
+          body_path: ${{ github.workspace }}/CHANGELOG.md
+          files: |
+            xws.zip
+          prerelease: true

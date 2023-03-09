@@ -90,7 +90,7 @@ func (s xplaneService) onPluginStateChanged(state extra.PluginState, plugin *ext
 func (s xplaneService) onPluginStart() {
 	s.Logger.Info("Plugin started")
 	// import xplane logs
-	s.ImportXplanePilotLogs()
+	//s.ImportXplanePilotLogs()
 
 	s.setupGin()
 	processing.RegisterFlightLoopCallback(s.flightLoop, -1, nil)
