@@ -36,7 +36,7 @@ jobs:
             go-mod-
       - run: go mod tidy
       #      - run: make mac-test
-      - run: ./tools/release.sh && mv dist/apps/xws.zip xws.zip
+      - run: cd ../../ && ./tools/release.sh && mv dist/apps/xws.zip xws.zip
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -44,5 +44,5 @@ jobs:
         with:
           body_path: ${{ github.workspace }}/CHANGELOG.md
           files: |
-            xws.zip
+            ../../xws.zip
           prerelease: true
