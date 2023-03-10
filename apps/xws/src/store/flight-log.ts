@@ -1,4 +1,11 @@
-import { action, computed, makeObservable, observable, toJS } from 'mobx';
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+  toJS,
+} from 'mobx';
 import {
   Api,
   ModelsFlightState,
@@ -473,13 +480,17 @@ class FlightLogStore {
   @action
   async loadFlightStatuses() {
     let res = await this.api.flightLogs.flightLogsList({ isOverview: 'true' });
-    this.flightStatuses = res.data;
+    runInAction(() => {
+      this.flightStatuses = res.data;
+    });
   }
 
   @action
   async LoadFlightInfo(id: string) {
     let res = await this.api.flightLogs.flightLogsDetail(id);
-    this.flightStatus = res.data;
+    runInAction(() => {
+      this.flightStatus = res.data;
+    });
   }
 
   calculateArcs(data: any) {

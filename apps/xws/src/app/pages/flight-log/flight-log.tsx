@@ -251,8 +251,7 @@ export function FlightLog(props: FlightLogProps) {
                     </Col>
                     <Col span={6}>
                       <Statistic
-                        title={'Fuel'}
-                        suffix={'kg'}
+                        title={'Fuel (kg)'}
                         loading={FlightLogStore.FlightDetailData.length == 0}
                         value={
                           ((FlightLogStore.FlightDetailData[0].fuel as any) -
@@ -297,11 +296,11 @@ export function FlightLog(props: FlightLogProps) {
                                 header={`touchdown - ${index + 1}`}
                                 key={index}
                               >
-                                <Row gutter={16}>
+                                <Row gutter={12}>
                                   <Col span={6}>
                                     <Statistic
-                                      title={'VS'}
-                                      suffix={'ft/min'}
+                                      title={'VS(ft/min)'}
+                                      // suffix={'ft/min'}
                                       loading={
                                         FlightLogStore.FlightDetailData
                                           .length == 0
@@ -322,8 +321,8 @@ export function FlightLog(props: FlightLogProps) {
                                   </Col>
                                   <Col span={6}>
                                     <Statistic
-                                      title={'IAS'}
-                                      suffix={'kt'}
+                                      title={'IAS(kt)'}
+                                      // suffix={'kt'}
                                       loading={
                                         FlightLogStore.FlightDetailData
                                           .length == 0
@@ -341,7 +340,6 @@ export function FlightLog(props: FlightLogProps) {
                                   <Col span={6}>
                                     <Statistic
                                       title={'G Force'}
-                                      suffix={'G'}
                                       value={Math.max(
                                         ...FlightLogStore?.flightStatus?.locations
                                           ?.slice(
@@ -362,8 +360,8 @@ export function FlightLog(props: FlightLogProps) {
                                   </Col>
                                   <Col span={6}>
                                     <Statistic
-                                      title={'Pitch'}
-                                      suffix={'deg'}
+                                      title={'Pitch(deg)'}
+                                      // suffix={'deg'}
                                       loading={
                                         FlightLogStore.FlightDetailData
                                           .length == 0

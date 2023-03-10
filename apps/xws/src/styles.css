@@ -24,4 +24,5 @@ body {
 
 .main-content {
   background: url('/airport_night.jpg');
+  background-size: cover;
 }

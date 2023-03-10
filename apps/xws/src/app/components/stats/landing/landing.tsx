@@ -47,11 +47,10 @@ export function Landing(props: LandingProps) {
             <Row gutter={[8, 8]}>
               <Col span={24}>
                 <Statistic
-                  title="Avg VS"
+                  title="Avg VS (ft/min)"
                   value={FlightLogStore.AvgLandingVS}
                   precision={0}
                   // valueStyle={{color: '#3f8600'}}
-                  suffix="ft/min"
                   // valueStyle={{ fontSize: 'small' }}
                   // formatter={formatter}
                 />

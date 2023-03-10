@@ -1,6 +1,16 @@
 import { useObserver } from 'mobx-react-lite';
 import { useStores } from '../../../store';
-import { Card, Col, Divider, Row, Spin, Statistic, Tabs, Timeline } from 'antd';
+import {
+  Card,
+  Col,
+  Divider,
+  Row,
+  Space,
+  Spin,
+  Statistic,
+  Tabs,
+  Timeline,
+} from 'antd';
 import { ModelsFlightStatusLocation } from '../../../store/Api';
 import { useEffect, useState } from 'react';
 import MapDetailed from '../../components/map/mapDetailed';
@@ -39,10 +49,22 @@ export function Live(props: LiveProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   return useObserver(() => {
-    return loading ? (
-      <Spin tip="Loading" size="large">
-        <div className="content" />
-      </Spin>
+    return loading || !LiveStore.flightStatus.aircraftICAO?.length > 0 ? (
+      <Row style={{ marginTop: '30vh' }}>
+        <Col span={8}></Col>
+        <Col span={8}>
+          <Card style={{ height: '20vh', width: '30vw' }}>
+            <Spin
+              tip="Waiting for aircraft ... "
+              size="large"
+              style={{ marginTop: '8vh' }}
+            >
+              <div className="content" />
+            </Spin>
+          </Card>
+        </Col>
+        <Col span={8}></Col>{' '}
+      </Row>
     ) : (
       <>
         <Row style={{ height: '100%' }} gutter={20}>

@@ -88,7 +88,6 @@ export function TableView(props: TableViewProps) {
           a.arrival.airportId < b.arrival.airportId ? -1 : 1
         )
         .map((data: any) => {
-          console.log(data.arrival.airportId);
           return {
             text: data.arrival.airportId,
             value: data.arrival.airportId,
