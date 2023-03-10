@@ -2,6 +2,7 @@ package flight_status
 
 import (
 	"apps/core/models"
+	"apps/core/services/dataref"
 	"fmt"
 )
 
@@ -35,6 +36,8 @@ func (f flightStatusService) processDatarefParked(datarefValues models.DatarefVa
 
 		event := f.addFlightEvent(fmt.Sprintf("Taxi out at %s", airportId))
 		f.addLocation(datarefValues, -1, &event)
+		datarefExtList := dataref.InitializeDatarefList(f.Logger)
+		f.DatarefSvc.SetDatarefExtList(&datarefExtList)
 		f.changeState(models.FlightStateTaxiOut, 0.2)
 	}
 }

@@ -2,7 +2,7 @@ A
 1000
 CLI_SCRIPT
 
-acf "/user/dzou/X-Plane\ 12/Aircraft/Laminar Research/Boeing B737-800/b738.acf"
+acf "Aircraft/Laminar Research/Beechcraft Baron 58/Baron_58.acf"
 
 wait 30
 

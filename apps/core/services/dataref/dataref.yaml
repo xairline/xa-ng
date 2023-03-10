@@ -1,9 +1,9 @@
 - name: ts
   value: sim/time/total_running_time_sec
   precision: 3
-- name: tas
-  value: sim/cockpit2/gauges/indicators/true_airspeed_kts_pilot
-  precision: 0
+#- name: tas
+#  value: sim/cockpit2/gauges/indicators/true_airspeed_kts_pilot
+#  precision: 0
 - name: vs
   value: sim/flightmodel/position/vh_ind_fpm
   precision: 0

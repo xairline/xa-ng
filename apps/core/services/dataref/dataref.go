@@ -25,12 +25,17 @@ type DatarefService interface {
 	GetCurrentValues() models.DatarefValues
 	GetValueByDatarefName(dataref, name string, precision *int8, isByteArray bool) models.DatarefValue
 	GetNearestAirport() (string, string)
+	SetDatarefExtList(datarefExtlist *[]models.DatarefExt)
 	getCurrentValue(datarefExt *models.DatarefExt) models.DatarefValue
 }
 
 type datarefService struct {
-	DatarefExtList []models.DatarefExt
+	DatarefExtList *[]models.DatarefExt
 	Logger         logger.Logger
+}
+
+func (d datarefService) SetDatarefExtList(datarefExtlist *[]models.DatarefExt) {
+	d.DatarefExtList = datarefExtlist
 }
 
 func (d datarefService) GetNearestAirport() (string, string) {
@@ -115,7 +120,7 @@ func (d datarefService) getCurrentValue(datarefExt *models.DatarefExt) models.Da
 func (d datarefService) GetCurrentValues() models.DatarefValues {
 	var res = models.DatarefValues{}
 	//var wg sync.WaitGroup
-	for _, value := range d.DatarefExtList {
+	for _, value := range *d.DatarefExtList {
 		//wg.Add(1)
 		datarefExt := value
 		//go func() {
@@ -137,33 +142,38 @@ func NewDatarefService(logger logger.Logger) DatarefService {
 		datarefSvcLock.Lock()
 		defer datarefSvcLock.Unlock()
 
-		var datarefList []models.Dataref
-		err := yaml.Unmarshal(datarefBytes, &datarefList)
-		if err != nil {
-			logger.Errorf("Unmarshal: %v", err)
-		}
-		var datarefExtList []models.DatarefExt
-		for _, dataref := range datarefList {
-			xplaneDataref, success := dataAccess.FindDataRef(dataref.DatarefStr)
-			if !success {
-				logger.Errorf("Failed to FindDataRef: %s", dataref.DatarefStr)
-			}
-			precision := dataref.Precision
-			datarefExtList = append(datarefExtList, models.DatarefExt{
-				Name:         dataref.Name,
-				Dataref:      xplaneDataref,
-				DatarefType:  dataAccess.GetDataRefTypes(xplaneDataref),
-				Precision:    &precision,
-				IsBytesArray: dataref.IsBytesArray,
-			})
-		}
+		datarefExtList := InitializeDatarefList(logger)
 
 		datarefSvc = datarefService{
-			DatarefExtList: datarefExtList,
+			DatarefExtList: &datarefExtList,
 			Logger:         logger,
 		}
 		return datarefSvc
 	}
+}
+
+func InitializeDatarefList(logger logger.Logger) []models.DatarefExt {
+	var datarefList []models.Dataref
+	err := yaml.Unmarshal(datarefBytes, &datarefList)
+	if err != nil {
+		logger.Errorf("Unmarshal: %v", err)
+	}
+	var datarefExtList []models.DatarefExt
+	for _, dataref := range datarefList {
+		xplaneDataref, success := dataAccess.FindDataRef(dataref.DatarefStr)
+		if !success {
+			logger.Errorf("Failed to FindDataRef: %s", dataref.DatarefStr)
+		}
+		precision := dataref.Precision
+		datarefExtList = append(datarefExtList, models.DatarefExt{
+			Name:         dataref.Name,
+			Dataref:      xplaneDataref,
+			DatarefType:  dataAccess.GetDataRefTypes(xplaneDataref),
+			Precision:    &precision,
+			IsBytesArray: dataref.IsBytesArray,
+		})
+	}
+	return datarefExtList
 }
 
 func dataRoundup(value float64, precision int) float64 {
