@@ -36,7 +36,7 @@ export function Headquarter(props: HeadquarterProps) {
   }, []);
   return useObserver(() => (
     <div>
-      <Row gutter={[16, 8]}>
+      <Row gutter={[8, 8]}>
         <Col span={`${windowDimensions.width > 992 ? '12' : '12'}`}>
           <Flights size={'small'}/>
         </Col>

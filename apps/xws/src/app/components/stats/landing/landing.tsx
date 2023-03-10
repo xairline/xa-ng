@@ -1,8 +1,8 @@
-import {useStores} from '../../../../store';
-import {useObserver} from 'mobx-react-lite';
-import {Card, Col, Row, Statistic} from 'antd';
-import {CardSize} from 'antd/es/card/Card';
-import {DualAxes} from '@ant-design/plots';
+import { useStores } from '../../../../store';
+import { useObserver } from 'mobx-react-lite';
+import { Card, Col, Row, Statistic } from 'antd';
+import { CardSize } from 'antd/es/card/Card';
+import { DualAxes } from '@ant-design/plots';
 
 /* eslint-disable-next-line */
 export interface LandingProps {
@@ -10,7 +10,7 @@ export interface LandingProps {
 }
 
 export function Landing(props: LandingProps) {
-  const {FlightLogStore} = useStores();
+  const { FlightLogStore } = useStores();
 
   return useObserver(() => {
     const config = {
@@ -39,28 +39,29 @@ export function Landing(props: LandingProps) {
     };
     return (
       <Card title={'Landing'} size={props.size}>
-        <Row>
-          <Col span={18}>
+        <Row gutter={[8, 8]}>
+          <Col span={16}>
             <DualAxes {...(config as any)} />
           </Col>
-          <Col span={4} offset={2}>
-            <Row gutter={[16, 16]}>
-              <Col>
+          <Col span={7} offset={1}>
+            <Row gutter={[8, 8]}>
+              <Col span={24}>
                 <Statistic
                   title="Avg VS"
                   value={FlightLogStore.AvgLandingVS}
-                  precision={2}
-
+                  precision={0}
                   // valueStyle={{color: '#3f8600'}}
                   suffix="ft/min"
+                  // valueStyle={{ fontSize: 'small' }}
                   // formatter={formatter}
                 />
               </Col>
-              <Col>
+              <Col span={24}>
                 <Statistic
                   title="Avg G"
                   value={FlightLogStore.AvgGForce}
                   precision={2}
+                  // valueStyle={{ fontSize: 'small' }}
                   // valueStyle={{color: '#3f8600'}}
                   // suffix="%"
                   // formatter={formatter}
@@ -70,7 +71,7 @@ export function Landing(props: LandingProps) {
           </Col>
         </Row>
       </Card>
-    )
+    );
   });
 }
 

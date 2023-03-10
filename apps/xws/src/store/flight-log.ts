@@ -28,7 +28,6 @@ export const outFlowColors = [
 ];
 
 export interface TableDataSet {
-  filters: any;
   data: any;
 }
 
@@ -462,7 +461,7 @@ class FlightLogStore {
             flightStatus.departureFlightInfo?.time,
       });
     });
-    return { data, filters: [] };
+    return { data };
   }
 
   @action

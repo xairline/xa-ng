@@ -42,11 +42,27 @@ export function TableView(props: TableViewProps) {
     {
       title: 'Departure',
       dataIndex: 'departure',
-      filters: FlightLogStore.tableDataSet.filters['departure'] || null,
-      filterMode: 'menu',
+      filters: FlightLogStore.tableDataSet.data
+        .filter((elem: any, index: any, self: any) => {
+          return (
+            index ===
+            self.findIndex(
+              (t: any) => t.departure.airportId === elem.departure.airportId
+            )
+          );
+        })
+        .sort((a: any, b: any) =>
+          a.departure.airportId < b.departure.airportId ? -1 : 1
+        )
+        .map((data: any) => {
+          return {
+            text: data.departure.airportId,
+            value: data.departure.airportId,
+          };
+        }),
       filterSearch: true,
-      //onFilter: (value: string, record) => record.departure.startsWith(value),
-      // fixed: 'left',
+      onFilter: (value: string, record: any) =>
+        record.departure.airportId.startsWith(value),
       width: '90px',
       render: (record: ModelsFlightInfo) => (
         <Tooltip placement="topLeft" title={record.airportName}>
@@ -57,10 +73,30 @@ export function TableView(props: TableViewProps) {
     {
       title: 'Arrival',
       dataIndex: 'arrival',
-      filters: FlightLogStore.tableDataSet.filters['arrival'] || null,
-      filterMode: 'menu',
+      filters: FlightLogStore.tableDataSet.data
+        .filter((elem: any, index: any, self: any) => {
+          return (
+            index ===
+            self.findIndex(
+              (t: any) =>
+                t.arrival.airportId === elem.arrival.airportId &&
+                t.arrival.airportId.length > 0
+            )
+          );
+        })
+        .sort((a: any, b: any) =>
+          a.arrival.airportId < b.arrival.airportId ? -1 : 1
+        )
+        .map((data: any) => {
+          console.log(data.arrival.airportId);
+          return {
+            text: data.arrival.airportId,
+            value: data.arrival.airportId,
+          };
+        }),
       filterSearch: true,
-      //onFilter: (value: string, record) => record.arrival.startsWith(value),
+      onFilter: (value: string, record: any) =>
+        record.arrival.airportId.startsWith(value),
       // fixed: 'left',
       width: '80px',
       render: (record: ModelsFlightInfo) => (
