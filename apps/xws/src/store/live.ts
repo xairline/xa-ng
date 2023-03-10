@@ -6,6 +6,7 @@ import {
   runInAction,
   toJS,
 } from 'mobx';
+import { locationToEvents } from '.';
 import {
   Api,
   ModelsDatarefValue,
@@ -68,7 +69,7 @@ class LiveStore {
 
   @computed
   get Events(): any {
-    return this.flightStatus.locations?.filter((value) => value.event);
+    return locationToEvents(this.flightStatus.locations || []);
   }
 
   @computed

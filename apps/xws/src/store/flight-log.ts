@@ -13,6 +13,7 @@ import {
   ModelsFlightStatusLocation,
 } from './Api';
 import { scaleQuantile } from 'd3-scale';
+import { locationToEvents } from './index';
 
 export const inFlowColors = [
   [255, 255, 204],
@@ -317,7 +318,7 @@ class FlightLogStore {
     if (this.flightStatuses.length > 0) {
       this.flightStatuses
         .slice()
-        .sort((a, b) => a.id - b.id)
+        .sort((a, b) => a?.id - b?.id)
         .forEach((flightStatus) => {
           let touchDownCount = 0;
           let g: number = 0;
@@ -368,20 +369,7 @@ class FlightLogStore {
 
   @computed
   get FlightEvents(): any {
-    let lastIndex = 0;
-    let res: ModelsFlightStatusLocation[] = [];
-    this.flightStatus.locations?.map(
-      (location: ModelsFlightStatusLocation, index: number) => {
-        if (
-          location.event?.eventType &&
-          (location.event?.eventType as any) !== ''
-        ) {
-          res.push(location);
-        }
-      }
-    );
-
-    return res;
+    return locationToEvents(this.flightStatus.locations || []);
   }
 
   @computed

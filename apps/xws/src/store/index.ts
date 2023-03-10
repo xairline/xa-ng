@@ -1,9 +1,10 @@
-import {createContext, useContext} from 'react';
-import {routerStore} from './router';
-import {flightLogStore} from './flight-log';
-import {vaStore} from './va';
-import {liveStore} from './live';
-import {analyticsStore} from './analytics';
+import { createContext, useContext } from 'react';
+import { routerStore } from './router';
+import { flightLogStore } from './flight-log';
+import { vaStore } from './va';
+import { liveStore } from './live';
+import { analyticsStore } from './analytics';
+import { ModelsFlightStatusLocation } from './Api';
 
 export const rootStoreContext = createContext({
   RouterStore: routerStore,
@@ -19,4 +20,20 @@ export const useStores = () => {
     throw new Error('useStores must be used within a provider');
   }
   return store;
+};
+
+export const locationToEvents = (
+  locations: ModelsFlightStatusLocation[]
+): ModelsFlightStatusLocation[] => {
+  let lastIndex = 0;
+  let res: ModelsFlightStatusLocation[] = [];
+  locations?.map((location: ModelsFlightStatusLocation, index: number) => {
+    if (
+      location.event?.eventType &&
+      (location.event?.eventType as any) !== ''
+    ) {
+      res.push(location);
+    }
+  });
+  return res;
 };
