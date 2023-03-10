@@ -16,8 +16,9 @@ func (f flightStatusService) processDatarefLanding(datarefValues models.DatarefV
 			0,
 		)
 		event := f.addFlightEvent(fmt.Sprintf("Taxi in at %s", airportId))
-		f.addLocation(datarefValues, -1, &event)
+
 		f.changeState(models.FlightStateTaxiIn, 0.2)
+		f.addLocation(datarefValues, -1, &event)
 		return
 	} else {
 		f.addLocation(datarefValues, 0.1, nil)

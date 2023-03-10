@@ -14,7 +14,7 @@ import (
 func TestFlightStatusService_ProcessDatarefClimb(t *testing.T) {
 	tmpDbDir := path.Join("/tmp", uuid.New().String())
 	os.Mkdir(tmpDbDir, 0700)
-	db, _ := utils.CreateDatabase(logger.NewGenericLogger(), tmpDbDir)
+	db, _ := utils.CreateDatabase(logger.NewGenericLogger(), tmpDbDir, false)
 	var tests = []struct {
 		name          string
 		initSvc       FlightStatusService

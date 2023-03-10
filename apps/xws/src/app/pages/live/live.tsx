@@ -136,6 +136,7 @@ export function Live(props: LiveProps) {
                                   LiveStore?.flightStatus?.locations?.length - 1
                                 ]?.vs || 'NA'
                               }
+                              precision={0}
                               valueStyle={{ fontSize: 'small' }}
                             />
                           </Col>
@@ -176,6 +177,7 @@ export function Live(props: LiveProps) {
                                   LiveStore?.flightStatus?.locations?.length - 1
                                 ]?.ias
                               }
+                              precision={0}
                               suffix={'kt'}
                               valueStyle={{ fontSize: 'small' }}
                             />

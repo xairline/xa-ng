@@ -1,14 +1,13 @@
-import {useObserver} from 'mobx-react-lite';
-import {useEffect, useState} from 'react';
-import {useStores} from 'apps/xws/src/store';
-import {Badge, Space} from 'antd';
+import { useObserver } from 'mobx-react-lite';
+import { useEffect, useState } from 'react';
+import { useStores } from 'apps/xws/src/store';
+import { Badge, Space } from 'antd';
 
 /* eslint-disable-next-line */
-export interface AutoPilotProps {
-}
+export interface AutoPilotProps {}
 
 function getWindowDimensions() {
-  const {innerWidth: width, innerHeight: height} = window;
+  const { innerWidth: width, innerHeight: height } = window;
   return {
     width,
     height,
@@ -16,7 +15,7 @@ function getWindowDimensions() {
 }
 
 export function AutoPilot(props: AutoPilotProps) {
-  const {LiveStore} = useStores();
+  const { LiveStore } = useStores();
   const [windowDimensions, setWindowDimensions] = useState(
     getWindowDimensions()
   );

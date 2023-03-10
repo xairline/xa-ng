@@ -19,13 +19,15 @@ func (f flightStatusService) processDatarefCruise(datarefValues models.DatarefVa
 	// 30s
 	if *f.climbCounter >= int(30/f.FlightStatus.PollFrequency) {
 		event := f.addFlightEvent("Climb")
-		f.addLocation(datarefValues, -1, &event)
+
 		f.changeState(models.FlightStateClimb, 0.2)
+		f.addLocation(datarefValues, -1, &event)
 	}
 	if *f.descendCounter >= int(30/f.FlightStatus.PollFrequency) {
 		event := f.addFlightEvent("Descend")
-		f.addLocation(datarefValues, -1, &event)
+
 		f.changeState(models.FlightStateDescend, 0.2)
+		f.addLocation(datarefValues, -1, &event)
 	}
 
 	currentHeading := datarefValues["heading"].GetFloat64()

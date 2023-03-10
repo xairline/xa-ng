@@ -314,61 +314,73 @@ class FlightLogStore {
       },
     ];
     let counter = 0;
-    this.flightStatuses.forEach((flightStatus) => {
-      let touchDownCount = 0;
-      let g: number = 0;
-      let vs = 0;
-      flightStatus.locations?.forEach((location: any, index: number) => {
-        if ((location.state as any) == 'landing') {
-          if (
-            location!.gearForce! < 1 &&
-            flightStatus!.locations![index + 1]!.gearForce! > 0
-          ) {
-            touchDownCount += 1;
-            if (location!.vs! * -1 > vs) {
-              vs = location.vs! * -1;
+    if (this.flightStatuses.length > 0) {
+      this.flightStatuses
+        .slice()
+        .sort((a, b) => a.id - b.id)
+        .forEach((flightStatus) => {
+          let touchDownCount = 0;
+          let g: number = 0;
+          let vs = 0;
+          flightStatus.locations?.forEach((location: any, index: number) => {
+            if ((location.state as any) == 'landing') {
+              if (
+                location!.gearForce! < 1 &&
+                flightStatus!.locations![index + 1]!.gearForce! > 0
+              ) {
+                touchDownCount += 1;
+                if (location!.vs! * -1 > vs) {
+                  vs = location.vs! * -1;
+                }
+              }
+              if (location!.gforce! > g && location!.gearForce! > 1) {
+                g = location.gforce!;
+              }
             }
-          }
-          if (location!.gforce! > g && location!.gearForce! > 1) {
-            g = location.gforce!;
-          }
-        }
-      });
+          });
 
-      if (g != 0) {
-        counter++;
-        line.push({
-          name: 'VS(ft/min)',
-          ts: counter,
-          value: vs,
+          if (g != 0) {
+            counter++;
+            line.push({
+              name: 'VS(ft/min)',
+              ts: counter,
+              value: vs,
+            });
+            column.push({
+              type: 'G-Force',
+              ts: counter,
+              count: g,
+            });
+            avgG.push(g);
+            avgVs.push(vs);
+          }
         });
-        column.push({
-          type: 'G-Force',
-          ts: counter,
-          count: g,
-        });
-        avgG.push(g);
-        avgVs.push(vs);
-      }
-    });
 
-    const AvgGForce =
-      (avgG.reduce((partialSum, a) => partialSum + a, 0) * 1.0) / avgG.length;
-    const AvgVs =
-      (avgVs.reduce((partialSum, a) => partialSum + a, 0) * 1.0) / avgVs.length;
-    this.setAvgVsAndG(AvgVs, AvgGForce);
+      const AvgGForce =
+        (avgG.reduce((partialSum, a) => partialSum + a, 0) * 1.0) / avgG.length;
+      const AvgVs =
+        (avgVs.reduce((partialSum, a) => partialSum + a, 0) * 1.0) /
+        avgVs.length;
+      this.setAvgVsAndG(AvgVs, AvgGForce);
+    }
     return { line, column };
   }
 
   @computed
   get FlightEvents(): any {
-    let res = this.flightStatus.locations?.filter(
-      (location: ModelsFlightStatusLocation) => {
-        return (
-          location.event?.eventType && (location.event?.eventType as any) !== ''
-        );
+    let lastIndex = 0;
+    let res: ModelsFlightStatusLocation[] = [];
+    this.flightStatus.locations?.map(
+      (location: ModelsFlightStatusLocation, index: number) => {
+        if (
+          location.event?.eventType &&
+          (location.event?.eventType as any) !== ''
+        ) {
+          res.push(location);
+        }
       }
     );
+
     return res;
   }
 
