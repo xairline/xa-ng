@@ -448,7 +448,7 @@ class FlightLogStore {
     this.flightStatuses.forEach((flightStatus) => {
       data.push({
         key: flightStatus.id,
-        date: flightStatus.createdAt,
+        date: flightStatus.updatedAt,
         departure: flightStatus.departureFlightInfo,
         arrival: flightStatus.arrivalFlightInfo || '-',
         hasLocationData: flightStatus.locations

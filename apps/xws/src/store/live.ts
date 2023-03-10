@@ -146,7 +146,9 @@ class LiveStore {
     let flightStatus = res.data;
     res = await this.api.flightStatus.locationList();
     flightStatus.locations?.push(res.data);
-    this.flightStatus = flightStatus;
+    runInAction(() => {
+      this.flightStatus = flightStatus;
+    });
   }
 
   calculatePaths(data: ModelsFlightStatus[]): any {

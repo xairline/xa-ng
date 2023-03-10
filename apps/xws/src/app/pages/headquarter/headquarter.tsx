@@ -37,13 +37,13 @@ export function Headquarter(props: HeadquarterProps) {
   return useObserver(() => (
     <div>
       <Row gutter={[16, 8]}>
-        <Col span={`${windowDimensions.width > 992 ? '8' : '12'}`}>
+        <Col span={`${windowDimensions.width > 992 ? '12' : '12'}`}>
           <Flights size={'small'}/>
         </Col>
-        <Col span={`${windowDimensions.width > 992 ? '16' : '12'}`}>
+        <Col span={`${windowDimensions.width > 992 ? '12' : '12'}`}>
           <Landing size={'small'}/>
         </Col>
-        <Col span={`${windowDimensions.width > 992 ? '8' : '24'}`}>
+        <Col span={`${windowDimensions.width > 992 ? '12' : '24'}`}>
           <TableView
             height={`${
               windowDimensions.width > 992
@@ -53,7 +53,7 @@ export function Headquarter(props: HeadquarterProps) {
           />
         </Col>
         <Col
-          span={`${windowDimensions.width > 992 ? '16' : '24'}`}
+          span={`${windowDimensions.width > 992 ? '12' : '24'}`}
           style={{
             height: `${windowDimensions.width > 992 ? '47vh' : '35vh'}`,
           }}

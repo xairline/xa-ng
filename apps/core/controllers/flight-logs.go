@@ -50,10 +50,10 @@ func (u FlightLogsController) GetFlightLogs(c *gin.Context) {
 	if isOverview == "true" {
 		result = u.db.
 			Preload("Locations" /*, "event_type = (?)", models.StateEvent*/).
-			Model(&models.FlightStatus{}).Order("created_at DESC")
+			Model(&models.FlightStatus{})
 
 	} else {
-		result = u.db.Model(&models.FlightStatus{}).Order("created_at DESC")
+		result = u.db.Model(&models.FlightStatus{})
 	}
 	// departureAirportId
 	departureAirportId := c.Request.URL.Query().Get("departureAirportId")
@@ -71,7 +71,7 @@ func (u FlightLogsController) GetFlightLogs(c *gin.Context) {
 		result = result.Where("aircraft_icao = ?", aircraftICAO)
 	}
 
-	result.Find(&res)
+	result.Order("id DESC").Find(&res)
 	if result.Error != nil {
 		c.JSON(500, utils.ResponseError{Message: fmt.Sprintf("Failed to get flight logs: %+v", result.Error)})
 	}

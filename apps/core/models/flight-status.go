@@ -6,9 +6,9 @@ import (
 )
 
 type FlightStatus struct {
-	ID                  uint      `gorm:"primarykey" json:"id"`
-	CreatedAt           time.Time `json:"createdAt"`
-	UpdatedAt           time.Time
+	ID                  uint                   `gorm:"primarykey" json:"id"`
+	CreatedAt           time.Time              `json:"createdAt"`
+	UpdatedAt           time.Time              `json:"updatedAt"`
 	DeletedAt           gorm.DeletedAt         `gorm:"index"`
 	CurrentState        FlightState            `gorm:"-" swaggerignore:"true"`
 	PollFrequency       float32                `gorm:"-" swaggerignore:"true"`
