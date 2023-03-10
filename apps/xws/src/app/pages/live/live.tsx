@@ -1,19 +1,18 @@
-import {useObserver} from 'mobx-react-lite';
-import {useStores} from '../../../store';
-import {Card, Col, Row, Spin, Tabs, Timeline} from 'antd';
-import {ModelsFlightStatusLocation} from '../../../store/Api';
-import {useEffect, useState} from 'react';
+import { useObserver } from 'mobx-react-lite';
+import { useStores } from '../../../store';
+import { Card, Col, Divider, Row, Spin, Statistic, Tabs, Timeline } from 'antd';
+import { ModelsFlightStatusLocation } from '../../../store/Api';
+import { useEffect, useState } from 'react';
 import MapDetailed from '../../components/map/mapDetailed';
 import Overview from './components/overview';
 import AutoPilot from './components/autopilot';
-import {runInAction} from 'mobx'; /* eslint-disable-next-line */
+import { runInAction } from 'mobx'; /* eslint-disable-next-line */
 
 /* eslint-disable-next-line */
-export interface LiveProps {
-}
+export interface LiveProps {}
 
 function getWindowDimensions() {
-  const {innerWidth: width, innerHeight: height} = window;
+  const { innerWidth: width, innerHeight: height } = window;
   return {
     width,
     height,
@@ -21,7 +20,8 @@ function getWindowDimensions() {
 }
 
 export function Live(props: LiveProps) {
-  const {LiveStore} = useStores();
+  const { LiveStore } = useStores();
+  const [loading, setLoading] = useState(true);
   const [windowDimensions, setWindowDimensions] = useState(
     getWindowDimensions()
   );
@@ -32,27 +32,29 @@ export function Live(props: LiveProps) {
 
     window.addEventListener('resize', handleResize);
     runInAction(() => {
-      LiveStore.loadLiveFlightStatus();
+      LiveStore.loadLiveFlightStatus().then(() => {
+        setLoading(false);
+      });
     });
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   return useObserver(() => {
-    return LiveStore?.Events?.length <= 0 ? (
+    return loading ? (
       <Spin tip="Loading" size="large">
-        <div className="content"/>
+        <div className="content" />
       </Spin>
     ) : (
       <>
-        <Row style={{height: '100%'}} gutter={20}>
+        <Row style={{ height: '100%' }} gutter={20}>
           <Col
-            lg={10}
+            lg={12}
             span={24}
             style={{
               height: `${windowDimensions.width > 992 ? '100%' : '50%'}`,
             }}
           >
-            <Card style={{height: '99%'}}>
-              <Row gutter={16} style={{height: '100%'}}>
+            <Card style={{ height: '99%' }}>
+              <Row gutter={16} style={{ height: '100%' }}>
                 <Col
                   span={8}
                   md={6}
@@ -72,13 +74,13 @@ export function Live(props: LiveProps) {
                         const h = Math.floor(
                           ((value.timestamp as any) -
                             LiveStore.Events[0].timestamp) /
-                          3600
+                            3600
                         );
                         const m = Math.floor(
                           ((value.timestamp as any) -
                             LiveStore.Events[0].timestamp -
                             h * 3600) /
-                          60
+                            60
                         );
                         return (
                           <Timeline.Item key={value.timestamp}>
@@ -95,6 +97,81 @@ export function Live(props: LiveProps) {
                   <Card>
                     <Row gutter={8}>
                       <Col span={24}>
+                        <Row gutter={8}>
+                          <Col span={8}>
+                            <Statistic
+                              title={'Aircraft'}
+                              value={LiveStore.flightStatus.aircraftICAO}
+                              valueStyle={{ fontSize: 'small' }}
+                            />
+                          </Col>
+                          <Col span={8}>
+                            <Statistic
+                              title={'VS'}
+                              suffix={'ft/min'}
+                              value={
+                                LiveStore?.flightStatus?.locations[
+                                  LiveStore?.flightStatus?.locations?.length - 1
+                                ]?.vs || 'NA'
+                              }
+                              valueStyle={{ fontSize: 'small' }}
+                            />
+                          </Col>
+                          <Col span={8}>
+                            <Statistic
+                              title={'Heading'}
+                              value={
+                                LiveStore?.flightStatus?.locations[
+                                  LiveStore?.flightStatus?.locations?.length - 1
+                                ]?.heading
+                              }
+                              valueStyle={{ fontSize: 'small' }}
+                            />
+                          </Col>
+                          <Divider />
+                          <Col span={8}>
+                            <Statistic
+                              title={'Altitude'}
+                              value={
+                                Math.floor(
+                                  (LiveStore?.flightStatus?.locations[
+                                    LiveStore?.flightStatus?.locations?.length -
+                                      1
+                                  ]?.altitude *
+                                    3.28084) /
+                                    100
+                                ) * 100
+                              }
+                              suffix={'ft'}
+                              valueStyle={{ fontSize: 'small' }}
+                            />
+                          </Col>
+                          <Col span={8}>
+                            <Statistic
+                              title={'IAS'}
+                              value={
+                                LiveStore?.flightStatus?.locations[
+                                  LiveStore?.flightStatus?.locations?.length - 1
+                                ]?.ias
+                              }
+                              suffix={'kt'}
+                              valueStyle={{ fontSize: 'small' }}
+                            />
+                          </Col>
+                          <Col span={8}>
+                            <Statistic
+                              title={'Fuel'}
+                              value={
+                                LiveStore?.flightStatus?.locations[
+                                  LiveStore?.flightStatus?.locations?.length - 1
+                                ]?.fuel
+                              }
+                              suffix={'kg'}
+                              valueStyle={{ fontSize: 'small' }}
+                            />
+                          </Col>
+                        </Row>
+                        <Divider />
                         <Tabs
                           defaultActiveKey="1"
                           type="card"
@@ -103,12 +180,12 @@ export function Live(props: LiveProps) {
                             {
                               label: `Overview`,
                               key: `overview`,
-                              children: <Overview/>,
+                              children: <Overview />,
                             },
                             {
                               label: `AP`,
                               key: `ap`,
-                              children: <AutoPilot/>,
+                              children: <AutoPilot />,
                             },
                           ]}
                         />
@@ -117,81 +194,10 @@ export function Live(props: LiveProps) {
                   </Card>
                 </Col>
               </Row>
-              <Row
-                style={{
-                  height: '85%',
-                  paddingTop: '10px',
-                }}
-                gutter={[20, 20]}
-              >
-                <Col span={windowDimensions.width > 992 ? 12 : 6}>
-                  <Card
-                    title={'VS'}
-                    size={windowDimensions.width > 992 ? 'small' : 'default'}
-                    draggable={'true'}
-                  >
-                    {LiveStore?.flightStatus?.locations &&
-                    LiveStore?.flightStatus?.locations?.length > 0 ? (
-                      LiveStore?.flightStatus?.locations[
-                      LiveStore?.flightStatus?.locations?.length - 1
-                        ]?.vs + ' ft/min'
-                    ) : (
-                      <Spin tip="Loading" size="large"/>
-                    )}
-                  </Card>
-                </Col>
-                <Col span={windowDimensions.width > 992 ? 12 : 6}>
-                  <Card
-                    title={'Heading'}
-                    size={windowDimensions.width > 992 ? 'small' : 'default'}
-                  >
-                    {LiveStore?.flightStatus?.locations &&
-                    LiveStore.flightStatus.locations?.length > 0 ? (
-                      LiveStore?.flightStatus?.locations[
-                      LiveStore?.flightStatus?.locations?.length - 1
-                        ]?.heading
-                    ) : (
-                      <Spin tip="Loading" size="large"/>
-                    )}
-                  </Card>
-                </Col>
-                <Col span={windowDimensions.width > 992 ? 12 : 6}>
-                  <Card
-                    title={'Altitude'}
-                    size={windowDimensions.width > 992 ? 'small' : 'default'}
-                  >
-                    {LiveStore?.flightStatus?.locations &&
-                    LiveStore.flightStatus.locations?.length > 0 ? (
-                      Math.floor(
-                        LiveStore?.flightStatus?.locations[
-                        LiveStore?.flightStatus?.locations?.length - 1
-                          ]?.altitude * 3.28084
-                      ) + ' ft'
-                    ) : (
-                      <Spin tip="Loading" size="large"/>
-                    )}
-                  </Card>
-                </Col>
-                <Col span={windowDimensions.width > 992 ? 12 : 6}>
-                  <Card
-                    title={'IAS'}
-                    size={windowDimensions.width > 992 ? 'small' : 'default'}
-                  >
-                    {LiveStore?.flightStatus?.locations &&
-                    LiveStore.flightStatus.locations?.length > 0 ? (
-                      LiveStore?.flightStatus?.locations[
-                      LiveStore?.flightStatus?.locations?.length - 1
-                        ]?.ias
-                    ) : (
-                      <Spin tip="Loading" size="large"/>
-                    )}
-                  </Card>
-                </Col>
-              </Row>
             </Card>
           </Col>
           <Col
-            lg={14}
+            lg={12}
             span={24}
             style={{
               height: `${windowDimensions.width > 992 ? '100%' : '50%'}`,
@@ -204,17 +210,17 @@ export function Live(props: LiveProps) {
                 mapStyle={'mapbox://styles/mapbox/satellite-streets-v12'}
                 viewState={{
                   longitude:
-                  LiveStore.flightStatus.locations[
-                  LiveStore.flightStatus.locations?.length - 1
+                    LiveStore.flightStatus.locations[
+                      LiveStore.flightStatus.locations?.length - 1
                     ].lng,
                   latitude:
-                  LiveStore.flightStatus.locations[
-                  LiveStore.flightStatus.locations?.length - 1
+                    LiveStore.flightStatus.locations[
+                      LiveStore.flightStatus.locations?.length - 1
                     ].lat,
                   zoom:
                     LiveStore.flightStatus.locations[
-                    LiveStore.flightStatus.locations?.length - 1
-                      ].gearForce > 1
+                      LiveStore.flightStatus.locations?.length - 1
+                    ].gearForce > 1
                       ? 15
                       : 10,
                   pitch: 53,

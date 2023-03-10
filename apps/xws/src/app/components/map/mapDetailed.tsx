@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import DeckGL from '@deck.gl/react/typed';
-import {PathLayer} from '@deck.gl/layers/typed';
+import { PathLayer } from '@deck.gl/layers/typed';
 import Map from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import {useObserver} from 'mobx-react-lite';
-import {TripsLayer} from '@deck.gl/geo-layers/typed';
+import { useObserver } from 'mobx-react-lite';
+import { TripsLayer } from '@deck.gl/geo-layers/typed';
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN =
   'pk.eyJ1IjoieGFpcmxpbmUiLCJhIjoiY2xkOGE0eHY2MDExZzNvbnh6NG0zYjdkeSJ9.DBehpQbCB9Sjws8OH7I69A';
@@ -31,7 +31,7 @@ export function MapDetailed(props: MapArchProps) {
     return () => window.cancelAnimationFrame(animation.id);
   }, [animation]);
 
-  function getTooltip({object}: any) {
+  function getTooltip({ object }: any) {
     if (!object || !object.item) {
       return null;
     }
@@ -65,33 +65,33 @@ export function MapDetailed(props: MapArchProps) {
       getPath: (d: any) => d.path,
       getColor: (d: any) => d.color,
       billboard: true,
-      getWidth: (d) => 2,
+      getWidth: (d) => 20,
     }),
     new PathLayer({
       id: 'path-layer',
       data: props.data.paths,
       pickable: true,
       widthScale: 20,
-      widthMinPixels: 3,
-      widthMaxPixels: 3,
+      widthMinPixels: 5,
+      widthMaxPixels: 5,
       getPath: (d: any) => d.path,
       getColor: (d: any) => d.color,
       getWidth: (d) => 2,
     }),
-    new TripsLayer({
-      id: 'trips-layer',
-      data: props.data.paths,
-      getPath: (d) => d.path,
-      getTimestamps: (d) => d.timestamps,
-      getColor: (d: any) => d.color,
-      opacity: 0.1,
-      widthMinPixels: 6,
-      // rounded: true,
-      fadeTrail: false,
-      trailLength,
-      currentTime: time,
-      shadowEnabled: true,
-    }),
+    // new TripsLayer({
+    //   id: 'trips-layer',
+    //   data: props.data.paths,
+    //   getPath: (d) => d.path,
+    //   getTimestamps: (d) => d.timestamps,
+    //   getColor: (d: any) => d.color,
+    //   opacity: 0.1,
+    //   widthMinPixels: 6,
+    //   // rounded: true,
+    //   fadeTrail: false,
+    //   trailLength,
+    //   currentTime: time,
+    //   shadowEnabled: true,
+    // }),
   ];
   return useObserver(() => (
     <DeckGL

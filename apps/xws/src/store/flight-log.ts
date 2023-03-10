@@ -524,25 +524,36 @@ class FlightLogStore {
     let paths: any[] = [];
     let pathsExt: any[] = [];
     toJS(data).forEach((item: any) => {
-      let res: any = {
-        path: [],
-        timestamps: [],
-        item: item,
-      };
-      item?.locations?.forEach((location: any) => {
-        const pathItem = [location.lng, location.lat, location.agl];
+      item?.locations?.forEach((location: any, index: number) => {
+        if (index < 2) return;
+        let res: any = {
+          path: [],
+          timestamps: [],
+          item: item,
+        };
+        const pathItem = [
+          item?.locations[index].lng,
+          item?.locations[index].lat,
+          item?.locations[index].agl,
+        ];
+        const lastPathItem = [
+          item?.locations[index - 1].lng,
+          item?.locations[index - 1].lat,
+          item?.locations[index - 1].agl,
+        ];
         res.timestamps.push(location.timestamp);
         res.path.push(pathItem);
-        res.color = [22, 104, 220];
+        res.path.push(lastPathItem);
+        res.color = location.gearForce > 0 ? [92, 49, 8] : [22, 104, 220];
+        paths.push(res);
         let resExt: any = {
           path: [],
         };
         resExt.path.push(pathItem);
         resExt.path.push([location.lng, location.lat, 0]);
-        resExt.color = location.gearForce > 0 ? [211, 32, 41] : [22, 104, 220];
+        resExt.color = location.gearForce > 0 ? [92, 49, 8] : [22, 104, 220];
         pathsExt.push(resExt);
       });
-      paths.push(res);
     });
     return { paths, pathsExt };
   }
