@@ -13,7 +13,7 @@ import {
   ModelsFlightStatusLocation,
 } from './Api';
 import { scaleQuantile } from 'd3-scale';
-import { locationToEvents } from './index';
+import { locationsToEvents } from './index';
 
 export const inFlowColors = [
   [255, 255, 204],
@@ -369,7 +369,9 @@ class FlightLogStore {
 
   @computed
   get FlightEvents(): any {
-    return locationToEvents(this.flightStatus.locations || []);
+    return locationsToEvents(
+      this.flightStatus.locations || [],
+    );
   }
 
   @computed

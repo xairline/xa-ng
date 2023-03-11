@@ -22,7 +22,7 @@ export const useStores = () => {
   return store;
 };
 
-export const locationToEvents = (
+export const locationsToEvents = (
   locations: ModelsFlightStatusLocation[]
 ): ModelsFlightStatusLocation[] => {
   let lastIndex = 0;
