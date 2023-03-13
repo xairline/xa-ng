@@ -369,9 +369,9 @@ class FlightLogStore {
 
   @computed
   get FlightEvents(): any {
-    return locationsToEvents(
-      this.flightStatus.locations || [],
-    );
+    return this.flightStatus.events?.slice().sort((eventA, eventB) => {
+      return eventA.timestamp - eventB.timestamp;
+    });
   }
 
   @computed

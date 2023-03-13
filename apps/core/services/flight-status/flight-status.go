@@ -88,7 +88,7 @@ func (f flightStatusService) addLocation(datarefValues models.DatarefValues, dis
 	}
 	if event != nil {
 		myEvent := *event
-		newLocation.Event = myEvent
+		f.FlightStatus.Events = append(f.FlightStatus.Events, myEvent)
 	}
 	if len(f.FlightStatus.Locations) == 0 || (f.FlightStatus.CurrentState == models.FlightStateLanding && newLocation.Agl < 5) {
 		f.FlightStatus.Locations = append(
@@ -132,6 +132,9 @@ func (f flightStatusService) setArrivalFlightInfo(airportId, airportName string,
 
 func (f flightStatusService) addFlightEvent(description string) models.FlightStatusEvent {
 	event := models.FlightStatusEvent{
+		ID:          0,
+		FlightId:    int(f.FlightStatus.ID),
+		Timestamp:   f.CurrentLocation.Timestamp,
 		Description: description,
 		EventType:   models.StateEvent,
 	}
@@ -195,8 +198,10 @@ func (f flightStatusService) ResetFlightStatus() {
 
 	// reset
 	f.FlightStatus.Locations = []models.FlightStatusLocation{}
+	f.FlightStatus.Events = []models.FlightStatusEvent{}
 	f.FlightStatus.ArrivalFlightInfo = models.FlightInfo{}
 	f.FlightStatus.DepartureFlightInfo = models.FlightInfo{}
+	f.CurrentLocation = new(models.FlightStatusLocation)
 	f.FlightStatus.ID = 0
 	f.changeState(models.FlightStateParked, 5)
 }
@@ -237,6 +242,7 @@ func (f flightStatusService) cleanupDataPointsAndStore() {
 	if len(f.FlightStatus.Locations) > 0 {
 		var indexOfLastLanding, indexOfFirstTaxiIn int
 		for index, location := range f.FlightStatus.Locations {
+			location := location
 			if location.State == models.FlightStateLanding {
 				if f.FlightStatus.Locations[index].GearForce <= 1 &&
 					f.FlightStatus.Locations[index+1].GearForce > 1 {
@@ -245,7 +251,9 @@ func (f flightStatusService) cleanupDataPointsAndStore() {
 			}
 			if location.State == models.FlightStateTaxiIn {
 				indexOfFirstTaxiIn = index
-				f.FlightStatus.Locations[indexOfFirstTaxiIn].Event = f.addFlightEvent(fmt.Sprintf("Taxi in at %s", f.FlightStatus.ArrivalFlightInfo.AirportId))
+				f.CurrentLocation = &location
+				event := f.addFlightEvent(fmt.Sprintf("Taxi in at %s", f.FlightStatus.ArrivalFlightInfo.AirportId))
+				f.FlightStatus.Events = append(f.FlightStatus.Events, event)
 				break
 			}
 		}
@@ -265,7 +273,12 @@ func (f flightStatusService) cleanupDataPointsAndStore() {
 		// store to db
 		result := f.db.CreateInBatches(&locations, 500)
 		if result.Error != nil {
-			f.Logger.Errorf("Failed to store flight: %+v", result)
+			f.Logger.Errorf("Failed to store flight locations: %+v", result)
+		}
+		events := f.FlightStatus.Events[:len(f.FlightStatus.Events)]
+		result = f.db.CreateInBatches(&events, 500)
+		if result.Error != nil {
+			f.Logger.Errorf("Failed to store flight events: %+v", result)
 		}
 	}
 }

@@ -11,7 +11,10 @@ import {
   Tabs,
   Timeline,
 } from 'antd';
-import { ModelsFlightStatusLocation } from '../../../store/Api';
+import {
+  ModelsFlightStatusEvent,
+  ModelsFlightStatusLocation,
+} from '../../../store/Api';
 import { useEffect, useState } from 'react';
 import MapDetailed from '../../components/map/mapDetailed';
 import Overview from './components/overview';
@@ -88,8 +91,8 @@ export function Live(props: LiveProps) {
                 >
                   <Timeline>
                     {LiveStore?.Events?.map(
-                      (value: ModelsFlightStatusLocation) => {
-                        if (value?.event?.description == '') {
+                      (value: ModelsFlightStatusEvent) => {
+                        if (value?.description == '') {
                           return;
                         }
                         // convert time to hh:mm
@@ -105,10 +108,12 @@ export function Live(props: LiveProps) {
                             60
                         );
                         return (
-                          <Timeline.Item key={value.timestamp}>
+                          <Timeline.Item
+                            key={value.timestamp + value.description}
+                          >
                             {h.toString().length == 1 ? '0' : ''}
                             {h}:{m.toString().length == 1 ? '0' : ''}
-                            {m} - {value.event?.description}
+                            {m} - {value.description}
                           </Timeline.Item>
                         );
                       }

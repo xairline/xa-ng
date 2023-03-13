@@ -161,7 +161,6 @@ export function FlightLog(props: FlightLogProps) {
     ],
     annotations: [annotations], //fix touch down line
   };
-
   return useObserver(() =>
     loading ? (
       <Spin tip="Loading" size="large">
@@ -207,10 +206,12 @@ export function FlightLog(props: FlightLogProps) {
                           60
                       );
                       return (
-                        <Timeline.Item key={value.id}>
+                        <Timeline.Item
+                          key={value.timestamp + value.description}
+                        >
                           {h.toString().length == 1 ? '0' : ''}
                           {h}:{m.toString().length == 1 ? '0' : ''}
-                          {m} - {value.event?.description}
+                          {m} - {value.description}
                         </Timeline.Item>
                       );
                     }

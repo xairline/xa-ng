@@ -436,6 +436,12 @@ const docTemplateXWebStack = `{
                 "departureFlightInfo": {
                     "$ref": "#/definitions/models.FlightInfo"
                 },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FlightStatusEvent"
+                    }
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -459,11 +465,29 @@ const docTemplateXWebStack = `{
         "models.FlightStatusEvent": {
             "type": "object",
             "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
                 "description": {
                     "type": "string"
                 },
                 "eventType": {
                     "$ref": "#/definitions/models.FlightStatusEventType"
+                },
+                "flightId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         },
@@ -490,9 +514,6 @@ const docTemplateXWebStack = `{
                 },
                 "deletedAt": {
                     "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "event": {
-                    "$ref": "#/definitions/models.FlightStatusEvent"
                 },
                 "flightId": {
                     "type": "integer"

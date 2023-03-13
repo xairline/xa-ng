@@ -6,7 +6,6 @@ import {
   runInAction,
   toJS,
 } from 'mobx';
-import { locationsToEvents } from '.';
 import {
   Api,
   ModelsDatarefValue,
@@ -69,9 +68,9 @@ class LiveStore {
 
   @computed
   get Events(): any {
-    return locationsToEvents(
-      this.flightStatus.locations || [],
-    );
+    return this.flightStatus.events
+      ?.slice()
+      .sort((a, b) => a.timestamp - b.timestamp);
   }
 
   @computed
@@ -90,26 +89,25 @@ class LiveStore {
 
       if (sampling && location.timestamp - lastTs > 10) {
         lastTs = location.timestamp;
+        const ts = Math.floor(
+          location.timestamp -
+            (this.flightStatus?.locations
+              ? (this.flightStatus.locations[0].timestamp as any)
+              : 0)
+        );
+        console.log(ts);
         line.push({
           name: 'IAS',
-          ts: Math.floor(
-            location.timestamp -
-              (this.flightStatus?.locations
-                ? (this.flightStatus.locations[0].timestamp as any)
-                : 0)
-          ),
+          ts,
           value: location.ias,
         });
         column.push({
           type: 'AGL',
-          ts: Math.floor(
-            location.timestamp - this.flightStatus.locations[0].timestamp
-          ),
+          ts,
           count: location.agl * 3.28084,
         });
       }
     });
-
     return { line, column };
   }
 

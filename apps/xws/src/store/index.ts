@@ -21,19 +21,3 @@ export const useStores = () => {
   }
   return store;
 };
-
-export const locationsToEvents = (
-  locations: ModelsFlightStatusLocation[]
-): ModelsFlightStatusLocation[] => {
-  let lastIndex = 0;
-  let res: ModelsFlightStatusLocation[] = [];
-  locations?.map((location: ModelsFlightStatusLocation, index: number) => {
-    if (
-      location.event?.eventType &&
-      (location.event?.eventType as any) !== ''
-    ) {
-      res.push(location);
-    }
-  });
-  return res;
-};
