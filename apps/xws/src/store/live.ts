@@ -95,7 +95,6 @@ class LiveStore {
               ? (this.flightStatus.locations[0].timestamp as any)
               : 0)
         );
-        console.log(ts);
         line.push({
           name: 'IAS',
           ts,
