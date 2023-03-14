@@ -18,13 +18,13 @@ func (f flightStatusService) processDatarefCruise(datarefValues models.DatarefVa
 	}
 	// 30s
 	if *f.climbCounter >= int(30/f.FlightStatus.PollFrequency) {
-		event := f.addFlightEvent("Climb")
+		event := f.AddFlightEvent("Climb", models.StateEvent)
 
 		f.changeState(models.FlightStateClimb, 0.2)
 		f.addLocation(datarefValues, -1, &event)
 	}
 	if *f.descendCounter >= int(30/f.FlightStatus.PollFrequency) {
-		event := f.addFlightEvent("Descend")
+		event := f.AddFlightEvent("Descend", models.StateEvent)
 
 		f.changeState(models.FlightStateDescend, 0.2)
 		f.addLocation(datarefValues, -1, &event)

@@ -34,7 +34,7 @@ func (f flightStatusService) processDatarefParked(datarefValues models.DatarefVa
 			f.Logger.Errorf("Failed to store flight: %+v", result)
 		}
 
-		event := f.addFlightEvent(fmt.Sprintf("Taxi out at %s", airportId))
+		event := f.AddFlightEvent(fmt.Sprintf("Taxi out at %s", airportId), models.StateEvent)
 		f.changeState(models.FlightStateTaxiOut, 0.2)
 		f.addLocation(datarefValues, -1, &event)
 		datarefExtList := dataref.InitializeDatarefList(f.Logger)

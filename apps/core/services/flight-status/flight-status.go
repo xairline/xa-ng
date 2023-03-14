@@ -8,6 +8,10 @@ import (
 	"apps/core/utils/logger"
 	_ "embed"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/builder"
+	"github.com/hyperjumptech/grule-rule-engine/engine"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"gorm.io/gorm"
 	"math"
 	"sync"
@@ -29,11 +33,13 @@ type FlightStatusService interface {
 	processDatarefLanding(datarefValues models.DatarefValues)
 	processDatarefTaxiIn(datarefValues models.DatarefValues)
 	changeState(newState models.FlightState, newPollFrequency float32)
-	addFlightEvent(description string) models.FlightStatusEvent
+	AddFlightEvent(description string, eventType models.FlightStatusEventType) models.FlightStatusEvent
 	setDepartureFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64)
 	setArrivalFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64)
 	addLocation(datarefValues models.DatarefValues, distance_threshold float64, event *models.FlightStatusEvent)
 	GetLocation() models.FlightStatusLocation
+	AddViolationEvent(description string)
+	EventExists(description string) bool
 }
 
 type flightStatusService struct {
@@ -45,6 +51,19 @@ type flightStatusService struct {
 	db              *gorm.DB
 	Logger          logger.Logger
 	CurrentLocation *models.FlightStatusLocation
+	KnowledgeBase   *ast.KnowledgeBase
+	Engine          *engine.GruleEngine
+	DataCtx         ast.IDataContext
+}
+
+func (f flightStatusService) EventExists(description string) bool {
+	res := false
+	for _, v := range f.FlightStatus.Events {
+		if v.Description == description {
+			return true
+		}
+	}
+	return res
 }
 
 func (f flightStatusService) GetLocation() models.FlightStatusLocation {
@@ -88,7 +107,9 @@ func (f flightStatusService) addLocation(datarefValues models.DatarefValues, dis
 	}
 	if event != nil {
 		myEvent := *event
+		flightStatusSvcLock.Lock()
 		f.FlightStatus.Events = append(f.FlightStatus.Events, myEvent)
+		flightStatusSvcLock.Unlock()
 	}
 	if len(f.FlightStatus.Locations) == 0 || (f.FlightStatus.CurrentState == models.FlightStateLanding && newLocation.Agl < 5) {
 		f.FlightStatus.Locations = append(
@@ -130,19 +151,36 @@ func (f flightStatusService) setArrivalFlightInfo(airportId, airportName string,
 	}
 }
 
-func (f flightStatusService) addFlightEvent(description string) models.FlightStatusEvent {
+func (f flightStatusService) AddFlightEvent(description string, eventType models.FlightStatusEventType) models.FlightStatusEvent {
 	event := models.FlightStatusEvent{
 		ID:          0,
 		FlightId:    int(f.FlightStatus.ID),
 		Timestamp:   f.CurrentLocation.Timestamp,
 		Description: description,
-		EventType:   models.StateEvent,
+		EventType:   eventType,
 	}
 	f.Logger.Infof(
 		"NEW Event: %+v",
 		event.Description,
 	)
 	return event
+}
+
+func (f flightStatusService) AddViolationEvent(description string) {
+	event := models.FlightStatusEvent{
+		ID:          0,
+		FlightId:    int(f.FlightStatus.ID),
+		Timestamp:   f.CurrentLocation.Timestamp,
+		Description: description,
+		EventType:   models.ViolationEvent,
+	}
+	f.Logger.Infof(
+		"NEW Event: %+v",
+		event.Description,
+	)
+	flightStatusSvcLock.Lock()
+	f.FlightStatus.Events = append(f.FlightStatus.Events, event)
+	flightStatusSvcLock.Unlock()
 }
 
 func (f flightStatusService) GetFlightStatus() *models.FlightStatus {
@@ -187,6 +225,8 @@ func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) 
 	case models.FlightStateTaxiIn:
 		f.processDatarefTaxiIn(datarefValues)
 	}
+	f.DataCtx.Add("FACT", f)
+	f.Engine.Execute(f.DataCtx, f.KnowledgeBase)
 	return f.FlightStatus.PollFrequency
 }
 
@@ -214,8 +254,23 @@ func NewFlightStatusService(datarefSvc dataref.DatarefService, logger logger.Log
 		logger.Info("FlightStatus SVC: initializing")
 		flightStatusSvcLock.Lock()
 		defer flightStatusSvcLock.Unlock()
+
+		// rules
+		knowledgeLibrary := ast.NewKnowledgeLibrary()
+		ruleBuilder := builder.NewRuleBuilder(knowledgeLibrary)
+		bundle := pkg.NewGITResourceBundle("https://github.com/xairline/xairline-v2.git", "/**/*.grl")
+		bundle.RefName = "refs/heads/dev"
+		resources := bundle.MustLoad()
+		for _, res := range resources {
+			err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)
+			if err != nil {
+				panic(err)
+			}
+		}
+		engine := engine.NewGruleEngine()
+		dataCtx := ast.NewDataContext()
 		flightStatus := models.FlightStatus{}
-		flightStatusSvc = flightStatusService{
+		flightStatusSvc = &flightStatusService{
 			FlightStatus:    &flightStatus,
 			CurrentLocation: new(models.FlightStatusLocation),
 			DatarefSvc:      datarefSvc,
@@ -224,6 +279,9 @@ func NewFlightStatusService(datarefSvc dataref.DatarefService, logger logger.Log
 			descendCounter:  new(int),
 			Logger:          logger,
 			db:              db,
+			KnowledgeBase:   knowledgeLibrary.NewKnowledgeBaseInstance("TutorialRules", "0.0.1"),
+			Engine:          engine,
+			DataCtx:         dataCtx,
 		}
 		flightStatusSvc.ResetFlightStatus()
 		return flightStatusSvc
@@ -252,8 +310,10 @@ func (f flightStatusService) cleanupDataPointsAndStore() {
 			if location.State == models.FlightStateTaxiIn {
 				indexOfFirstTaxiIn = index
 				f.CurrentLocation = &location
-				event := f.addFlightEvent(fmt.Sprintf("Taxi in at %s", f.FlightStatus.ArrivalFlightInfo.AirportId))
+				event := f.AddFlightEvent(fmt.Sprintf("Taxi in at %s", f.FlightStatus.ArrivalFlightInfo.AirportId), models.StateEvent)
+				flightStatusSvcLock.Lock()
 				f.FlightStatus.Events = append(f.FlightStatus.Events, event)
+				flightStatusSvcLock.Unlock()
 				break
 			}
 		}

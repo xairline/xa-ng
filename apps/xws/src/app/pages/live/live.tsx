@@ -12,7 +12,7 @@ import {
   Timeline,
 } from 'antd';
 import {
-  ModelsFlightStatusEvent,
+  ModelsFlightStatusEvent, ModelsFlightStatusEventType,
   ModelsFlightStatusLocation,
 } from '../../../store/Api';
 import { useEffect, useState } from 'react';
@@ -110,6 +110,12 @@ export function Live(props: LiveProps) {
                         return (
                           <Timeline.Item
                             key={value.timestamp + value.description}
+                            color={
+                              value.eventType ==
+                              ModelsFlightStatusEventType.StateEvent
+                                ? 'blue'
+                                : 'red'
+                            }
                           >
                             {h.toString().length == 1 ? '0' : ''}
                             {h}:{m.toString().length == 1 ? '0' : ''}

@@ -19,12 +19,17 @@ func (f flightStatusService) processDatarefLanding(datarefValues models.DatarefV
 		f.addLocation(datarefValues, -1, nil)
 		return
 	} else {
-		f.addLocation(datarefValues, 0.1, nil)
+		var myEvent *models.FlightStatusEvent
+		if f.FlightStatus.Locations[len(f.FlightStatus.Locations)-1].GearForce < 1 && f.CurrentLocation.GearForce > 1 {
+			event := f.AddFlightEvent("Touchdown", models.LocationEvent)
+			myEvent = &event
+		}
+		f.addLocation(datarefValues, 0.1, myEvent)
 	}
 	// go-around
 	//if datarefValues["vs"].GetFloat64() > 500 &&
 	//	datarefValues["gear_force"].GetFloat64() < 1 {
-	//	f.addFlightEvent(datarefValues, "Climb")
+	//	f.AddFlightEvent(datarefValues, "Climb")
 	//	f.changeState(models.FlightStateClimb, 0.2)
 	//	return
 	//}

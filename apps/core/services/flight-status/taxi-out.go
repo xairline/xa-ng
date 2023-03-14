@@ -14,7 +14,7 @@ func (f flightStatusService) processDatarefTaxiOut(datarefValues models.DatarefV
 	}
 	if (n1 > 75 || datarefValues["gearForce"].GetFloat64() < 10) &&
 		datarefValues["gs"].GetFloat64() > 30/1.9438 {
-		event := f.addFlightEvent("Takeoff")
+		event := f.AddFlightEvent("Takeoff", models.StateEvent)
 
 		f.changeState(models.FlightStateTakeoff, 0.1)
 		f.addLocation(datarefValues, -1, &event)

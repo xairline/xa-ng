@@ -1,21 +1,15 @@
-import {
-  Card,
-  Col,
-  Collapse,
-  Divider,
-  Row,
-  Spin,
-  Statistic,
-  Tabs,
-  Timeline,
-} from 'antd';
+import { Card, Col, Collapse, Row, Spin, Statistic, Timeline } from 'antd';
 import { useEffect, useState } from 'react';
 import { useStores } from '../../../store';
 import { useObserver } from 'mobx-react-lite';
 import { useParams } from 'react-router-dom';
-import { ModelsFlightStatusLocation } from '../../../store/Api';
+import {
+  ModelsFlightStatusEvent,
+  ModelsFlightStatusEventType,
+} from '../../../store/Api';
 import MapDetailed from '../../components/map/mapDetailed';
 import { DualAxes } from '@ant-design/plots';
+
 const { Panel } = Collapse;
 /* eslint-disable-next-line */
 export interface FlightLogProps {
@@ -192,7 +186,7 @@ export function FlightLog(props: FlightLogProps) {
               >
                 <Timeline>
                   {FlightLogStore.FlightEvents.map(
-                    (value: ModelsFlightStatusLocation) => {
+                    (value: ModelsFlightStatusEvent) => {
                       // convert time to hh:mm
                       const h = Math.floor(
                         ((value.timestamp as any) -
@@ -208,6 +202,12 @@ export function FlightLog(props: FlightLogProps) {
                       return (
                         <Timeline.Item
                           key={value.timestamp + value.description}
+                          color={
+                            value.eventType ==
+                            ModelsFlightStatusEventType.StateEvent
+                              ? 'blue'
+                              : 'red'
+                          }
                         >
                           {h.toString().length == 1 ? '0' : ''}
                           {h}:{m.toString().length == 1 ? '0' : ''}
@@ -216,6 +216,7 @@ export function FlightLog(props: FlightLogProps) {
                       );
                     }
                   )}
+
                 </Timeline>
               </Col>
               <Col span={16} md={18}>
