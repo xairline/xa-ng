@@ -11,7 +11,9 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
+	ruleLogger "github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"math"
 	"sync"
@@ -40,6 +42,7 @@ type FlightStatusService interface {
 	GetLocation() models.FlightStatusLocation
 	AddViolationEvent(description string)
 	EventExists(description string) bool
+	IsTouchdown() bool
 }
 
 type flightStatusService struct {
@@ -64,6 +67,10 @@ func (f flightStatusService) EventExists(description string) bool {
 		}
 	}
 	return res
+}
+
+func (f flightStatusService) IsTouchdown() bool {
+	return f.FlightStatus.Locations[len(f.FlightStatus.Locations)-1].GearForce < 1 && f.CurrentLocation.GearForce > 1
 }
 
 func (f flightStatusService) GetLocation() models.FlightStatusLocation {
@@ -205,6 +212,7 @@ func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) 
 		GS:        datarefValues["gs"].GetFloat64(),
 		Pitch:     datarefValues["pitch"].GetFloat64(),
 		Heading:   datarefValues["heading"].GetFloat64(),
+		FlapRatio: datarefValues["flap_ratio"].GetFloat64(),
 		State:     f.FlightStatus.CurrentState,
 	}
 	switch f.FlightStatus.CurrentState {
@@ -226,7 +234,10 @@ func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) 
 		f.processDatarefTaxiIn(datarefValues)
 	}
 	f.DataCtx.Add("FACT", f)
-	f.Engine.Execute(f.DataCtx, f.KnowledgeBase)
+	err := f.Engine.Execute(f.DataCtx, f.KnowledgeBase)
+	if err != nil {
+		f.Logger.Errorf("rule: %v", err)
+	}
 	return f.FlightStatus.PollFrequency
 }
 
@@ -262,6 +273,7 @@ func NewFlightStatusService(datarefSvc dataref.DatarefService, logger logger.Log
 		bundle.RefName = "refs/heads/dev"
 		resources := bundle.MustLoad()
 		for _, res := range resources {
+			logger.Infof("load rules: %v", res.String())
 			err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)
 			if err != nil {
 				panic(err)
@@ -284,6 +296,7 @@ func NewFlightStatusService(datarefSvc dataref.DatarefService, logger logger.Log
 			DataCtx:         dataCtx,
 		}
 		flightStatusSvc.ResetFlightStatus()
+		ruleLogger.SetLogLevel(ruleLogger.Level(logrus.TraceLevel))
 		return flightStatusSvc
 	}
 }

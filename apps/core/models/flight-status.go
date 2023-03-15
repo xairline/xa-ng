@@ -41,6 +41,7 @@ type FlightStatusLocation struct {
 	Heading   float64     `json:"heading"`
 	GS        float64     `json:"gs"`
 	Pitch     float64     `json:"pitch"`
+	FlapRatio float64     `json:"flapRatio"`
 	State     FlightState `gorm:"embedded" json:"state"`
 }
 

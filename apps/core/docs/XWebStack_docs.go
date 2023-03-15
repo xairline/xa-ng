@@ -515,6 +515,9 @@ const docTemplateXWebStack = `{
                 "deletedAt": {
                     "$ref": "#/definitions/gorm.DeletedAt"
                 },
+                "flapRatio": {
+                    "type": "number"
+                },
                 "flightId": {
                     "type": "integer"
                 },

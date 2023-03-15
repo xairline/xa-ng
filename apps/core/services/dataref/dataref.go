@@ -12,6 +12,7 @@ import (
 	"github.com/xairline/goplane/xplm/navigation"
 	"gopkg.in/yaml.v3"
 	"math"
+	"strconv"
 	"sync"
 )
 
@@ -27,6 +28,8 @@ type DatarefService interface {
 	GetNearestAirport() (string, string)
 	SetDatarefExtList(datarefExtlist *[]models.DatarefExt)
 	getCurrentValue(datarefExt *models.DatarefExt) models.DatarefValue
+	GetFloatValueByDatarefName(dataref string) float64
+	GetStringValueByDatarefName(dataref string) string
 }
 
 type datarefService struct {
@@ -68,6 +71,18 @@ func (d datarefService) GetValueByDatarefName(dataref, name string, precision *i
 		IsBytesArray: isByteArray,
 	}
 	return d.getCurrentValue(&datarefExt)
+}
+
+func (d datarefService) GetFloatValueByDatarefName(dataref string) float64 {
+	tmpRes := d.GetValueByDatarefName(dataref, "", nil, false)
+	res, _ := strconv.ParseFloat(fmt.Sprintf("%v", tmpRes.Value), 64)
+	return res
+}
+
+func (d datarefService) GetStringValueByDatarefName(dataref string) string {
+	tmpRes := d.GetValueByDatarefName(dataref, "", nil, true)
+	res := fmt.Sprintf("%v", tmpRes.Value)
+	return res
 }
 
 func (d datarefService) getCurrentValue(datarefExt *models.DatarefExt) models.DatarefValue {

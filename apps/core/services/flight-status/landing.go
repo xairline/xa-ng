@@ -20,7 +20,7 @@ func (f flightStatusService) processDatarefLanding(datarefValues models.DatarefV
 		return
 	} else {
 		var myEvent *models.FlightStatusEvent
-		if f.FlightStatus.Locations[len(f.FlightStatus.Locations)-1].GearForce < 1 && f.CurrentLocation.GearForce > 1 {
+		if f.IsTouchdown() {
 			event := f.AddFlightEvent("Touchdown", models.LocationEvent)
 			myEvent = &event
 		}

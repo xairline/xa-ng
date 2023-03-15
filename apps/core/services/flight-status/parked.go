@@ -39,6 +39,5 @@ func (f flightStatusService) processDatarefParked(datarefValues models.DatarefVa
 		f.addLocation(datarefValues, -1, &event)
 		datarefExtList := dataref.InitializeDatarefList(f.Logger)
 		f.DatarefSvc.SetDatarefExtList(&datarefExtList)
-
 	}
 }

@@ -35,6 +35,9 @@
 - name: lng
   value: sim/flightmodel/position/longitude
   precision: -1
+- name: flap_ratio
+  value: sim/flightmodel2/controls/flap_handle_deploy_ratio
+  precision: -1
 #- name: icao
 #  value: sim/aircraft/view/acf_ICAO
 #  isBytesArray: true
