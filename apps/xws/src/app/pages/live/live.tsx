@@ -121,10 +121,7 @@ export function Live(props: LiveProps) {
                             {h.toString().length == 1 ? '0' : ''}
                             {h}:{m.toString().length == 1 ? '0' : ''}
                             {m} -{' '}
-                            {value.eventType ==
-                            ModelsFlightStatusEventType.ViolationEvent
-                              ? value.details
-                              : value.description}
+                            {value.details || value.description}
                           </Timeline.Item>
                         );
                       }

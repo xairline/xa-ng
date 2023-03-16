@@ -211,11 +211,7 @@ export function FlightLog(props: FlightLogProps) {
                         >
                           {h.toString().length == 1 ? '0' : ''}
                           {h}:{m.toString().length == 1 ? '0' : ''}
-                          {m} -{' '}
-                          {value.eventType ==
-                          ModelsFlightStatusEventType.ViolationEvent
-                            ? value.details
-                            : value.description}
+                          {m} - {value.details || value.description}
                         </Timeline.Item>
                       );
                     }
