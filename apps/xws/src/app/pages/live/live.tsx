@@ -12,7 +12,8 @@ import {
   Timeline,
 } from 'antd';
 import {
-  ModelsFlightStatusEvent, ModelsFlightStatusEventType,
+  ModelsFlightStatusEvent,
+  ModelsFlightStatusEventType,
   ModelsFlightStatusLocation,
 } from '../../../store/Api';
 import { useEffect, useState } from 'react';
@@ -119,7 +120,11 @@ export function Live(props: LiveProps) {
                           >
                             {h.toString().length == 1 ? '0' : ''}
                             {h}:{m.toString().length == 1 ? '0' : ''}
-                            {m} - {value.description}
+                            {m} -{' '}
+                            {value.eventType ==
+                            ModelsFlightStatusEventType.ViolationEvent
+                              ? value.details
+                              : value.description}
                           </Timeline.Item>
                         );
                       }

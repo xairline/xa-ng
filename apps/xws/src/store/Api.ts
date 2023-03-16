@@ -73,6 +73,7 @@ export interface ModelsFlightStatusEvent {
   createdAt?: string;
   deletedAt?: GormDeletedAt;
   description?: string;
+  details?: string;
   eventType?: ModelsFlightStatusEventType;
   flightId?: number;
   id?: number;
@@ -82,6 +83,8 @@ export interface ModelsFlightStatusEvent {
 
 export enum ModelsFlightStatusEventType {
   StateEvent = 'event:state',
+  LocationEvent = 'event:location',
+  ViolationEvent = 'event:violation',
 }
 
 export interface ModelsFlightStatusLocation {
@@ -89,6 +92,7 @@ export interface ModelsFlightStatusLocation {
   altitude?: number;
   createdAt?: string;
   deletedAt?: GormDeletedAt;
+  flapRatio?: number;
   flightId?: number;
   fuel?: number;
   gearForce?: number;

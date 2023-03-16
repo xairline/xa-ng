@@ -40,7 +40,7 @@ type FlightStatusService interface {
 	setArrivalFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64)
 	addLocation(datarefValues models.DatarefValues, distance_threshold float64, event *models.FlightStatusEvent)
 	GetLocation() models.FlightStatusLocation
-	AddViolationEvent(description string)
+	AddViolationEvent(description string, details interface{})
 	EventExists(description string) bool
 	IsTouchdown() bool
 }
@@ -173,13 +173,14 @@ func (f flightStatusService) AddFlightEvent(description string, eventType models
 	return event
 }
 
-func (f flightStatusService) AddViolationEvent(description string) {
+func (f flightStatusService) AddViolationEvent(description string, details interface{}) {
 	event := models.FlightStatusEvent{
 		ID:          0,
 		FlightId:    int(f.FlightStatus.ID),
 		Timestamp:   f.CurrentLocation.Timestamp,
 		Description: description,
 		EventType:   models.ViolationEvent,
+		Details:     fmt.Sprintf("%s: %v", description, details),
 	}
 	f.Logger.Infof(
 		"NEW Event: %+v",

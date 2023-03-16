@@ -474,6 +474,9 @@ const docTemplateXWebStack = `{
                 "description": {
                     "type": "string"
                 },
+                "details": {
+                    "type": "string"
+                },
                 "eventType": {
                     "$ref": "#/definitions/models.FlightStatusEventType"
                 },
@@ -494,10 +497,14 @@ const docTemplateXWebStack = `{
         "models.FlightStatusEventType": {
             "type": "string",
             "enum": [
-                "event:state"
+                "event:state",
+                "event:location",
+                "event:violation"
             ],
             "x-enum-varnames": [
-                "StateEvent"
+                "StateEvent",
+                "LocationEvent",
+                "ViolationEvent"
             ]
         },
         "models.FlightStatusLocation": {
