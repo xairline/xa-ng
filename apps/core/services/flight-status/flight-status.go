@@ -40,7 +40,7 @@ type FlightStatusService interface {
 	setArrivalFlightInfo(airportId, airportName string, timestamp, fuelWeight, totalWeight float64)
 	addLocation(datarefValues models.DatarefValues, distance_threshold float64, event *models.FlightStatusEvent)
 	GetLocation() models.FlightStatusLocation
-	AddViolationEvent(description string)
+	AddViolationEvent(description string, details interface{})
 	EventExists(description string) bool
 	IsTouchdown() bool
 }
@@ -60,13 +60,12 @@ type flightStatusService struct {
 }
 
 func (f flightStatusService) EventExists(description string) bool {
-	res := false
 	for _, v := range f.FlightStatus.Events {
 		if v.Description == description {
 			return true
 		}
 	}
-	return res
+	return false
 }
 
 func (f flightStatusService) IsTouchdown() bool {
@@ -173,13 +172,14 @@ func (f flightStatusService) AddFlightEvent(description string, eventType models
 	return event
 }
 
-func (f flightStatusService) AddViolationEvent(description string) {
+func (f flightStatusService) AddViolationEvent(description string, details interface{}) {
 	event := models.FlightStatusEvent{
 		ID:          0,
 		FlightId:    int(f.FlightStatus.ID),
 		Timestamp:   f.CurrentLocation.Timestamp,
 		Description: description,
 		EventType:   models.ViolationEvent,
+		Details:     fmt.Sprintf("%s: %v", description, details),
 	}
 	f.Logger.Infof(
 		"NEW Event: %+v",
@@ -215,6 +215,14 @@ func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) 
 		FlapRatio: datarefValues["flap_ratio"].GetFloat64(),
 		State:     f.FlightStatus.CurrentState,
 	}
+	err := f.DataCtx.Add("FACT", f)
+	if err != nil {
+		f.Logger.Errorf("add rule: %v", err)
+	}
+	err = f.Engine.Execute(f.DataCtx, f.KnowledgeBase)
+	if err != nil {
+		f.Logger.Errorf("rule: %v", err)
+	}
 	switch f.FlightStatus.CurrentState {
 	case models.FlightStateParked:
 		f.processDatarefParked(datarefValues)
@@ -232,11 +240,6 @@ func (f flightStatusService) ProcessDataref(datarefValues models.DatarefValues) 
 		f.processDatarefLanding(datarefValues)
 	case models.FlightStateTaxiIn:
 		f.processDatarefTaxiIn(datarefValues)
-	}
-	f.DataCtx.Add("FACT", f)
-	err := f.Engine.Execute(f.DataCtx, f.KnowledgeBase)
-	if err != nil {
-		f.Logger.Errorf("rule: %v", err)
 	}
 	return f.FlightStatus.PollFrequency
 }
@@ -279,7 +282,7 @@ func NewFlightStatusService(datarefSvc dataref.DatarefService, logger logger.Log
 				panic(err)
 			}
 		}
-		engine := engine.NewGruleEngine()
+		gruleEngine := engine.NewGruleEngine()
 		dataCtx := ast.NewDataContext()
 		flightStatus := models.FlightStatus{}
 		flightStatusSvc = &flightStatusService{
@@ -292,7 +295,7 @@ func NewFlightStatusService(datarefSvc dataref.DatarefService, logger logger.Log
 			Logger:          logger,
 			db:              db,
 			KnowledgeBase:   knowledgeLibrary.NewKnowledgeBaseInstance("TutorialRules", "0.0.1"),
-			Engine:          engine,
+			Engine:          gruleEngine,
 			DataCtx:         dataCtx,
 		}
 		flightStatusSvc.ResetFlightStatus()

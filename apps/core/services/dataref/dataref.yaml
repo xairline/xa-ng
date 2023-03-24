@@ -26,6 +26,7 @@
   value: sim/cockpit2/engine/indicators/N1_percent
 - name: pitch
   value: sim/flightmodel/position/theta
+  precision: 2
 - name: ias
   value: sim/cockpit2/gauges/indicators/airspeed_kts_pilot
   precision: 1

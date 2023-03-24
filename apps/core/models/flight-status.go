@@ -54,6 +54,7 @@ type FlightStatusEvent struct {
 	Timestamp   float64               `json:"timestamp"`
 	EventType   FlightStatusEventType `json:"eventType"`
 	Description string                `json:"description"`
+	Details     string                `json:"details"`
 }
 type FlightInfo struct {
 	AirportId   string  `json:"airportId"`
@@ -79,6 +80,6 @@ const (
 
 const (
 	StateEvent     FlightStatusEventType = "event:state"
-	LocationEvent                        = "event:location"
-	ViolationEvent                       = "event:violation"
+	LocationEvent  FlightStatusEventType = "event:location"
+	ViolationEvent FlightStatusEventType = "event:violation"
 )

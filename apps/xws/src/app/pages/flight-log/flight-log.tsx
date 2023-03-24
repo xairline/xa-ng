@@ -211,12 +211,11 @@ export function FlightLog(props: FlightLogProps) {
                         >
                           {h.toString().length == 1 ? '0' : ''}
                           {h}:{m.toString().length == 1 ? '0' : ''}
-                          {m} - {value.description}
+                          {m} - {value.details || value.description}
                         </Timeline.Item>
                       );
                     }
                   )}
-
                 </Timeline>
               </Col>
               <Col span={16} md={18}>
