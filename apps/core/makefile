@@ -6,7 +6,7 @@ clean:
 	rm -r dist || true
 mac:
 	GOOS=darwin \
-	GOARCH=amd64 \
+	GOARCH=arm64 \
 	CGO_ENABLED=1 \
 	CGO_CFLAGS="-DAPL=1 -DIBM=0 -DLIN=0 -O0 -g" \
 	CGO_LDFLAGS="-F/System/Library/Frameworks/ -F${CURDIR}/Libraries/Mac -framework XPLM" \
