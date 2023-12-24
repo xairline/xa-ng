@@ -71,6 +71,7 @@ func (u FlightLogsController) GetFlightLogs(c *gin.Context) {
 		result = result.Where("aircraft_icao = ?", aircraftICAO)
 	}
 
+	result = result.Where("LENGTH(arrival_airport_id) > 0")
 	result.Order("id DESC").Find(&res)
 	if result.Error != nil {
 		c.JSON(500, utils.ResponseError{Message: fmt.Sprintf("Failed to get flight logs: %+v", result.Error)})

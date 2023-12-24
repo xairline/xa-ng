@@ -31,7 +31,9 @@ class AnalyticsStore {
       source: this.source,
     });
     runInAction(() => {
-      this.flightLogs = res.data;
+      this.flightLogs = res.data.filter((flightStatus  )=>{
+        return flightStatus.arrivalFlightInfo && flightStatus.arrivalFlightInfo.airportName;
+      });
     });
   }
 
