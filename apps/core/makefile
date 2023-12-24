@@ -3,17 +3,24 @@ current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
 
 clean:
-	rm -r dist || true
+	rm -r dist || true || rm ~/X-Plane\ 12/Resources/plugins/XWebStack/mac.xpl
 mac:
 	GOOS=darwin \
 	GOARCH=arm64 \
 	CGO_ENABLED=1 \
 	CGO_CFLAGS="-DAPL=1 -DIBM=0 -DLIN=0 -O0 -g" \
 	CGO_LDFLAGS="-F/System/Library/Frameworks/ -F${CURDIR}/Libraries/Mac -framework XPLM" \
-	go build -buildmode c-shared -o ../../dist/apps/XWebStack/mac.xpl main.go
-dev:
+	go build -buildmode c-shared -o ../../dist/apps/XWebStack/mac_arm.xpl main.go
 	GOOS=darwin \
 	GOARCH=amd64 \
+	CGO_ENABLED=1 \
+	CGO_CFLAGS="-DAPL=1 -DIBM=0 -DLIN=0 -O0 -g" \
+	CGO_LDFLAGS="-F/System/Library/Frameworks/ -F${CURDIR}/Libraries/Mac -framework XPLM" \
+	go build -buildmode c-shared -o ../../dist/apps/XWebStack/mac_amd.xpl main.go
+	lipo ../../dist/apps/XWebStack/mac_arm.xpl ../../dist/apps/XWebStack/mac_amd.xpl -create -output ../../dist/apps/XWebStack/mac.xpl
+dev:
+	GOOS=darwin \
+	GOARCH=arm64 \
 	CGO_ENABLED=1 \
 	CGO_CFLAGS="-DAPL=1 -DIBM=0 -DLIN=0 -O0 -g" \
 	CGO_LDFLAGS="-F/System/Library/Frameworks/ -F${CURDIR}/Libraries/Mac -framework XPLM" \

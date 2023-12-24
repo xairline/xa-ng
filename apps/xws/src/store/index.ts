@@ -1,16 +1,12 @@
 import { createContext, useContext } from 'react';
 import { routerStore } from './router';
 import { flightLogStore } from './flight-log';
-import { vaStore } from './va';
-import { liveStore } from './live';
 import { analyticsStore } from './analytics';
 import { ModelsFlightStatusLocation } from './Api';
 
 export const rootStoreContext = createContext({
   RouterStore: routerStore,
   FlightLogStore: flightLogStore,
-  VaStore: vaStore,
-  LiveStore: liveStore,
   AnalyticsStore: analyticsStore,
 });
 

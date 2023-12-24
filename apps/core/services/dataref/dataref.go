@@ -12,6 +12,7 @@ import (
 	"github.com/xairline/goplane/xplm/navigation"
 	"gopkg.in/yaml.v3"
 	"math"
+	"reflect"
 	"strconv"
 	"sync"
 )
@@ -30,6 +31,7 @@ type DatarefService interface {
 	getCurrentValue(datarefExt *models.DatarefExt) models.DatarefValue
 	GetFloatValueByDatarefName(dataref string) float64
 	GetStringValueByDatarefName(dataref string) string
+	SetValueByDatarefName(dataref string, value interface{})
 }
 
 type datarefService struct {
@@ -39,6 +41,36 @@ type datarefService struct {
 
 func (d datarefService) SetDatarefExtList(datarefExtlist *[]models.DatarefExt) {
 	d.DatarefExtList = datarefExtlist
+}
+
+func (d datarefService) SetValueByDatarefName(dataref string, value interface{}) {
+	myDataref, success := dataAccess.FindDataRef(dataref)
+	if !success {
+		d.Logger.Errorf("Failed to find dataref: %s", dataref)
+	}
+	d.Logger.Infof("%v", myDataref)
+	// check value type: int, float, string, array
+	rv := reflect.ValueOf(value)
+	switch rv.Kind() {
+	case reflect.Int:
+		d.Logger.Infof("Setting %s to %d (int)", dataref, rv.Int())
+		dataAccess.SetIntData(myDataref, int(rv.Int()))
+	case reflect.Float64:
+		d.Logger.Infof("Setting %s to %f (float)", dataref, rv.Float())
+		dataAccess.SetDoubleData(myDataref, float64(rv.Float()))
+		dataAccess.SetFloatData(myDataref, float32(rv.Float()))
+	case reflect.String:
+		d.Logger.Infof("Setting %s to %s (string)", dataref, rv.String())
+		dataAccess.SetString(myDataref, rv.String())
+	case reflect.Slice, reflect.Array:
+		// For simplicity, returning the original slice/array
+		// More complex logic can be added for specific element types
+		d.Logger.Infof("Setting %s to %v (array)", dataref, rv.Interface())
+		dataAccess.SetIntArrayData(myDataref, rv.Interface().([]int))
+	default:
+		d.Logger.Errorf("Unknown dataref type for %+v", value)
+		return
+	}
 }
 
 func (d datarefService) GetNearestAirport() (string, string) {

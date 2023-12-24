@@ -147,14 +147,6 @@ export function TableView(props: TableViewProps) {
         record.hasLocationData ? (
           <>
             <Link to={`/flight-logs/${record.key}`}>Details</Link>
-            {!record.va_filed ? (
-              <>
-                <Divider type={'vertical'} />
-                <Link to={`/va/${record.key}`}>VA</Link>
-              </>
-            ) : (
-              <></>
-            )}
           </>
         ) : (
           <Tooltip

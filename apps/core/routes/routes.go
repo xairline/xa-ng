@@ -29,7 +29,6 @@ func NewRoutes(
 		NewDatarefRoutes(logger, gin, datarefController),
 		NewFlightLogsRoutes(logger, gin, flightLogsController),
 		NewStaticRoutes(logger, gin, staticPath),
-		NewVaRoutes(logger, gin, vaController),
 		NewFlightStatusRoutes(logger, gin, flightStatusController),
 	}
 }

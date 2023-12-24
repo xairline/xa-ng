@@ -25,6 +25,14 @@ type DatarefValue struct {
 	Value       interface{}            `json:"value" `
 }
 
+type SetDatarefValue struct {
+	Dataref string      `json:"dataref" `
+	Value   interface{} `json:"value" `
+}
+type SetDatarefValueReq struct {
+	Request SetDatarefValue `json:"request" `
+}
+
 func (d DatarefValue) GetFloat64() float64 {
 	if d.Value == nil {
 		return 0

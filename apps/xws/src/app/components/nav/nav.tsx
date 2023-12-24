@@ -4,7 +4,6 @@ import {faBuilding, faChartLine, faPlane,} from '@fortawesome/free-solid-svg-ico
 import Headquarter from '../../pages/headquarter/headquarter';
 import {Link} from 'react-router-dom';
 import {useStores} from '../../../store';
-import Live from '../../pages/live/live';
 import Analytics from '../../pages/analytics/analytics';
 
 const {Header} = Layout;
@@ -33,21 +32,6 @@ export const routes: Array<IRoute> = [
     comp: <Headquarter />,
   },
   // hq sub menus
-  {
-    path: '/live',
-    name: 'Live',
-    icon: (
-      <FontAwesomeIcon
-        icon={faPlane}
-        style={{
-          marginLeft: '6px',
-          marginRight: '20px',
-        }}
-        size={'1x'}
-      />
-    ),
-    comp: <Live />,
-  },
   // {
   //   path: '/analytics',
   //   name: 'Analytics',

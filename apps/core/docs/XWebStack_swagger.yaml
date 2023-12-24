@@ -177,6 +177,12 @@ definitions:
       vs:
         type: number
     type: object
+  models.SetDatarefValue:
+    properties:
+      dataref:
+        type: string
+      value: {}
+    type: object
   models.Va:
     properties:
       Address:
@@ -350,6 +356,13 @@ paths:
     put:
       consumes:
       - application/json
+      parameters:
+      - description: dataref and value
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SetDatarefValue'
       produces:
       - application/json
       responses:

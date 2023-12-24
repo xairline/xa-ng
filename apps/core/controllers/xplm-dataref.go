@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	datarefModels "apps/core/models"
 	"apps/core/services/dataref"
 	"apps/core/utils"
 	"apps/core/utils/logger"
@@ -68,12 +69,21 @@ func (u DatarefController) GetDatarefs(c *gin.Context) {
 // SetDataref
 // @Summary  Set Dataref
 // @Tags     XPLM_Dataref
+// @Param    request body datarefModels.SetDatarefValue true "dataref and value"
 // @Accept   json
 // @Produce  json
 // @Failure  501  "Not Implemented"
 // @Router   /xplm/dataref [put]
 func (u DatarefController) SetDataref(c *gin.Context) {
-	c.JSON(501, "not implemented")
+	// get dataref and value
+	var data datarefModels.SetDatarefValueReq
+	err := c.BindJSON(&data)
+	u.logger.Infof("dataref: %+v", data)
+	if err != nil {
+		u.logger.Errorf("dataref: %+v", err)
+		c.JSON(500, utils.ResponseError{Message: err.Error()})
+	}
+	u.datarefSvc.SetValueByDatarefName(data.Request.Dataref, data.Request.Value)
 }
 
 // SetDatarefs
