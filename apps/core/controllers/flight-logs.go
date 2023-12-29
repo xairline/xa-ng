@@ -75,6 +75,7 @@ func (u FlightLogsController) GetFlightLogs(c *gin.Context) {
 	result.Order("id DESC").Find(&res)
 	if result.Error != nil {
 		c.JSON(500, utils.ResponseError{Message: fmt.Sprintf("Failed to get flight logs: %+v", result.Error)})
+		return
 	}
 	c.JSON(200, res)
 }
@@ -98,8 +99,10 @@ func (u FlightLogsController) GetFlightLog(c *gin.Context) {
 		First(&res, id)
 	if result.Error == nil {
 		c.JSON(200, res)
+		return
 	} else {
 		u.logger.Infof("%+v", result.Error)
 		c.JSON(404, "not found")
+		return
 	}
 }

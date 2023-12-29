@@ -38,6 +38,7 @@ func (u DatarefController) GetDataref(c *gin.Context) {
 	dataref, success := c.GetQuery("dataref_str")
 	if !success {
 		c.JSON(500, utils.ResponseError{Message: `missing "dataref_str"`})
+		return
 	}
 
 	var alias string
@@ -82,6 +83,7 @@ func (u DatarefController) SetDataref(c *gin.Context) {
 	if err != nil {
 		u.logger.Errorf("dataref: %+v", err)
 		c.JSON(500, utils.ResponseError{Message: err.Error()})
+		return
 	}
 	u.datarefSvc.SetValueByDatarefName(data.Request.Dataref, data.Request.Value)
 }
