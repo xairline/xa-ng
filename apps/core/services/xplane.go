@@ -216,7 +216,23 @@ func (s xplaneService) setupWebsocket() {
 						msg, _ := json.Marshal(datarefValue)
 						err := ws.WriteMessage(websocket.TextMessage, msg)
 						if err != nil {
-							s.Logger.Errorf("Failed to get flight status, %v", err)
+							s.Logger.Errorf("Failed to get dataref, %v", err)
+							// send error message back
+							_ = ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("action:GetFlightStatus, error:%v", err)))
+							break wsloop
+						}
+						break
+					case "SetDataref":
+						datarefReq := &models.SetDatarefValue{}
+						json.Unmarshal([]byte(req), &datarefReq)
+						s.DatarefSvc.SetValueByDatarefName(
+							datarefReq.Dataref,
+							datarefReq.Value,
+						)
+
+						err := ws.WriteMessage(websocket.TextMessage, []byte("value set"))
+						if err != nil {
+							s.Logger.Errorf("Failed to set dataref, %v", err)
 							// send error message back
 							_ = ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("action:GetFlightStatus, error:%v", err)))
 							break wsloop

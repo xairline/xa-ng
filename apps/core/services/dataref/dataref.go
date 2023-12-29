@@ -96,10 +96,12 @@ func (d datarefService) GetValueByDatarefName(dataref, name string, precision *i
 		d.Logger.Errorf("Failed to find dataref: %s", name)
 		return models.DatarefValue{}
 	}
+	datarefType := dataAccess.GetDataRefTypes(myDataref)
+	d.Logger.Infof("datarefType: %v", datarefType)
 	datarefExt := models.DatarefExt{
 		Name:         name,
 		Dataref:      myDataref,
-		DatarefType:  dataAccess.GetDataRefTypes(myDataref),
+		DatarefType:  datarefType,
 		Precision:    precision,
 		IsBytesArray: isByteArray,
 	}
@@ -123,6 +125,7 @@ func (d datarefService) getCurrentValue(datarefExt *models.DatarefExt) models.Da
 	switch datarefExt.DatarefType {
 	case dataAccess.TypeInt:
 		currentValue = dataAccess.GetIntData(datarefExt.Dataref)
+		break
 	case dataAccess.TypeFloat, dataAccess.TypeDouble, 6:
 		tmp := dataAccess.GetFloatData(datarefExt.Dataref)
 		if datarefExt.Precision != nil {
@@ -130,6 +133,7 @@ func (d datarefService) getCurrentValue(datarefExt *models.DatarefExt) models.Da
 		} else {
 			currentValue = tmp
 		}
+		break
 	case dataAccess.TypeFloatArray:
 		tmpValue := dataAccess.GetFloatArrayData(datarefExt.Dataref)
 		res := make([]float64, len(tmpValue))
@@ -141,8 +145,10 @@ func (d datarefService) getCurrentValue(datarefExt *models.DatarefExt) models.Da
 		} else {
 			currentValue = tmpValue
 		}
+		break
 	case dataAccess.TypeIntArray:
 		currentValue = dataAccess.GetIntArrayData(datarefExt.Dataref)
+		break
 	case dataAccess.TypeData: // string??
 		tmpValue := dataAccess.GetData(datarefExt.Dataref)
 		if datarefExt.IsBytesArray {
@@ -156,12 +162,25 @@ func (d datarefService) getCurrentValue(datarefExt *models.DatarefExt) models.Da
 		} else {
 			currentValue = tmpValue
 		}
+		break
 	default:
-		d.Logger.Errorf("Unknown dataref type for %+v", datarefExt)
+		tmpValue := dataAccess.GetData(datarefExt.Dataref)
+		if datarefExt.IsBytesArray {
+			currentValue = ""
+			for _, element := range tmpValue {
+				if element == 0 {
+					break
+				}
+				currentValue = fmt.Sprintf("%s", currentValue) + string(byte(element))
+			}
+		} else {
+			d.Logger.Errorf("Unknown dataref type for %+v", datarefExt)
+		}
 	}
 	return models.DatarefValue{
-		Name:  datarefExt.Name,
-		Value: currentValue,
+		Name:        datarefExt.Name,
+		DatarefType: datarefExt.DatarefType,
+		Value:       currentValue,
 	}
 }
 
