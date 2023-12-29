@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	"github.com/xairline/goplane/extra"
 	"github.com/xairline/goplane/xplm/processing"
@@ -23,6 +24,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -36,6 +38,8 @@ type XplaneService interface {
 	flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32
 	// setup gin
 	setupGin()
+	// setup websocket
+	setupWebsocket()
 }
 
 type xplaneService struct {
@@ -93,6 +97,7 @@ func (s xplaneService) onPluginStart() {
 	//s.ImportXplanePilotLogs()
 
 	s.setupGin()
+	s.setupWebsocket()
 	processing.RegisterFlightLoopCallback(s.flightLoop, -1, nil)
 }
 
@@ -133,6 +138,95 @@ func (s xplaneService) setupGin() {
 		err := g.Run(":" + port)
 		if err != nil {
 			s.Logger.Errorf("Failed to start gin server, %v", err)
+		}
+	}()
+}
+func (s xplaneService) setupWebsocket() {
+	// get plugin path
+	systemPath := utilities.GetSystemPath()
+	pluginPath := filepath.Join(systemPath, "Resources", "plugins", "XWebStack")
+	err := godotenv.Load(filepath.Join(pluginPath, "config"))
+	if err != nil {
+		s.Logger.Errorf("Some error occured. Err: %s", err)
+	}
+
+	token := os.Getenv("CLIENT_TOKEN")
+	s.Logger.Infof("CLIENT_TOKEN: %s", token)
+	if token == "" {
+		s.Logger.Errorf("CLIENT_TOKEN is empty")
+		return
+	}
+
+	go func() {
+		for {
+			// Use the token to connect to the WebSocket endpoint
+			wsUrl := "wss://app.xairline.org/apis/ws?auth=" + token
+			ws, _, err := websocket.DefaultDialer.Dial(wsUrl, nil)
+			if err != nil {
+				s.Logger.Errorf("Could not open a ws connection on %s %v", wsUrl, err)
+				time.Sleep(time.Second * 5) // Wait for 5 seconds before trying to reconnect
+				continue
+			}
+
+			// Loop for reading messages and handling pings
+		wsloop:
+			for {
+				// Read the response from the WebSocket server
+				messageType, responseMessage, err := ws.ReadMessage()
+				if err != nil {
+					s.Logger.Errorf("Could not read message from ws connection %v", err)
+					break wsloop
+				}
+				// Handle text messages
+				if messageType == websocket.TextMessage &&
+					len(responseMessage) > 0 &&
+					strings.Contains(string(responseMessage), "|") {
+					message := string(responseMessage)
+					// split by | to get action and req
+					action := message[:strings.IndexByte(message, '|')]
+					req := message[strings.IndexByte(message, '|')+1:]
+					s.Logger.Infof("action: %s, req: %s", action, req)
+					// depends on action, handle req
+					switch action {
+					case "GetFlightStatus":
+						//flightStatus := s.FlightStatusService.GetFlightStatus()
+						err := ws.WriteMessage(websocket.TextMessage, []byte("test"))
+						//err := ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("action:GetFlightStatus, data:%s", flightStatus)))
+						if err != nil {
+							s.Logger.Errorf("Failed to get flight status, %v", err)
+							// send error message back
+							_ = ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("action:GetFlightStatus, error:%v", err)))
+							break wsloop
+						}
+						break
+					case "GetDataref":
+						datarefReq := &models.Dataref{}
+						json.Unmarshal([]byte(req), &datarefReq)
+						precision := int8(0)
+						if datarefReq.Precision != 0 {
+							precision = datarefReq.Precision
+						}
+						datarefValue := s.DatarefSvc.GetValueByDatarefName(
+							datarefReq.Name,
+							datarefReq.Name,
+							&precision,
+							datarefReq.IsBytesArray,
+						)
+						s.Logger.Infof("datarefValue: %+v", datarefValue)
+						msg, _ := json.Marshal(datarefValue)
+						err := ws.WriteMessage(websocket.TextMessage, msg)
+						if err != nil {
+							s.Logger.Errorf("Failed to get flight status, %v", err)
+							// send error message back
+							_ = ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("action:GetFlightStatus, error:%v", err)))
+							break wsloop
+						}
+						break
+					}
+				}
+			}
+			// Set up a defer function to close the WebSocket connection
+			defer ws.Close()
 		}
 	}()
 }

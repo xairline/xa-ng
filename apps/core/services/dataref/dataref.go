@@ -94,6 +94,7 @@ func (d datarefService) GetValueByDatarefName(dataref, name string, precision *i
 	myDataref, success := dataAccess.FindDataRef(dataref)
 	if !success {
 		d.Logger.Errorf("Failed to find dataref: %s", name)
+		return models.DatarefValue{}
 	}
 	datarefExt := models.DatarefExt{
 		Name:         name,
