@@ -53,6 +53,8 @@ type xplaneService struct {
 var xplaneSvcLock = &sync.Mutex{}
 var xplaneSvc XplaneService
 
+var commands = []string{}
+
 func NewXplaneService(
 	datarefSvc dataref.DatarefService,
 	flightStatusSvc flight_status.FlightStatusService,
@@ -106,6 +108,13 @@ func (s xplaneService) onPluginStop() {
 }
 
 func (s xplaneService) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32 {
+	if len(commands) != 0 {
+		command := commands[len(commands)-1]
+		commands = commands[:len(commands)-1]
+		cmdRef := utilities.FindCommand(command)
+		utilities.CommandOnce(cmdRef)
+		s.Logger.Infof("Command: %+v executed", cmdRef)
+	}
 	datarefValues := s.DatarefSvc.GetCurrentValues()
 	return s.FlightStatusService.ProcessDataref(datarefValues)
 }
@@ -238,7 +247,23 @@ func (s xplaneService) setupWebsocket() {
 							break wsloop
 						}
 						break
+					case "SendCommand":
+						cmdRef := utilities.FindCommand(req)
+						if cmdRef == nil {
+							_ = ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("action:SendCommand, error:%v", "command not found")))
+							break
+						}
+						commands = append(commands, req)
+						err := ws.WriteMessage(websocket.TextMessage, []byte("command sent"))
+						if err != nil {
+							s.Logger.Errorf("Failed to send cmd, %v", err)
+							// send error message back
+							_ = ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("action:SendCommand, error:%v", err)))
+							break wsloop
+						}
+						break
 					}
+
 				}
 			}
 			// Set up a defer function to close the WebSocket connection
