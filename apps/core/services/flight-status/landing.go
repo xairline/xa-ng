@@ -14,7 +14,7 @@ func (f flightStatusService) processDatarefLanding(datarefValues models.DatarefV
 			0,
 			0,
 		)
-
+		f.db.Model(&models.FlightStatus{}).Where("id = ?", f.FlightStatus.ID).Updates(f.FlightStatus)
 		f.changeState(models.FlightStateTaxiIn, 0.2)
 		f.addLocation(datarefValues, -1, nil)
 		return

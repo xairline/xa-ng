@@ -197,6 +197,27 @@ func (s xplaneService) setupWebsocket() {
 					s.Logger.Infof("action: %s, req: %s", action, req)
 					// depends on action, handle req
 					switch action {
+					case "SyncFlightLogs":
+						var lastSyncedFlightStatus models.FlightStatus
+						lastSyncedId, _ := strconv.ParseUint(req, 10, 0)
+						s.db.Model(&models.FlightStatus{}).Order("id desc").Limit(1).Find(&lastSyncedFlightStatus)
+						if lastSyncedFlightStatus.ID == uint(lastSyncedId) {
+							ws.WriteMessage(websocket.TextMessage, []byte("SyncFlightLogs|Done"))
+							break
+						}
+						s.Logger.Infof("lastSyncedId: %d", lastSyncedId)
+						s.Logger.Infof("lastSyncedFlightStatus: %d", lastSyncedFlightStatus.ID)
+						var res []models.FlightStatus
+						s.db.Preload("Locations").
+							Preload("Events").
+							Model(&models.FlightStatus{}).
+							Where("id > ?", lastSyncedId).
+							Order("id asc").
+							Limit(5).
+							Find(&res)
+						msgBytes, _ := json.Marshal(res)
+						ws.WriteMessage(websocket.TextMessage, msgBytes)
+						break
 					case "GetFlightStatus":
 						//flightStatus := s.FlightStatusService.GetFlightStatus()
 						err := ws.WriteMessage(websocket.TextMessage, []byte("test"))
