@@ -200,7 +200,11 @@ func (s xplaneService) setupWebsocket() {
 					case "SyncFlightLogs":
 						var lastSyncedFlightStatus models.FlightStatus
 						lastSyncedId, _ := strconv.ParseUint(req, 10, 0)
-						s.db.Model(&models.FlightStatus{}).Order("id desc").Limit(1).Find(&lastSyncedFlightStatus)
+						s.db.Model(&models.FlightStatus{}).
+							Where("arrival_total_weight > 1").
+							Order("id desc").
+							Limit(1).
+							Find(&lastSyncedFlightStatus)
 						if lastSyncedFlightStatus.ID == uint(lastSyncedId) {
 							ws.WriteMessage(websocket.TextMessage, []byte("SyncFlightLogs|Done"))
 							break
