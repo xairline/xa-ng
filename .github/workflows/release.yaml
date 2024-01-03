@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: '16'
       - run: |
-          CI=false npm install -g yarn
+          CI=false npm install
           nx run xws:build:production
         working-directory: .
 
