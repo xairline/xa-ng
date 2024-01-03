@@ -34,7 +34,7 @@ jobs:
           node-version: '16'
       - run: |
           npx pnpm install
-          nx run xws:build:production
+          npx pnpm nx run xws:build:production
         working-directory: .
 
       - uses: actions/cache@v2
