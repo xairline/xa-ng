@@ -34,8 +34,14 @@ jobs:
           key: go-mod-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             go-mod-
-      - run: go mod tidy
-      - run: make all -j 3
+      - run: |
+          go mod tidy
+          make all -j 3
+          rm -f ${{ github.workspace }}/dist/apps/XWebStack/mac_arm.xpl ${{ github.workspace }}/dist/apps/XWebStack/mac_amd.xpl
+          cp -r ${{ github.workspace }}/dist/apps/xws ${{ github.workspace }}/dist/apps/XWebStack
+          echo "PORT=19090" > ${{ github.workspace }}/dist/apps/XWebStack/config
+          root=$(pwd)
+          cd ${{ github.workspace }}/dist/apps/ && zip -r xws.zip XWebStack && cd $root
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -43,5 +49,5 @@ jobs:
         with:
           body_path: ${{ github.workspace }}/README.md
           files: |
-            ${{ github.workspace }}/dist/apps/XWebStack/*.xpl
+            ${{ github.workspace }}/dist/apps/xws.zip
           prerelease: false
