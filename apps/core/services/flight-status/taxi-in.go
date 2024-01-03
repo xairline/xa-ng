@@ -2,7 +2,10 @@ package flight_status
 
 import (
 	"apps/core/models"
+	"github.com/gorilla/websocket"
 	"math"
+	"os"
+	"time"
 )
 
 func (f flightStatusService) processDatarefTaxiIn(datarefValues models.DatarefValues) {
@@ -21,12 +24,33 @@ func (f flightStatusService) processDatarefTaxiIn(datarefValues models.DatarefVa
 		f.FlightStatus.ArrivalFlightInfo.TotalWeight = totalWeight.GetFloat64()
 		f.addLocation(datarefValues, -1, nil)
 		f.db.Model(&models.FlightStatus{}).Where("id = ?", f.FlightStatus.ID).Updates(f.FlightStatus)
+		f.hack_sync_flight()
 		f.ResetFlightStatus()
 	} else {
 		currentHeading := datarefValues["heading"].GetFloat64()
 		lastHeading := f.FlightStatus.Locations[len(f.FlightStatus.Locations)-1].Heading
 		if math.Abs(lastHeading-currentHeading) > 10 {
 			f.addLocation(datarefValues, -1, nil)
+		}
+	}
+}
+
+func (f flightStatusService) hack_sync_flight() {
+	token := os.Getenv("CLIENT_TOKEN")
+	f.Logger.Infof("hack - CLIENT_TOKEN: %s", token)
+	if token == "" {
+		f.Logger.Errorf("CLIENT_TOKEN is empty")
+		return
+	}
+
+	for {
+		// Use the token to connect to the WebSocket endpoint
+		wsUrl := "wss://app.xairline.org/apis/ws?auth=" + token
+		_, _, err := websocket.DefaultDialer.Dial(wsUrl, nil)
+		if err != nil {
+			f.Logger.Errorf("Could not open a ws connection on %s %v", wsUrl, err)
+			time.Sleep(time.Second * 5) // Wait for 5 seconds before trying to reconnect
+			continue
 		}
 	}
 }
