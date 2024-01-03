@@ -33,8 +33,7 @@ jobs:
         with:
           node-version: '16'
       - run: |
-          npm install -g pnpm
-          pnpm install
+          npx pnpm install
           nx run xws:build:production
         working-directory: .
 
