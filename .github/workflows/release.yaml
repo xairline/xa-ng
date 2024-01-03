@@ -51,3 +51,4 @@ jobs:
           files: |
             ${{ github.workspace }}/dist/apps/xws.zip
           prerelease: false
+          repository: xairline/xairline-v2
