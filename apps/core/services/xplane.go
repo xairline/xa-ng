@@ -206,7 +206,11 @@ func (s xplaneService) setupWebsocket() {
 							Limit(1).
 							Find(&lastSyncedFlightStatus)
 						if lastSyncedFlightStatus.ID == uint(lastSyncedId) {
-							ws.WriteMessage(websocket.TextMessage, []byte("SyncFlightLogs|Done"))
+							s.Logger.Infof("Synced flight logs for client")
+							err := ws.WriteMessage(websocket.TextMessage, []byte("SyncFlightLogs|Done"))
+							if err != nil {
+								s.Logger.Errorf("Failed to send message to ws connection %v", err)
+							}
 							break
 						}
 						s.Logger.Infof("lastSyncedId: %d", lastSyncedId)
