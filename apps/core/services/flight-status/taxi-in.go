@@ -52,5 +52,6 @@ func (f flightStatusService) hack_sync_flight() {
 			time.Sleep(time.Second * 5) // Wait for 5 seconds before trying to reconnect
 			continue
 		}
+		break
 	}
 }
