@@ -201,10 +201,11 @@ func (s xplaneService) setupWebsocket() {
 						var lastSyncedFlightStatus models.FlightStatus
 						lastSyncedId, _ := strconv.ParseUint(req, 10, 0)
 						s.db.Model(&models.FlightStatus{}).
-							Where("arrival_total_weight > 1").
+							Where("arrival_total_weight > 10").
 							Order("id desc").
 							Limit(1).
 							Find(&lastSyncedFlightStatus)
+						s.Logger.Infof("lastSyncedFlightStatus: %+v", lastSyncedFlightStatus)
 						if lastSyncedFlightStatus.ID == uint(lastSyncedId) {
 							s.Logger.Infof("Synced flight logs for client")
 							err := ws.WriteMessage(websocket.TextMessage, []byte("SyncFlightLogs|Done"))
@@ -219,7 +220,7 @@ func (s xplaneService) setupWebsocket() {
 						s.db.Preload("Locations").
 							Preload("Events").
 							Model(&models.FlightStatus{}).
-							Where("id > ?", lastSyncedId).
+							Where("id > ? AND arrival_total_weight > 10", lastSyncedId).
 							Order("id asc").
 							Limit(5).
 							Find(&res)
