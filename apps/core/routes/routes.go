@@ -19,16 +19,12 @@ func NewRoutes(
 	logger logger.Logger,
 	gin *gin.Engine,
 	datarefController controllers.DatarefController,
-	flightLogsController controllers.FlightLogsController,
-	flightStatusController controllers.FlightStatusController,
 	staticPath string,
 ) Routes {
 	return Routes{
 		NewOpenAPIRoutes(logger, gin),
 		NewDatarefRoutes(logger, gin, datarefController),
-		NewFlightLogsRoutes(logger, gin, flightLogsController),
 		NewStaticRoutes(logger, gin, staticPath),
-		NewFlightStatusRoutes(logger, gin, flightStatusController),
 	}
 }
 

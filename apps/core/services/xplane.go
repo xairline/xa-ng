@@ -3,16 +3,11 @@ package services
 //go:generate mockgen -destination=./__mocks__/xplane.go -package=mocks -source=xplane.go
 
 import (
-	"apps/core/controllers"
 	"apps/core/models"
-	"apps/core/routes"
-	"apps/core/services/dataref"
-	"apps/core/services/flight-status"
 	"apps/core/utils/logger"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	"github.com/xairline/goplane/extra"
@@ -36,30 +31,25 @@ type XplaneService interface {
 	onPluginStop()
 	// flight loop
 	flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlightLoop float32, counter int, ref interface{}) float32
-	// setup gin
-	setupGin()
 	// setup websocket
 	setupWebsocket()
 }
 
 type xplaneService struct {
-	Plugin              *extra.XPlanePlugin
-	DatarefSvc          dataref.DatarefService
-	FlightStatusService flight_status.FlightStatusService
-	Logger              logger.Logger
-	db                  *gorm.DB
+	Plugin     *extra.XPlanePlugin
+	DatarefSvc DatarefService
+	Logger     logger.Logger
+	db         *gorm.DB
 }
 
 var xplaneSvcLock = &sync.Mutex{}
 var xplaneSvc XplaneService
 
-var commands = []string{}
+var commands []string
 
 func NewXplaneService(
-	datarefSvc dataref.DatarefService,
-	flightStatusSvc flight_status.FlightStatusService,
+	datarefSvc DatarefService,
 	logger logger.Logger,
-	db *gorm.DB,
 ) XplaneService {
 	if xplaneSvc != nil {
 		logger.Info("Xplane SVC has been initialized already")
@@ -69,11 +59,9 @@ func NewXplaneService(
 		xplaneSvcLock.Lock()
 		defer xplaneSvcLock.Unlock()
 		xplaneSvc := xplaneService{
-			Plugin:              extra.NewPlugin("X Web Stack", "com.github.xairline.xwebstack", "A plugin enables Frontend developer to contribute to xplane"),
-			DatarefSvc:          datarefSvc,
-			FlightStatusService: flightStatusSvc,
-			Logger:              logger,
-			db:                  db,
+			Plugin:     extra.NewPlugin("X Web Stack", "com.github.xairline.xwebstack", "A plugin exposes XP datarefs and commands to web clients"),
+			DatarefSvc: datarefSvc,
+			Logger:     logger,
 		}
 		xplaneSvc.Plugin.SetPluginStateCallback(xplaneSvc.onPluginStateChanged)
 		return xplaneSvc
@@ -95,10 +83,7 @@ func (s xplaneService) onPluginStateChanged(state extra.PluginState, plugin *ext
 
 func (s xplaneService) onPluginStart() {
 	s.Logger.Info("Plugin started")
-	// import xplane logs
-	//s.ImportXplanePilotLogs()
 
-	s.setupGin()
 	s.setupWebsocket()
 	processing.RegisterFlightLoopCallback(s.flightLoop, -1, nil)
 }
@@ -115,41 +100,9 @@ func (s xplaneService) flightLoop(elapsedSinceLastCall, elapsedTimeSinceLastFlig
 		utilities.CommandOnce(cmdRef)
 		s.Logger.Infof("Command: %+v executed", cmdRef)
 	}
-	datarefValues := s.DatarefSvc.GetCurrentValues()
-	return s.FlightStatusService.ProcessDataref(datarefValues)
+	return 0.02
 }
 
-func (s xplaneService) setupGin() {
-	g := gin.Default()
-	// get plugin path
-	systemPath := utilities.GetSystemPath()
-	pluginPath := filepath.Join(systemPath, "Resources", "plugins", "XWebStack")
-	routes.NewRoutes(
-		s.Logger,
-		g,
-		controllers.NewDatarefController(s.Logger, s.DatarefSvc),
-		controllers.NewFlightLogsController(s.Logger, s.db),
-		controllers.NewFlightStatusController(s.Logger, s.FlightStatusService),
-		pluginPath+"/xws",
-	).Setup()
-	err := godotenv.Load(filepath.Join(pluginPath, "config"))
-	if err != nil {
-		s.Logger.Errorf("Some error occured. Err: %s", err)
-	}
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "9090"
-	}
-	s.Logger.Infof("Server port: %s", port)
-
-	go func() {
-		err := g.Run(":" + port)
-		if err != nil {
-			s.Logger.Errorf("Failed to start gin server, %v", err)
-		}
-	}()
-}
 func (s xplaneService) setupWebsocket() {
 	// get plugin path
 	systemPath := utilities.GetSystemPath()
@@ -225,7 +178,10 @@ func (s xplaneService) setupWebsocket() {
 							Limit(5).
 							Find(&res)
 						msgBytes, _ := json.Marshal(res)
-						ws.WriteMessage(websocket.TextMessage, msgBytes)
+						err := ws.WriteMessage(websocket.TextMessage, msgBytes)
+						if err != nil {
+							s.Logger.Errorf("Failed to send message to ws connection %v", err)
+						}
 						break
 					case "GetFlightStatus":
 						//flightStatus := s.FlightStatusService.GetFlightStatus()
@@ -240,7 +196,10 @@ func (s xplaneService) setupWebsocket() {
 						break
 					case "GetDataref":
 						datarefReq := &models.Dataref{}
-						json.Unmarshal([]byte(req), &datarefReq)
+						err := json.Unmarshal([]byte(req), &datarefReq)
+						if err != nil {
+							s.Logger.Errorf("Failed to unmarshal datarefReq, %v", err)
+						}
 						precision := int8(0)
 						if datarefReq.Precision != 0 {
 							precision = datarefReq.Precision
@@ -253,7 +212,7 @@ func (s xplaneService) setupWebsocket() {
 						)
 						s.Logger.Infof("datarefValue: %+v", datarefValue)
 						msg, _ := json.Marshal(datarefValue)
-						err := ws.WriteMessage(websocket.TextMessage, msg)
+						err = ws.WriteMessage(websocket.TextMessage, msg)
 						if err != nil {
 							s.Logger.Errorf("Failed to get dataref, %v", err)
 							// send error message back
@@ -297,7 +256,12 @@ func (s xplaneService) setupWebsocket() {
 				}
 			}
 			// Set up a defer function to close the WebSocket connection
-			defer ws.Close()
+			defer func(ws *websocket.Conn) {
+				err := ws.Close()
+				if err != nil {
+					s.Logger.Errorf("Could not close ws connection %v", err)
+				}
+			}(ws)
 		}
 	}()
 }

@@ -1,4 +1,4 @@
-package dataref
+package services
 
 //go:generate mockgen -destination=../__mocks__/dataref/dataref.go -package=mocks -source=dataref.go
 
@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"github.com/xairline/goplane/xplm/dataAccess"
 	"github.com/xairline/goplane/xplm/navigation"
-	"gopkg.in/yaml.v3"
 	"math"
 	"reflect"
 	"strconv"
@@ -20,11 +19,7 @@ import (
 var datarefSvcLock = &sync.Mutex{}
 var datarefSvc DatarefService
 
-//go:embed dataref.yaml
-var datarefBytes []byte
-
 type DatarefService interface {
-	GetCurrentValues() models.DatarefValues
 	GetValueByDatarefName(dataref, name string, precision *int8, isByteArray bool) models.DatarefValue
 	GetNearestAirport() (string, string)
 	SetDatarefExtList(datarefExtlist *[]models.DatarefExt)
@@ -157,7 +152,7 @@ func (d datarefService) getCurrentValue(datarefExt *models.DatarefExt) models.Da
 				if element == 0 {
 					break
 				}
-				currentValue = fmt.Sprintf("%s", currentValue) + string(byte(element))
+				currentValue = fmt.Sprintf("%s", currentValue) + string(element)
 			}
 		} else {
 			currentValue = tmpValue
@@ -171,7 +166,7 @@ func (d datarefService) getCurrentValue(datarefExt *models.DatarefExt) models.Da
 				if element == 0 {
 					break
 				}
-				currentValue = fmt.Sprintf("%s", currentValue) + string(byte(element))
+				currentValue = fmt.Sprintf("%s", currentValue) + string(element)
 			}
 		} else {
 			d.Logger.Errorf("Unknown dataref type for %+v", datarefExt)
@@ -184,22 +179,6 @@ func (d datarefService) getCurrentValue(datarefExt *models.DatarefExt) models.Da
 	}
 }
 
-func (d datarefService) GetCurrentValues() models.DatarefValues {
-	var res = models.DatarefValues{}
-	//var wg sync.WaitGroup
-	for _, value := range *d.DatarefExtList {
-		//wg.Add(1)
-		datarefExt := value
-		//go func() {
-		//	defer wg.Done()
-		currentValue := d.getCurrentValue(&datarefExt)
-		res[currentValue.Name] = currentValue
-		//}()
-	}
-	//wg.Wait()
-	return res
-}
-
 func NewDatarefService(logger logger.Logger) DatarefService {
 	if datarefSvc != nil {
 		logger.Info("Dataref SVC has been initialized already")
@@ -209,38 +188,11 @@ func NewDatarefService(logger logger.Logger) DatarefService {
 		datarefSvcLock.Lock()
 		defer datarefSvcLock.Unlock()
 
-		datarefExtList := InitializeDatarefList(logger)
-
 		datarefSvc = datarefService{
-			DatarefExtList: &datarefExtList,
-			Logger:         logger,
+			Logger: logger,
 		}
 		return datarefSvc
 	}
-}
-
-func InitializeDatarefList(logger logger.Logger) []models.DatarefExt {
-	var datarefList []models.Dataref
-	err := yaml.Unmarshal(datarefBytes, &datarefList)
-	if err != nil {
-		logger.Errorf("Unmarshal: %v", err)
-	}
-	var datarefExtList []models.DatarefExt
-	for _, dataref := range datarefList {
-		xplaneDataref, success := dataAccess.FindDataRef(dataref.DatarefStr)
-		if !success {
-			logger.Errorf("Failed to FindDataRef: %s", dataref.DatarefStr)
-		}
-		precision := dataref.Precision
-		datarefExtList = append(datarefExtList, models.DatarefExt{
-			Name:         dataref.Name,
-			Dataref:      xplaneDataref,
-			DatarefType:  dataAccess.GetDataRefTypes(xplaneDataref),
-			Precision:    &precision,
-			IsBytesArray: dataref.IsBytesArray,
-		})
-	}
-	return datarefExtList
 }
 
 func dataRoundup(value float64, precision int) float64 {

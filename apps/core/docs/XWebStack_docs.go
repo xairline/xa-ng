@@ -571,8 +571,6 @@ var SwaggerInfoXWebStack = &swag.Spec{
 	Description:      "",
 	InfoInstanceName: "XWebStack",
 	SwaggerTemplate:  docTemplateXWebStack,
-	LeftDelim:        "{{",
-	RightDelim:       "}}",
 }
 
 func init() {

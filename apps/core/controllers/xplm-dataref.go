@@ -2,7 +2,7 @@ package controllers
 
 import (
 	datarefModels "apps/core/models"
-	"apps/core/services/dataref"
+	"apps/core/services"
 	"apps/core/utils"
 	"apps/core/utils/logger"
 	"github.com/gin-gonic/gin"
@@ -11,11 +11,11 @@ import (
 // DatarefController data type
 type DatarefController struct {
 	logger     logger.Logger
-	datarefSvc dataref.DatarefService
+	datarefSvc services.DatarefService
 }
 
 // NewDatarefController creates new Dataref controller
-func NewDatarefController(logger logger.Logger, datarefSvc dataref.DatarefService) DatarefController {
+func NewDatarefController(logger logger.Logger, datarefSvc services.DatarefService) DatarefController {
 	return DatarefController{
 		logger:     logger,
 		datarefSvc: datarefSvc,
