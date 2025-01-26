@@ -168,37 +168,6 @@ const docTemplateXWebStack = `{
                 }
             }
         },
-        "/va": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Va"
-                ],
-                "summary": "Get a list of Va",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Va"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseError"
-                        }
-                    }
-                }
-            }
-        },
         "/xplm/dataref": {
             "get": {
                 "consumes": [
@@ -467,9 +436,6 @@ const docTemplateXWebStack = `{
                 },
                 "updatedAt": {
                     "type": "string"
-                },
-                "va_filed": {
-                    "type": "boolean"
                 }
             }
         },
@@ -591,23 +557,6 @@ const docTemplateXWebStack = `{
                 },
                 "value": {}
             }
-        },
-        "models.Va": {
-            "type": "object",
-            "properties": {
-                "Address": {
-                    "type": "string"
-                },
-                "FlightInfo": {
-                    "type": "string"
-                },
-                "Name": {
-                    "type": "string"
-                },
-                "PIREP": {
-                    "type": "string"
-                }
-            }
         }
     }
 }`
@@ -622,6 +571,8 @@ var SwaggerInfoXWebStack = &swag.Spec{
 	Description:      "",
 	InfoInstanceName: "XWebStack",
 	SwaggerTemplate:  docTemplateXWebStack,
+	LeftDelim:        "{{",
+	RightDelim:       "}}",
 }
 
 func init() {
