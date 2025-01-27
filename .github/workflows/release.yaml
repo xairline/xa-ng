@@ -48,7 +48,6 @@ jobs:
           go mod tidy
           make all -j 3
           rm -f ${{ github.workspace }}/dist/apps/XWebStack/mac_arm.xpl ${{ github.workspace }}/dist/apps/XWebStack/mac_amd.xpl
-#          cp -r  ${{ github.workspace }}/dist/apps/xws  ${{ github.workspace }}/dist/apps/XWebStack
           echo "PORT=19090" > ${{ github.workspace }}/dist/apps/XWebStack/config
           root=$(pwd)
           cd ${{ github.workspace }}/dist/apps/ && zip -r xws.zip XWebStack && cd $root
